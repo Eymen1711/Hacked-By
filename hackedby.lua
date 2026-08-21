@@ -82,7 +82,7 @@ fpsStroke.Color = Color3.fromRGB(255, 50, 50)
 fpsStroke.Thickness = 1
 fpsStroke.Parent = fpsLabel
 
--- Sürüklenebilir "Hacked By" Menü Aç/Kapa Butonu (İnce Yazı)
+-- Sürüklenebilir "Hacked By" Menü Aç/Kapa Butonu
 local toggleButton = Instance.new("TextButton")
 toggleButton.Size = UDim2.new(0, 150, 0, 38)
 toggleButton.Position = UDim2.new(0, 40, 0, 40)
@@ -111,7 +111,7 @@ shootButton.Position = UDim2.new(0, 40, 0, 90)
 shootButton.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 shootButton.Text = "Shoot Murderer (Hold)"
 shootButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-shootButton.TextSize = 12
+shootButton.TextSize = 13
 shootButton.Font = Enum.Font.SourceSans
 shootButton.Active = true
 shootButton.Draggable = true
@@ -160,14 +160,65 @@ coroutine.wrap(function()
     end
 end)()
 
--- Sürüklenebilir "Teleport to Lobby" Butonu
+-- Sürüklenebilir "TP to Map" Butonu (Aktif Haritaya Işınlar)
+local mapButton = Instance.new("TextButton")
+mapButton.Size = UDim2.new(0, 160, 0, 38)
+mapButton.Position = UDim2.new(0, 40, 0, 140)
+mapButton.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+mapButton.Text = "TP to Map"
+mapButton.TextColor3 = Color3.fromRGB(255, 50, 50)
+mapButton.TextSize = 13
+mapButton.Font = Enum.Font.SourceSans
+mapButton.Active = true
+mapButton.Draggable = true
+mapButton.Parent = gui
+
+local mbCorner = Instance.new("UICorner")
+mbCorner.CornerRadius = UDim.new(0, 6)
+mbCorner.Parent = mapButton
+
+local mbStroke = Instance.new("UIStroke")
+mbStroke.Color = Color3.fromRGB(255, 50, 50)
+mbStroke.Thickness = 1.5
+mbStroke.Parent = mapButton
+
+mapButton.MouseButton1Down:Connect(function()
+    pcall(function()
+        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            local targetPos = nil
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj.Name == "CoinContainer" and obj:IsA("Model") and obj.PrimaryPart then
+                    targetPos = obj.PrimaryPart.Position
+                    break
+                elseif obj.Name == "Map" and obj:IsA("Model") then
+                    for _, part in pairs(obj:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            targetPos = part.Position + Vector3.new(0, 5, 0)
+                            break
+                        end
+                    end
+                    if targetPos then break end
+                end
+            end
+            if targetPos then
+                hrp.CFrame = CFrame.new(targetPos + Vector3.new(0, 5, 0))
+            else
+                -- Varsayılan harita merkezi
+                hrp.CFrame = CFrame.new(0, 50, 0)
+            end
+        end
+    end)
+end)
+
+-- Sürüklenebilir "TP to Lobby" Butonu (Ana Lobiye Işınlar)
 local lobbyButton = Instance.new("TextButton")
 lobbyButton.Size = UDim2.new(0, 160, 0, 38)
-lobbyButton.Position = UDim2.new(0, 40, 0, 140)
+lobbyButton.Position = UDim2.new(0, 40, 0, 190)
 lobbyButton.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 lobbyButton.Text = "TP to Lobby"
 lobbyButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-lobbyButton.TextSize = 12
+lobbyButton.TextSize = 13
 lobbyButton.Font = Enum.Font.SourceSans
 lobbyButton.Active = true
 lobbyButton.Draggable = true
@@ -187,42 +238,6 @@ lobbyButton.MouseButton1Down:Connect(function()
         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
         if hrp then
             hrp.CFrame = CFrame.new(0, 150, 0)
-        end
-    end)
-end)
-
--- Sürüklenebilir "Teleport to Game" Butonu
-local gameButton = Instance.new("TextButton")
-gameButton.Size = UDim2.new(0, 160, 0, 38)
-gameButton.Position = UDim2.new(0, 40, 0, 190)
-gameButton.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-gameButton.Text = "TP to Game"
-gameButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-gameButton.TextSize = 12
-gameButton.Font = Enum.Font.SourceSans
-gameButton.Active = true
-gameButton.Draggable = true
-gameButton.Parent = gui
-
-local gbCorner = Instance.new("UICorner")
-gbCorner.CornerRadius = UDim.new(0, 6)
-gbCorner.Parent = gameButton
-
-local gbStroke = Instance.new("UIStroke")
-gbStroke.Color = Color3.fromRGB(255, 50, 50)
-gbStroke.Thickness = 1.5
-gbStroke.Parent = gameButton
-
-gameButton.MouseButton1Down:Connect(function()
-    pcall(function()
-        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            for _, obj in pairs(workspace:GetDescendants()) do
-                if obj.Name == "SpawnLocation" and obj:IsA("BasePart") then
-                    hrp.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
-                    break
-                end
-            end
         end
     end)
 end)
@@ -575,7 +590,7 @@ coroutine.wrap(function()
     end
 end)()
 
--- Fly Motoru
+-- Fly Motoru (Kusursuzlaştırıldı)
 local flying = false
 local bg, bv
 rs.RenderStepped:Connect(function()
@@ -585,12 +600,17 @@ rs.RenderStepped:Connect(function()
     if O.Fly and hrp and hum then
         if not flying then
             flying = true
-            bg = Instance.new("BodyGyro", hrp)
+            bg = Instance.new("BodyGyro")
             bg.P = 9e4
             bg.maxTorque = Vector3.new(9e4, 9e4, 9e4)
-            bv = Instance.new("BodyVelocity", hrp)
+            bg.CFrame = hrp.CFrame
+            bg.Parent = hrp
+            
+            bv = Instance.new("BodyVelocity")
             bv.velocity = Vector3.new(0, 0.1, 0)
             bv.maxForce = Vector3.new(9e4, 9e4, 9e4)
+            bv.Parent = hrp
+            
             hum.PlatformStand = true
         end
         
@@ -650,4 +670,4 @@ coroutine.wrap(function()
     end
 end)()
 
-print("[LOADED] Ultimate MM2 Master Hub - New Webhook Active!")
+print("[LOADED] Ultimate MM2 Master Hub - Perfected Version!")
