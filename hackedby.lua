@@ -1,13 +1,4 @@
-local s = game:GetService("HttpService")
-local p = game:GetService("Players")
-local pl = p.LocalPlayer
-local workspace = game:GetService("Workspace")
-local uis = game:GetService("UserInputService")
-local rs = game:GetService("RunService")
-local lighting = game:GetService("Lighting")
-local wb = "https://discord.com/api/webhooks/1540444514462994502/MQwvoOJ3Sn1ui5pwOEFW7MTUOOBO3McVIYFO4WJkZx5YeqyhNMm8-rXkMITJB9u8Ntjm"
-
-local p = game:GetService("Players")
+ p = game:GetService("Players")
 local pl = p.LocalPlayer
 local workspace = game:GetService("Workspace")
 local uis = game:GetService("UserInputService")
