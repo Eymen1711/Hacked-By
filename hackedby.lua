@@ -1,5 +1,5 @@
 -- ==========================================
--- ULTIMATE MM2 SCRIPT (EXACTLY LIKE VIDEO v30)
+-- ULTIMATE MM2 SCRIPT (EXACTLY LIKE VIDEO v31 - FIXED)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -25,7 +25,7 @@ local infJumpActive = false
 
 -- Eski pencereleri temizle
 pcall(function()
-    for i = 22, 30 do
+    for i = 22, 31 do
         local old = game:GetService("CoreGui"):FindFirstChild("HackedBy_MasterMenu_v" .. i)
         if old then old:Destroy() end
         local oldKey = game:GetService("CoreGui"):FindFirstChild("HackedBy_KeySystem_v" .. i)
@@ -54,7 +54,7 @@ end
 
 -- Bildirim Sistemi
 local notifGui = Instance.new("ScreenGui")
-notifGui.Name = "HackedBy_Notifications_v30"
+notifGui.Name = "HackedBy_Notifications_v31"
 notifGui.ResetOnSpawn = false
 pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
 if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -111,7 +111,7 @@ end
 
 -- Key System
 local gui = Instance.new("ScreenGui")
-gui.Name = "HackedBy_KeySystem_v30"
+gui.Name = "HackedBy_KeySystem_v31"
 gui.ResetOnSpawn = false
 pcall(function() gui.Parent = game:GetService("CoreGui") end)
 if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -163,9 +163,9 @@ loginBtn.MouseButton1Click:Connect(function()
         gui:Destroy()
         sendNotification("Success", "Key verified successfully!", 3)
         
-        -- MASTER MENU v30
+        -- MASTER MENU v31
         local mgui = Instance.new("ScreenGui")
-        mgui.Name = "HackedBy_MasterMenu_v30"
+        mgui.Name = "HackedBy_MasterMenu_v31"
         mgui.ResetOnSpawn = false
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -189,10 +189,8 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         -- ==========================================
-        -- SOL TARAFTAKI SABİT BUTONLAR (Videodaki gibi)
+        -- SOL TARAFTAKI SABİT BUTONLAR
         -- ==========================================
-        
-        -- 1. Toggle Menu Butonu
         local toggleButton = Instance.new("TextButton", mgui)
         toggleButton.Size = UDim2.new(0, 150, 0, 40)
         toggleButton.Position = UDim2.new(0, 20, 0, 20)
@@ -207,7 +205,6 @@ loginBtn.MouseButton1Click:Connect(function()
         local tbStroke = Instance.new("UIStroke", toggleButton)
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
-        -- 2. Silent Aim Butonu (Sol üstte)
         local leftSilentBtn = Instance.new("TextButton", mgui)
         leftSilentBtn.Size = UDim2.new(0, 150, 0, 40)
         leftSilentBtn.Position = UDim2.new(0, 20, 0, 70)
@@ -233,7 +230,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- 3. TP to Map Butonu
         local leftMapBtn = Instance.new("TextButton", mgui)
         leftMapBtn.Size = UDim2.new(0, 150, 0, 40)
         leftMapBtn.Position = UDim2.new(0, 20, 0, 120)
@@ -263,7 +259,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- 4. TP to Lobby Butonu
         local leftLobbyBtn = Instance.new("TextButton", mgui)
         leftLobbyBtn.Size = UDim2.new(0, 150, 0, 40)
         leftLobbyBtn.Position = UDim2.new(0, 20, 0, 170)
@@ -286,7 +281,7 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         -- ==========================================
-        -- ANA MENÜ PENCERESİ (SEKMELİ YAPI)
+        -- ANA MENÜ PENCERESİ (SEKMELİ SİSTEM)
         -- ==========================================
         local f = Instance.new("Frame", mgui)
         f.Size = UDim2.new(0, 520, 0, 380)
@@ -308,7 +303,6 @@ loginBtn.MouseButton1Click:Connect(function()
         local fStroke = Instance.new("UIStroke", f)
         rs.RenderStepped:Connect(function() if fStroke and fStroke.Parent then fStroke.Color = getThemeColor(1) end end)
 
-        -- Üst Başlık Barı
         local menuTitleLbl = Instance.new("TextLabel", f)
         menuTitleLbl.Size = UDim2.new(1, 0, 0, 40)
         menuTitleLbl.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
@@ -318,10 +312,10 @@ loginBtn.MouseButton1Click:Connect(function()
         menuTitleLbl.Font = CUSTOM_FONT
         Instance.new("UICorner", menuTitleLbl).CornerRadius = UDim.new(0, 12)
 
-        -- Üst Kategori Sekmeleri (Theme, ESP & X-Key, Combat & Aim, Trade & Misc, Auto Farm)
+        -- Sekme Butonları Alanı
         local tabsHolder = Instance.new("Frame", f)
-        tabsHolder.Size = UDim2.new(1, -10, 0, 35)
-        tabsHolder.Position = UDim2.new(0, 5, 0, 45)
+        tabsHolder.Size = UDim2.new(1, -16, 0, 35)
+        tabsHolder.Position = UDim2.new(0, 8, 0, 48)
         tabsHolder.BackgroundTransparency = 1
 
         local tabsLayout = Instance.new("UIListLayout", tabsHolder)
@@ -331,8 +325,8 @@ loginBtn.MouseButton1Click:Connect(function()
 
         -- İçerik Sayfaları Alanı
         local pagesHolder = Instance.new("Frame", f)
-        pagesHolder.Size = UDim2.new(1, -10, 1, -90)
-        pagesHolder.Position = UDim2.new(0, 5, 0, 85)
+        pagesHolder.Size = UDim2.new(1, -16, 1, -95)
+        pagesHolder.Position = UDim2.new(0, 8, 0, 90)
         pagesHolder.BackgroundTransparency = 1
 
         local function createTabPage()
@@ -344,7 +338,7 @@ loginBtn.MouseButton1Click:Connect(function()
             page.Visible = false
             local l = Instance.new("UIListLayout", page)
             l.SortOrder = Enum.SortOrder.LayoutOrder
-            l.Padding = UDim.new(0, 6)
+            l.Padding = UDim.new(0, 8)
             return page
         end
 
@@ -354,7 +348,8 @@ loginBtn.MouseButton1Click:Connect(function()
         local pageTrade = createTabPage()
         local pageAutoFarm = createTabPage()
 
-        pageTheme.Visible = true -- İlk açılan sekme
+        -- Varsayılan açık sayfa
+        pageTheme.Visible = true
 
         local function addTabButton(name, targetPage)
             local tBtn = Instance.new("TextButton", tabsHolder)
@@ -372,6 +367,7 @@ loginBtn.MouseButton1Click:Connect(function()
                 pageCombat.Visible = false
                 pageTrade.Visible = false
                 pageAutoFarm.Visible = false
+                
                 targetPage.Visible = true
             end)
         end
@@ -383,12 +379,12 @@ loginBtn.MouseButton1Click:Connect(function()
         addTabButton("Auto Farm", pageAutoFarm)
 
         -- ==========================================
-        -- SEKME İÇERİKLERİ
+        -- TÜM ÖZELLİK BUTONLARI (EKSİKSİZ)
         -- ==========================================
 
         -- 1. THEME SEKMESİ
         local themeToggleBtn = Instance.new("TextButton", pageTheme)
-        themeToggleBtn.Size = UDim2.new(1, 0, 0, 38)
+        themeToggleBtn.Size = UDim2.new(1, 0, 0, 42)
         themeToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
         themeToggleBtn.Text = "Rainbow Theme: ON"
         themeToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
@@ -407,9 +403,9 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- 2. ESP & KEY SEKMESİ
+        -- 2. ESP SEKMESİ
         local espToggleBtn = Instance.new("TextButton", pageEsp)
-        espToggleBtn.Size = UDim2.new(1, 0, 0, 38)
+        espToggleBtn.Size = UDim2.new(1, 0, 0, 42)
         espToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
         espToggleBtn.Text = "Perfect Role ESP: OFF"
         espToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -422,17 +418,17 @@ loginBtn.MouseButton1Click:Connect(function()
             if espEnabled then
                 espToggleBtn.Text = "Perfect Role ESP: ON"
                 espToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-                sendNotification("ESP", "ESP Activated!", 2)
+                sendNotification("ESP", "Perfect Role ESP Activated!", 2)
             else
                 espToggleBtn.Text = "Perfect Role ESP: OFF"
                 espToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                sendNotification("ESP", "ESP Deactivated!", 2)
+                sendNotification("ESP", "Perfect Role ESP Deactivated!", 2)
             end
         end)
 
-        -- 3. COMBAT & MISC SEKMESİ (Infinite Jump, Speed, Jump, Fullbright)
+        -- 3. COMBAT SEKMESİ (Infinite Jump, Fullbright, Hız, Zıplama)
         local infJumpBtn = Instance.new("TextButton", pageCombat)
-        infJumpBtn.Size = UDim2.new(1, 0, 0, 38)
+        infJumpBtn.Size = UDim2.new(1, 0, 0, 42)
         infJumpBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
         infJumpBtn.Text = "Infinite Jump: OFF"
         infJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -460,7 +456,7 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         local fullBrightBtn = Instance.new("TextButton", pageCombat)
-        fullBrightBtn.Size = UDim2.new(1, 0, 0, 38)
+        fullBrightBtn.Size = UDim2.new(1, 0, 0, 42)
         fullBrightBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
         fullBrightBtn.Text = "Fullbright (Night Vision)"
         fullBrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -473,13 +469,13 @@ loginBtn.MouseButton1Click:Connect(function()
                 game:GetService("Lighting").Brightness = 2
                 game:GetService("Lighting").ClockTime = 14
                 game:GetService("Lighting").GlobalShadows = false
-                sendNotification("Fullbright", "Brightness maximum!", 2)
+                sendNotification("Fullbright", "Night Vision Enabled!", 2)
             end)
         end)
 
-        -- Speed Ayarı (+ / -)
+        -- WalkSpeed Ayar Çubuğu
         local speedFrame = Instance.new("Frame", pageCombat)
-        speedFrame.Size = UDim2.new(1, 0, 0, 42)
+        speedFrame.Size = UDim2.new(1, 0, 0, 45)
         speedFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
         Instance.new("UICorner", speedFrame).CornerRadius = UDim.new(0, 6)
 
@@ -494,7 +490,7 @@ loginBtn.MouseButton1Click:Connect(function()
         speedLabel.Text = "WalkSpeed: " .. currentWalkSpeed
 
         local speedMinus = Instance.new("TextButton", speedFrame)
-        speedMinus.Size = UDim2.new(0, 35, 0, 30)
+        speedMinus.Size = UDim2.new(0, 35, 0, 32)
         speedMinus.Position = UDim2.new(0.65, 0, 0.15, 0)
         speedMinus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
         speedMinus.Text = "-"
@@ -503,7 +499,7 @@ loginBtn.MouseButton1Click:Connect(function()
         Instance.new("UICorner", speedMinus).CornerRadius = UDim.new(0, 4)
 
         local speedPlus = Instance.new("TextButton", speedFrame)
-        speedPlus.Size = UDim2.new(0, 35, 0, 30)
+        speedPlus.Size = UDim2.new(0, 35, 0, 32)
         speedPlus.Position = UDim2.new(0.82, 0, 0.15, 0)
         speedPlus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
         speedPlus.Text = "+"
@@ -520,9 +516,9 @@ loginBtn.MouseButton1Click:Connect(function()
             speedLabel.Text = "WalkSpeed: " .. currentWalkSpeed
         end)
 
-        -- Jump Ayarı (+ / -)
+        -- JumpPower Ayar Çubuğu
         local jumpFrame = Instance.new("Frame", pageCombat)
-        jumpFrame.Size = UDim2.new(1, 0, 0, 42)
+        jumpFrame.Size = UDim2.new(1, 0, 0, 45)
         jumpFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
         Instance.new("UICorner", jumpFrame).CornerRadius = UDim.new(0, 6)
 
@@ -537,7 +533,7 @@ loginBtn.MouseButton1Click:Connect(function()
         jumpLabel.Text = "JumpPower: " .. currentJumpPower
 
         local jumpMinus = Instance.new("TextButton", jumpFrame)
-        jumpMinus.Size = UDim2.new(0, 35, 0, 30)
+        jumpMinus.Size = UDim2.new(0, 35, 0, 32)
         jumpMinus.Position = UDim2.new(0.65, 0, 0.15, 0)
         jumpMinus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
         jumpMinus.Text = "-"
@@ -546,7 +542,7 @@ loginBtn.MouseButton1Click:Connect(function()
         Instance.new("UICorner", jumpMinus).CornerRadius = UDim.new(0, 4)
 
         local jumpPlus = Instance.new("TextButton", jumpFrame)
-        jumpPlus.Size = UDim2.new(0, 35, 0, 30)
+        jumpPlus.Size = UDim2.new(0, 35, 0, 32)
         jumpPlus.Position = UDim2.new(0.82, 0, 0.15, 0)
         jumpPlus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
         jumpPlus.Text = "+"
@@ -565,7 +561,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
         -- 4. TRADE & MISC SEKMESİ
         local rejoiningBtn = Instance.new("TextButton", pageTrade)
-        rejoiningBtn.Size = UDim2.new(1, 0, 0, 38)
+        rejoiningBtn.Size = UDim2.new(1, 0, 0, 42)
         rejoiningBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
         rejoiningBtn.Text = "Rejoin Server"
         rejoiningBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -579,7 +575,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
         -- 5. AUTO FARM SEKMESİ
         local autoFarmBtn = Instance.new("TextButton", pageAutoFarm)
-        autoFarmBtn.Size = UDim2.new(1, 0, 0, 38)
+        autoFarmBtn.Size = UDim2.new(1, 0, 0, 42)
         autoFarmBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
         autoFarmBtn.Text = "Auto Farm Coins: OFF"
         autoFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -600,7 +596,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Panel v30 successfully loaded!", 3)
+        sendNotification("Loaded", "Panel v31 fully loaded and fixed!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
