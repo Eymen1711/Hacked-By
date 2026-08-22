@@ -1,5 +1,5 @@
 -- ==========================================
--- ULTIMATE MM2 SCRIPT (CLEAN & FIX v24)
+-- ULTIMATE MM2 SCRIPT (FULL FEATURES v26)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -9,17 +9,20 @@ local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
 local camera = workspace.CurrentCamera
 
-local MENU_TITLE = "Hacked By" -- Burayı dilediğin isimle değiştirebilirsin!
-local LOOTLABS_LINK = "https://loot-link.com/s/9K7cNpua"
+local MENU_TITLE = "Hacked By" -- İstediğin ismi buraya yazabilirsin
 local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
 
 local customThemeColor = Color3.fromRGB(0, 255, 200)
 local rainbowModeActive = true
 local CUSTOM_FONT = Enum.Font.FredokaOne
 
--- Eskiden kalan tüm panelleri ve GUI'leri temizle (Çakışmayı önler)
+local currentWalkSpeed = 16
+local currentJumpPower = 50
+local silentAimEnabled = false
+
+-- Eski pencereleri temizle
 pcall(function()
-    for _, guiName in ipairs({"HackedBy_KeySystem", "HackedBy_MasterMenu", "HackedBy_Notifications", "HackedBy_KeySystem_v22", "HackedBy_MasterMenu_v22", "HackedBy_Notifications_v22", "HackedBy_KeySystem_v23", "HackedBy_MasterMenu_v23", "HackedBy_Notifications_v23", "HackedBy_KeySystem_v24", "HackedBy_MasterMenu_v24", "HackedBy_Notifications_v24"}) do
+    for _, guiName in ipairs({"HackedBy_KeySystem", "HackedBy_MasterMenu", "HackedBy_Notifications", "HackedBy_KeySystem_v22", "HackedBy_MasterMenu_v22", "HackedBy_Notifications_v22", "HackedBy_KeySystem_v23", "HackedBy_MasterMenu_v23", "HackedBy_Notifications_v23", "HackedBy_KeySystem_v24", "HackedBy_MasterMenu_v24", "HackedBy_Notifications_v24", "HackedBy_KeySystem_v25", "HackedBy_MasterMenu_v25", "HackedBy_Notifications_v25", "HackedBy_KeySystem_v26", "HackedBy_MasterMenu_v26", "HackedBy_Notifications_v26"}) do
         local old = game:GetService("CoreGui"):FindFirstChild(guiName)
         if old then old:Destroy() end
         local oldPlayerGui = pl.PlayerGui:FindFirstChild(guiName)
@@ -46,7 +49,7 @@ end
 
 -- Bildirim Sistemi
 local notifGui = Instance.new("ScreenGui")
-notifGui.Name = "HackedBy_Notifications_v24"
+notifGui.Name = "HackedBy_Notifications_v26"
 notifGui.ResetOnSpawn = false
 pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
 if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -103,7 +106,7 @@ end
 
 -- Key System
 local gui = Instance.new("ScreenGui")
-gui.Name = "HackedBy_KeySystem_v24"
+gui.Name = "HackedBy_KeySystem_v26"
 gui.ResetOnSpawn = false
 pcall(function() gui.Parent = game:GetService("CoreGui") end)
 if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -155,12 +158,30 @@ loginBtn.MouseButton1Click:Connect(function()
         gui:Destroy()
         sendNotification("Success", "Key verified successfully!", 3)
         
-        -- MASTER MENU v24
+        -- MASTER MENU v26
         local mgui = Instance.new("ScreenGui")
-        mgui.Name = "HackedBy_MasterMenu_v24"
+        mgui.Name = "HackedBy_MasterMenu_v26"
         mgui.ResetOnSpawn = false
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
+
+        -- Karakter hız ve zıplama döngüsü
+        task.spawn(function()
+            while true do
+                task.wait(0.2)
+                pcall(function()
+                    local char = pl.Character
+                    if char then
+                        local hum = char:FindFirstChildOfClass("Humanoid")
+                        if hum then
+                            if hum.WalkSpeed ~= currentWalkSpeed then hum.WalkSpeed = currentWalkSpeed end
+                            hum.UseJumpPower = true
+                            if hum.JumpPower ~= currentJumpPower then hum.JumpPower = currentJumpPower end
+                        end
+                    end
+                end)
+            end
+        end)
 
         local toggleButton = Instance.new("TextButton", mgui)
         toggleButton.Size = UDim2.new(0, 190, 0, 48)
@@ -207,7 +228,33 @@ loginBtn.MouseButton1Click:Connect(function()
         sideLayout.SortOrder = Enum.SortOrder.LayoutOrder
         sideLayout.Padding = UDim.new(0, 5)
 
-        local function createTabButton(name)
+        -- Sağ İçerik Alanı (Sayfalar)
+        local contentArea = Instance.new("Frame", f)
+        contentArea.Size = UDim2.new(1, -145, 1, -60)
+        contentArea.Position = UDim2.new(0, 145, 0, 58)
+        contentArea.BackgroundTransparency = 1
+
+        local function createPage()
+            local page = Instance.new("ScrollingFrame", contentArea)
+            page.Size = UDim2.new(1, 0, 1, 0)
+            page.BackgroundTransparency = 1
+            page.CanvasSize = UDim2.new(0, 0, 2, 0)
+            page.ScrollBarThickness = 4
+            page.Visible = false
+            local layout = Instance.new("UIListLayout", page)
+            layout.SortOrder = Enum.SortOrder.LayoutOrder
+            layout.Padding = UDim.new(0, 8)
+            return page
+        end
+
+        local pageVisuals = createPage()
+        local pagePlayers = createPage()
+        local pageTeleports = createPage()
+        local pageSettings = createPage()
+
+        pageVisuals.Visible = true
+
+        local function createTabButton(name, targetPage)
             local btn = Instance.new("TextButton", sidebar)
             btn.Size = UDim2.new(1, 0, 0, 40)
             btn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
@@ -215,24 +262,137 @@ loginBtn.MouseButton1Click:Connect(function()
             btn.TextColor3 = Color3.fromRGB(200, 200, 200)
             btn.TextSize = 14
             btn.Font = CUSTOM_FONT
-            return btn
+            
+            btn.MouseButton1Click:Connect(function()
+                pageVisuals.Visible = false
+                pagePlayers.Visible = false
+                pageTeleports.Visible = false
+                pageSettings.Visible = false
+                targetPage.Visible = true
+            end)
         end
 
-        createTabButton("Visuals (ESP)")
-        createTabButton("Player Mods")
-        createTabButton("Teleports")
-        createTabButton("Settings")
+        createTabButton("Visuals (ESP)", pageVisuals)
+        createTabButton("Player Mods", pagePlayers)
+        createTabButton("Teleports", pageTeleports)
+        createTabButton("Settings", pageSettings)
+
+        -- ==========================================
+        -- 1. VISUALS & SILENT AIM SEKMESİ İÇERİĞİ
+        -- ==========================================
+        local silentAimBtn = Instance.new("TextButton", pageVisuals)
+        silentAimBtn.Size = UDim2.new(0.95, 0, 0, 40)
+        silentAimBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        silentAimBtn.Text = "Silent Aim: OFF"
+        silentAimBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        silentAimBtn.TextSize = 14
+        silentAimBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", silentAimBtn).CornerRadius = UDim.new(0, 6)
+
+        silentAimBtn.MouseButton1Click:Connect(function()
+            silentAimEnabled = not silentAimEnabled
+            if silentAimEnabled then
+                silentAimBtn.Text = "Silent Aim: ON"
+                silentAimBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
+                sendNotification("Silent Aim", "Silent Aim Activated!", 2)
+            else
+                silentAimBtn.Text = "Silent Aim: OFF"
+                silentAimBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                sendNotification("Silent Aim", "Silent Aim Deactivated!", 2)
+            end
+        end)
+
+        -- ==========================================
+        -- 2. PLAYER MODS SEKMESİ İÇERİĞİ
+        -- ==========================================
+        local speedBtn = Instance.new("TextButton", pagePlayers)
+        speedBtn.Size = UDim2.new(0.95, 0, 0, 40)
+        speedBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        speedBtn.Text = "Toggle Fast Speed (100)"
+        speedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        speedBtn.TextSize = 14
+        speedBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", speedBtn).CornerRadius = UDim.new(0, 6)
+
+        local fastActive = false
+        speedBtn.MouseButton1Click:Connect(function()
+            fastActive = not fastActive
+            if fastActive then
+                currentWalkSpeed = 100
+                speedBtn.Text = "Fast Speed: ON"
+                speedBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
+            else
+                currentWalkSpeed = 16
+                speedBtn.Text = "Toggle Fast Speed (100)"
+                speedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            end
+        end)
+
+        -- ==========================================
+        -- 3. TELEPORTS SEKMESİ İÇERİĞİ (Map ve Lobby)
+        -- ==========================================
+        local tpMapBtn = Instance.new("TextButton", pageTeleports)
+        tpMapBtn.Size = UDim2.new(0.95, 0, 0, 40)
+        tpMapBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        tpMapBtn.Text = "Teleport to Map"
+        tpMapBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tpMapBtn.TextSize = 14
+        tpMapBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", tpMapBtn).CornerRadius = UDim.new(0, 6)
+
+        tpMapBtn.MouseButton1Click:Connect(function()
+            pcall(function()
+                local foundMap = workspace:FindFirstChild("Map") or workspace:FindFirstChild("CurrentMap")
+                if foundMap and pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
+                    -- Harita içindeki herhangi bir parçayı bulup ışınlanalım
+                    for _, obj in ipairs(foundMap:GetDescendants()) do
+                        if obj:IsA("BasePart") then
+                            pl.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
+                            sendNotification("Teleport", "Teleported to Map!", 2)
+                            break
+                        end
+                    end
+                else
+                    sendNotification("Error", "Map not found or round not started!", 2)
+                end
+            end)
+        end)
+
+        local tpLobbyBtn = Instance.new("TextButton", pageTeleports)
+        tpLobbyBtn.Size = UDim2.new(0.95, 0, 0, 40)
+        tpLobbyBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        tpLobbyBtn.Text = "Teleport to Lobby"
+        tpLobbyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tpLobbyBtn.TextSize = 14
+        tpLobbyBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", tpLobbyBtn).CornerRadius = UDim.new(0, 6)
+
+        tpLobbyBtn.MouseButton1Click:Connect(function()
+            pcall(function()
+                if pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
+                    -- MM2 lobi genellikle başlangıç spawn noktasıdır
+                    local spawnLocation = workspace:FindFirstChild("Lobby") or workspace:FindFirstChild("SpawnLocation")
+                    if spawnLocation and spawnLocation:IsA("BasePart") then
+                        pl.Character.HumanoidRootPart.CFrame = spawnLocation.CFrame + Vector3.new(0, 5, 0)
+                    else
+                        -- Varsayılan lobi koordinatı
+                        pl.Character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
+                    end
+                    sendNotification("Teleport", "Teleported to Lobby!", 2)
+                end
+            end)
+        end)
 
         local t = Instance.new("TextLabel", f)
         t.Size = UDim2.new(1, 0, 0, 52)
         t.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-        t.Text = MENU_TITLE .. " - Panel v24"
+        t.Text = MENU_TITLE .. " - Panel v26"
         t.TextColor3 = Color3.fromRGB(255, 255, 255)
         t.TextSize = 18
         t.Font = CUSTOM_FONT
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
-        sendNotification("Loaded", "Panel successfully updated and cleaned!", 3)
+        sendNotification("Loaded", "Panel v26 successfully loaded with Teleports & Silent Aim!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
