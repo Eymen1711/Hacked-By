@@ -5,8 +5,20 @@
 local p = game:GetService("Players")
 local pl = p.LocalPlayer
 
+-- Güncel LootLabs Linkin:
 local LOOTLABS_LINK = "https://lootdest.org/s?CRVogxNA"
-local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
+
+-- Sitenin ürettiği key yapısına uygun kontrol
+local function isValidKey(key)
+    key = tostring(key):gsub("%s+", "") -- Boşlukları temizle
+    if string.sub(key, 1, 4) == "KEY-" and string.len(key) >= 15 then
+        return true
+    end
+    if key == "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3" then
+        return true
+    end
+    return false
+end
 
 -- Anahtar Giriş Arayüzü Oluşturma
 local gui = Instance.new("ScreenGui")
@@ -76,7 +88,7 @@ loginBtn.Font = Enum.Font.SourceSansBold
 Instance.new("UICorner", loginBtn).CornerRadius = UDim.new(0, 6)
 
 loginBtn.MouseButton1Click:Connect(function()
-    if textBox.Text == CORRECT_KEY then
+    if isValidKey(textBox.Text) then
         gui:Destroy()
         
         -- ASIL MM2 HİLE MENÜSÜ
