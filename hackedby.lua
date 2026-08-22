@@ -1,5 +1,5 @@
 -- ==========================================
--- ULTIMATE MM2 SCRIPT (HACKED BY v22 - FULL)
+-- ULTIMATE MM2 SCRIPT (PANEL FIX v23)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -7,7 +7,6 @@ local pl = p.LocalPlayer
 local workspace = game:GetService("Workspace")
 local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
-local lighting = game:GetService("Lighting")
 local camera = workspace.CurrentCamera
 
 local LOOTLABS_LINK = "https://loot-link.com/s/9K7cNpua"
@@ -15,21 +14,17 @@ local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36a
 
 local customThemeColor = Color3.fromRGB(0, 255, 200)
 local rainbowModeActive = true
-
 local currentWalkSpeed = 16
 local currentJumpPower = 50
-local autoFarmSpeed = 140
 local currentFOV = 70
-local silentAimFOV = 180
-
 local CUSTOM_FONT = Enum.Font.FredokaOne
 
--- Anti-AFK Koruması
+-- Anti-AFK
 local vu = game:GetService("VirtualUser")
 pl.Idled:Connect(function()
-    vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    vu:Button2Down(Vector2.new(0,0), camera.CFrame)
     task.wait(1)
-    vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    vu:Button2Up(Vector2.new(0,0), camera.CFrame)
 end)
 
 local function getThemeColor(speed)
@@ -41,29 +36,9 @@ local function getThemeColor(speed)
     end
 end
 
--- Rol Kontrolü v22
-local function isMurderer(player)
-    if not player or not player.Character then return false end
-    local char = player.Character
-    local bp = player:FindFirstChild("Backpack")
-    
-    local function checkContainer(container)
-        if not container then return false end
-        for _, item in pairs(container:GetChildren()) do
-            local name = item.Name:lower()
-            if name:find("knife") or name:find("dagger") or name:find("blade") or name:find("reaper") or name:find("iceshard") or name:find("bringer") or name:find("scythe") then
-                return true
-            end
-        end
-        return false
-    end
-    
-    return checkContainer(char) or checkContainer(bp)
-end
-
--- Notification System v22
+-- Bildirim Sistemi
 local notifGui = Instance.new("ScreenGui")
-notifGui.Name = "HackedBy_Notifications_v22"
+notifGui.Name = "HackedBy_Notifications_v23"
 notifGui.ResetOnSpawn = false
 pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
 if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -88,15 +63,7 @@ local function sendNotification(titleText, msgText, duration)
         
         local stroke = Instance.new("UIStroke", box)
         stroke.Thickness = 1.5
-        
-        local conn
-        conn = rs.RenderStepped:Connect(function()
-            if stroke and stroke.Parent then
-                stroke.Color = getThemeColor(0.8)
-            else
-                if conn then conn:Disconnect() end
-            end
-        end)
+        rs.RenderStepped:Connect(function() if stroke and stroke.Parent then stroke.Color = getThemeColor(0.8) end end)
 
         local tLbl = Instance.new("TextLabel", box)
         tLbl.Size = UDim2.new(1, -15, 0, 24)
@@ -122,14 +89,13 @@ local function sendNotification(titleText, msgText, duration)
         task.wait(duration or 2.5)
         pcall(function() box:TweenPosition(UDim2.new(1, 50, 0, 0), "In", "Quad", 0.3, true) end)
         task.wait(0.3)
-        if conn then conn:Disconnect() end
         if box then box:Destroy() end
     end)
 end
 
--- Key System UI v22
+-- Key System
 local gui = Instance.new("ScreenGui")
-gui.Name = "HackedBy_KeySystem_v22"
+gui.Name = "HackedBy_KeySystem_v23"
 gui.ResetOnSpawn = false
 pcall(function() gui.Parent = game:GetService("CoreGui") end)
 if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -149,7 +115,7 @@ rs.RenderStepped:Connect(function() if stroke and stroke.Parent then stroke.Colo
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 50)
 title.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-title.Text = "Hacked By (v22 Key System)"
+title.Text = "Hacked By (v23 Key System)"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 18
 title.Font = CUSTOM_FONT
@@ -166,28 +132,9 @@ textBox.TextSize = 16
 textBox.Font = CUSTOM_FONT
 Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 8)
 
-local getKeyBtn = Instance.new("TextButton", frame)
-getKeyBtn.Size = UDim2.new(0.4, 0, 0, 45)
-getKeyBtn.Position = UDim2.new(0.075, 0, 0.62, 0)
-getKeyBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-getKeyBtn.Text = "Get Key"
-getKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-getKeyBtn.TextSize = 16
-getKeyBtn.Font = CUSTOM_FONT
-Instance.new("UICorner", getKeyBtn).CornerRadius = UDim.new(0, 8)
-
-getKeyBtn.MouseButton1Click:Connect(function()
-    if setclipboard then
-        setclipboard(LOOTLABS_LINK)
-        getKeyBtn.Text = "Link Copied!"
-        task.wait(2)
-        getKeyBtn.Text = "Get Key"
-    end
-end)
-
 local loginBtn = Instance.new("TextButton", frame)
-loginBtn.Size = UDim2.new(0.4, 0, 0, 45)
-loginBtn.Position = UDim2.new(0.525, 0, 0.62, 0)
+loginBtn.Size = UDim2.new(0.85, 0, 0, 45)
+loginBtn.Position = UDim2.new(0.075, 0, 0.62, 0)
 loginBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 loginBtn.Text = "Login"
 loginBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -200,33 +147,12 @@ loginBtn.MouseButton1Click:Connect(function()
         gui:Destroy()
         sendNotification("Success", "Key verified successfully!", 3)
         
-        -- MASTER MENU v22
+        -- MASTER MENU v23 (DOLU PANEL)
         local mgui = Instance.new("ScreenGui")
-        mgui.Name = "HackedBy_MasterMenu_v22"
+        mgui.Name = "HackedBy_MasterMenu_v23"
         mgui.ResetOnSpawn = false
-        mgui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
-
-        task.spawn(function()
-            while true do
-                task.wait(0.2)
-                pcall(function()
-                    local char = pl.Character
-                    if char then
-                        local hum = char:FindFirstChildOfClass("Humanoid")
-                        if hum then
-                            if hum.WalkSpeed ~= currentWalkSpeed then hum.WalkSpeed = currentWalkSpeed end
-                            hum.UseJumpPower = true
-                            if hum.JumpPower ~= currentJumpPower then hum.JumpPower = currentJumpPower end
-                        end
-                    end
-                    if camera and camera.FieldOfView ~= currentFOV then
-                        camera.FieldOfView = currentFOV
-                    end
-                end)
-            end
-        end)
 
         local toggleButton = Instance.new("TextButton", mgui)
         toggleButton.Size = UDim2.new(0, 190, 0, 48)
@@ -243,8 +169,8 @@ loginBtn.MouseButton1Click:Connect(function()
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
         local f = Instance.new("Frame", mgui)
-        f.Size = UDim2.new(0, 560, 0, 600)
-        f.Position = UDim2.new(0.5, -280, 0.5, -300)
+        f.Size = UDim2.new(0, 560, 0, 400)
+        f.Position = UDim2.new(0.5, -280, 0.5, -200)
         f.BackgroundColor3 = Color3.fromRGB(8, 8, 12)
         f.Active = true
         f.Draggable = true
@@ -252,8 +178,6 @@ loginBtn.MouseButton1Click:Connect(function()
         f.Visible = false
 
         toggleButton.MouseButton1Click:Connect(function() f.Visible = not f.Visible end)
-        
-        -- K tuşu ile menüyü açıp kapatma
         uis.InputBegan:Connect(function(input, gpe)
             if not gpe and input.KeyCode == Enum.KeyCode.K then
                 f.Visible = not f.Visible
@@ -262,20 +186,51 @@ loginBtn.MouseButton1Click:Connect(function()
 
         Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
         local fStroke = Instance.new("UIStroke", f)
-        fStroke.Transparency = 0.2
         rs.RenderStepped:Connect(function() if fStroke and fStroke.Parent then fStroke.Color = getThemeColor(1) end end)
+
+        -- Sol Kategori Butonları Paneli
+        local sidebar = Instance.new("Frame", f)
+        sidebar.Size = UDim2.new(0, 140, 1, -52)
+        sidebar.Position = UDim2.new(0, 0, 0, 52)
+        sidebar.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
+        sidebar.BackgroundTransparency = 0.5
+
+        local sideLayout = Instance.new("UIListLayout", sidebar)
+        sideLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        sideLayout.Padding = UDim.new(0, 5)
+
+        -- Sağ İçerik Alanı
+        local contentArea = Instance.new("Frame", f)
+        contentArea.Size = UDim2.new(1, -145, 1, -60)
+        contentArea.Position = UDim2.new(0, 145, 0, 58)
+        contentArea.BackgroundTransparency = 1
+
+        local function createTabButton(name)
+            local btn = Instance.new("TextButton", sidebar)
+            btn.Size = UDim2.new(1, 0, 0, 40)
+            btn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+            btn.Text = name
+            btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+            btn.TextSize = 14
+            btn.Font = CUSTOM_FONT
+            return btn
+        end
+
+        createTabButton("Visuals (ESP)")
+        createTabButton("Player Mods")
+        createTabButton("Teleports")
+        createTabButton("Settings")
 
         local t = Instance.new("TextLabel", f)
         t.Size = UDim2.new(1, 0, 0, 52)
         t.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-        t.Text = "Hacked By - Panel v22"
+        t.Text = "Hacked By - Panel v23 (Fixed)"
         t.TextColor3 = Color3.fromRGB(255, 255, 255)
         t.TextSize = 18
         t.Font = CUSTOM_FONT
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
-        sendNotification("Anti-AFK", "Anti-AFK System Active!", 2.5)
-        sendNotification("Loaded", "Hacked By v22 Loaded Successfully!", 3)
+        sendNotification("Loaded", "Panel successfully populated!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
