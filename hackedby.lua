@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (ERROR-FREE & GOD FLING ACTIVE)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (ERROR-FREE & CUSTOM SPEED/JUMP)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -24,7 +24,7 @@ local function getThemeColor(speed)
     end
 end
 
--- Anti-Ban Güvenlik Katmanı (Kick ve Şüpheli Event Koruması)
+-- Anti-Ban Security Layer
 pcall(function()
     local mt = getrawmetatable(game)
     setreadonly(mt, false)
@@ -39,7 +39,7 @@ pcall(function()
     setreadonly(mt, true)
 end)
 
--- Bildirim Sistemi
+-- Notification System
 local notifGui = Instance.new("ScreenGui")
 notifGui.Name = "MM2_Notifications"
 notifGui.ResetOnSpawn = false
@@ -105,7 +105,7 @@ local function sendNotification(titleText, msgText, duration)
     end)
 end
 
--- Key System Arayüzü
+-- Key System UI
 local gui = Instance.new("ScreenGui")
 gui.Name = "MM2_KeySystem"
 gui.ResetOnSpawn = false
@@ -138,7 +138,7 @@ textBox.Size = UDim2.new(0.85, 0, 0, 40)
 textBox.Position = UDim2.new(0.075, 0, 0.3, 0)
 textBox.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
 textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-textBox.PlaceholderText = "Key giriniz..."
+textBox.PlaceholderText = "Enter key..."
 textBox.Text = ""
 textBox.TextSize = 14
 textBox.Font = Enum.Font.Antique
@@ -178,7 +178,7 @@ loginBtn.MouseButton1Click:Connect(function()
         gui:Destroy()
         sendNotification("Success", "Key verified successfully!", 3)
         
-        -- ASIL HİLE MENÜSÜ
+        -- MASTER MENU
         local mgui = Instance.new("ScreenGui")
         mgui.Name = "MM2_MasterMenu"
         mgui.ResetOnSpawn = false
@@ -559,51 +559,69 @@ loginBtn.MouseButton1Click:Connect(function()
 
         Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
         
-        local speedFrame = Instance.new("Frame", pageFrames[5])
-        speedFrame.Size = UDim2.new(1, 0, 0, 50)
-        speedFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-        speedFrame.BackgroundTransparency = 0.4
-        Instance.new("UICorner", speedFrame).CornerRadius = UDim.new(0, 6)
+        -- Helper function to create custom sliders up to 100 with default 16
+        local function createSlider(parentContainer, labelName, defaultVal, callback)
+            local frameBox = Instance.new("Frame", parentContainer)
+            frameBox.Size = UDim2.new(1, 0, 0, 50)
+            frameBox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+            frameBox.BackgroundTransparency = 0.4
+            Instance.new("UICorner", frameBox).CornerRadius = UDim.new(0, 6)
 
-        local speedLbl = Instance.new("TextLabel", speedFrame)
-        speedLbl.Size = UDim2.new(1, -20, 0, 20)
-        speedLbl.Position = UDim2.new(0, 12, 0, 4)
-        speedLbl.BackgroundTransparency = 1
-        speedLbl.Text = "Autofarm Fly Speed: 30"
-        speedLbl.TextColor3 = Color3.fromRGB(220, 220, 220)
-        speedLbl.TextSize = 12
-        speedLbl.Font = Enum.Font.Antique
-        speedLbl.TextXAlignment = Enum.TextXAlignment.Left
+            local lbl = Instance.new("TextLabel", frameBox)
+            lbl.Size = UDim2.new(1, -20, 0, 20)
+            lbl.Position = UDim2.new(0, 12, 0, 4)
+            lbl.BackgroundTransparency = 1
+            lbl.Text = labelName .. ": " .. defaultVal
+            lbl.TextColor3 = Color3.fromRGB(220, 220, 220)
+            lbl.TextSize = 12
+            lbl.Font = Enum.Font.Antique
+            lbl.TextXAlignment = Enum.TextXAlignment.Left
 
-        local sliderBg = Instance.new("Frame", speedFrame)
-        sliderBg.Size = UDim2.new(1, -24, 0, 8)
-        sliderBg.Position = UDim2.new(0, 12, 0, 32)
-        sliderBg.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-        Instance.new("UICorner", sliderBg).CornerRadius = UDim.new(0, 4)
+            local sliderBg = Instance.new("Frame", frameBox)
+            sliderBg.Size = UDim2.new(1, -24, 0, 8)
+            sliderBg.Position = UDim2.new(0, 12, 0, 32)
+            sliderBg.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+            Instance.new("UICorner", sliderBg).CornerRadius = UDim.new(0, 4)
 
-        local sliderFill = Instance.new("Frame", sliderBg)
-        sliderFill.Size = UDim2.new(30/100, 0, 1, 0)
-        sliderFill.BackgroundColor3 = customThemeColor
-        Instance.new("UICorner", sliderFill).CornerRadius = UDim.new(0, 4)
-        rs.RenderStepped:Connect(function() if sliderFill and sliderFill.Parent then sliderFill.BackgroundColor3 = getThemeColor(1) end end)
+            local sliderFill = Instance.new("Frame", sliderBg)
+            sliderFill.Size = UDim2.new(defaultVal/100, 0, 1, 0)
+            sliderFill.BackgroundColor3 = customThemeColor
+            Instance.new("UICorner", sliderFill).CornerRadius = UDim.new(0, 4)
+            rs.RenderStepped:Connect(function() if sliderFill and sliderFill.Parent then sliderFill.BackgroundColor3 = getThemeColor(1) end end)
 
-        local autoFarmSpeed = 30
-        local dragging = false
-        local sliderBtn = Instance.new("TextButton", sliderBg)
-        sliderBtn.Size = UDim2.new(1, 0, 1, 0)
-        sliderBtn.BackgroundTransparency = 1
-        sliderBtn.Text = ""
+            local val = defaultVal
+            local dragging = false
+            local sliderBtn = Instance.new("TextButton", sliderBg)
+            sliderBtn.Size = UDim2.new(1, 0, 1, 0)
+            sliderBtn.BackgroundTransparency = 1
+            sliderBtn.Text = ""
 
-        sliderBtn.MouseButton1Down:Connect(function() dragging = true end)
-        uis.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
-        uis.InputChanged:Connect(function(input)
-            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
-                sliderFill.Size = UDim2.new(pos, 0, 1, 0)
-                autoFarmSpeed = math.floor(pos * 100)
-                if autoFarmSpeed < 5 then autoFarmSpeed = 5 end
-                speedLbl.Text = "Autofarm Fly Speed: " .. autoFarmSpeed
-            end
+            sliderBtn.MouseButton1Down:Connect(function() dragging = true end)
+            uis.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
+            uis.InputChanged:Connect(function(input)
+                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                    local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
+                    sliderFill.Size = UDim2.new(pos, 0, 1, 0)
+                    val = math.floor(pos * 100)
+                    if val < 1 then val = 1 end
+                    lbl.Text = labelName .. ": " .. val
+                    if callback then pcall(callback, val) end
+                end
+            end)
+            return frameBox
+        end
+
+        local autoFarmSpeed = 16
+        createSlider(pageFrames[5], "Autofarm Fly Speed", 16, function(v) autoFarmSpeed = v end)
+        createSlider(pageFrames[4], "WalkSpeed", 16, function(v)
+            pcall(function() pl.Character.Humanoid.WalkSpeed = v end)
+        end)
+        createSlider(pageFrames[4], "JumpPower", 16, function(v)
+            pcall(function()
+                local hum = pl.Character.Humanoid
+                hum.UseJumpPower = true
+                hum.JumpPower = v * 3 -- Adjusted scaling for realistic jump feel while keeping UI slider max 100
+            end)
         end)
 
         task.spawn(function()
@@ -766,7 +784,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Kesinlikle Hatasız God Fling Murderer (Sen ölmezsin, Murderer ölür ve eski yerine ışınlanırsın)
+        -- God Fling Murderer
         task.spawn(function()
             while true do
                 task.wait(0.1)
@@ -788,9 +806,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                         local targetHum = v.Character.Humanoid
                                         
                                         while targetHrp and targetHrp.Parent and targetHum.Health > 0 and O.FlingMurderer do
-                                            -- Senin canını daima fulle (Asla ölmeme garantisi)
                                             hum.Health = hum.MaxHealth
-                                            
                                             hrp.CFrame = targetHrp.CFrame
                                             hrp.Velocity = Vector3.new(40000, 40000, 40000)
                                             hrp.RotVelocity = Vector3.new(40000, 40000, 40000)
@@ -813,7 +829,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Kesinlikle Hatasız God Fling Sheriff (Sen ölmezsin, Sheriff ölür ve eski yerine ışınlanırsın)
+        -- God Fling Sheriff
         task.spawn(function()
             while true do
                 task.wait(0.1)
@@ -835,9 +851,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                         local targetHum = v.Character.Humanoid
                                         
                                         while targetHrp and targetHrp.Parent and targetHum.Health > 0 and O.FlingSheriff do
-                                            -- Senin canını daima fulle (Asla ölmeme garantisi)
                                             hum.Health = hum.MaxHealth
-                                            
                                             hrp.CFrame = targetHrp.CFrame
                                             hrp.Velocity = Vector3.new(40000, 40000, 40000)
                                             hrp.RotVelocity = Vector3.new(40000, 40000, 40000)
@@ -866,7 +880,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Uçarak ve Resetlenmeyen Auto Farm (Anti-Ban Korumalı)
+        -- Smooth Flying Autofarm (Controlled by Speed Slider)
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -880,7 +894,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                 if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) and v.Transparency < 1 then
                                     local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
                                     local distance = (hrp.Position - targetCF.Position).Magnitude
-                                    local travelTime = math.clamp(distance / (autoFarmSpeed * 10), 0.03, 0.4)
+                                    local travelTime = math.clamp(distance / (autoFarmSpeed * 10), 0.02, 0.4)
                                     
                                     local startTime = tick()
                                     local startCF = hrp.CFrame
@@ -891,7 +905,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                         rs.RenderStepped:Wait()
                                     end
                                     hrp.CFrame = targetCF
-                                    task.wait(0.04 + math.random(1, 5)/100)
+                                    task.wait(0.03 + math.random(1, 5)/100)
                                 end
                             end
                         end
@@ -900,11 +914,11 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Hacked by script ready with 0 errors!", 3)
+        sendNotification("Loaded", "Hacked by script ready with custom speed & jump controls!", 3)
     else
         textBox.Text = ""
-        textBox.PlaceholderText = "YANLIŞ ANAHTAR!"
+        textBox.PlaceholderText = "WRONG KEY!"
         task.wait(1.5)
-        textBox.PlaceholderText = "Key giriniz..."
+        textBox.PlaceholderText = "Enter key..."
     end
 end)
