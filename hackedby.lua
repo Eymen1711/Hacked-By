@@ -1,4 +1,4 @@
--- palofsc: Hacked By (Ultimate MM2 Edition - English & Trade Scam Tools)
+-- palofsc: Hacked By (Ultimate MM2 Edition - Fixed Auto Farm & Floating Controls)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -31,18 +31,18 @@ FpsGui.Parent = CoreGui
 FpsGui.ResetOnSpawn = false
 
 local FpsToggleButton = Instance.new("TextButton", FpsGui)
-FpsToggleButton.Size = UDim2.new(0, 120, 0, 32)
+FpsToggleButton.Size = UDim2.new(0, 110, 0, 30)
 FpsToggleButton.Position = UDim2.new(0, 15, 1, -45)
-FpsToggleButton.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
+FpsToggleButton.BackgroundColor3 = Color3.fromRGB(18, 18, 26)
 FpsToggleButton.TextColor3 = Color3.fromRGB(0, 255, 127)
-FpsToggleButton.TextSize = 13
+FpsToggleButton.TextSize = 12
 FpsToggleButton.Font = Enum.Font.GothamBold
 FpsToggleButton.Text = "FPS: 60 [ON]"
 FpsToggleButton.Active = true
 FpsToggleButton.Draggable = true
 Instance.new("UICorner", FpsToggleButton).CornerRadius = UDim.new(0, 8)
 local FpsStroke = Instance.new("UIStroke", FpsToggleButton)
-FpsStroke.Color = Color3.fromRGB(138, 43, 226)
+FpsStroke.Color = Color3.fromRGB(168, 85, 247)
 FpsStroke.Thickness = 1.5
 
 local fpsActive = true
@@ -76,45 +76,49 @@ KeySystemGui.Parent = CoreGui
 KeySystemGui.ResetOnSpawn = false
 
 local KeyFrame = Instance.new("Frame", KeySystemGui)
-KeyFrame.Size = UDim2.new(0, 380, 0, 280)
-KeyFrame.Position = UDim2.new(0.5, -190, 0.5, -140)
-KeyFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
+KeyFrame.Size = UDim2.new(0, 400, 0, 290)
+KeyFrame.Position = UDim2.new(0.5, -200, 0.5, -145)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(14, 14, 20)
 KeyFrame.Active = true
 KeyFrame.Draggable = true
-Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 16)
 
 local KeyStroke = Instance.new("UIStroke", KeyFrame)
-KeyStroke.Color = Color3.fromRGB(138, 43, 226)
+KeyStroke.Color = Color3.fromRGB(168, 85, 247)
 KeyStroke.Thickness = 2
 
 local KeyTitle = Instance.new("TextLabel", KeyFrame)
-KeyTitle.Size = UDim2.new(1, 0, 0, 50)
-KeyTitle.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
-KeyTitle.Text = "🔒 Hacked By | Key System"
+KeyTitle.Size = UDim2.new(1, 0, 0, 55)
+KeyTitle.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
+KeyTitle.Text = "🔐  HACKED BY | SECURE ACCESS"
 KeyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-KeyTitle.TextSize = 16
+KeyTitle.TextSize = 15
 KeyTitle.Font = Enum.Font.GothamBold
-Instance.new("UICorner", KeyTitle).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", KeyTitle).CornerRadius = UDim.new(0, 16)
 
 local KeyTextBox = Instance.new("TextBox", KeyFrame)
-KeyTextBox.Size = UDim2.new(0.85, 0, 0, 40)
-KeyTextBox.Position = UDim2.new(0.075, 0, 0.25, 0)
-KeyTextBox.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+KeyTextBox.Size = UDim2.new(0.85, 0, 0, 44)
+KeyTextBox.Position = UDim2.new(0.075, 0, 0.26, 0)
+KeyTextBox.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
 KeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-KeyTextBox.PlaceholderText = "Enter your key here..."
+KeyTextBox.PlaceholderText = "Enter your license key..."
 KeyTextBox.Text = ""
-KeyTextBox.TextSize = 14
-Instance.new("UICorner", KeyTextBox).CornerRadius = UDim.new(0, 8)
+KeyTextBox.TextSize = 13
+KeyTextBox.Font = Enum.Font.GothamMedium
+Instance.new("UICorner", KeyTextBox).CornerRadius = UDim.new(0, 10)
+local KeyBoxStroke = Instance.new("UIStroke", KeyTextBox)
+KeyBoxStroke.Color = Color3.fromRGB(50, 50, 70)
+KeyBoxStroke.Thickness = 1
 
 local GetKeyBtn = Instance.new("TextButton", KeyFrame)
-GetKeyBtn.Size = UDim2.new(0.85, 0, 0, 35)
-GetKeyBtn.Position = UDim2.new(0.075, 0, 0.43, 0)
-GetKeyBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+GetKeyBtn.Size = UDim2.new(0.85, 0, 0, 38)
+GetKeyBtn.Position = UDim2.new(0.075, 0, 0.45, 0)
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
 GetKeyBtn.Text = "🔗 Get Key (LootLabs)"
-GetKeyBtn.TextColor3 = Color3.fromRGB(200, 200, 255)
+GetKeyBtn.TextColor3 = Color3.fromRGB(216, 180, 254)
 GetKeyBtn.TextSize = 13
 GetKeyBtn.Font = Enum.Font.GothamBold
-Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 10)
 
 GetKeyBtn.MouseButton1Click:Connect(function()
     local lootlabsUrl = "https://lootdest.org/s/CRVogxNA"
@@ -126,14 +130,14 @@ GetKeyBtn.MouseButton1Click:Connect(function()
 end)
 
 local LoginBtn = Instance.new("TextButton", KeyFrame)
-LoginBtn.Size = UDim2.new(0.85, 0, 0, 40)
-LoginBtn.Position = UDim2.new(0.075, 0, 0.64, 0)
-LoginBtn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
-LoginBtn.Text = "Login"
+LoginBtn.Size = UDim2.new(0.85, 0, 0, 44)
+LoginBtn.Position = UDim2.new(0.075, 0, 0.65, 0)
+LoginBtn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
+LoginBtn.Text = "Authenticate & Launch"
 LoginBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-LoginBtn.TextSize = 15
+LoginBtn.TextSize = 14
 LoginBtn.Font = Enum.Font.GothamBold
-Instance.new("UICorner", LoginBtn).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", LoginBtn).CornerRadius = UDim.new(0, 10)
 
 -- ==========================================
 -- 2. MAIN HUB & TABS
@@ -146,64 +150,67 @@ local function StartMainHub()
 
     local ToggleMainGuiBtn = Instance.new("TextButton", ScreenGui)
     ToggleMainGuiBtn.Name = "ToggleMainGuiBtn"
-    ToggleMainGuiBtn.Size = UDim2.new(0, 150, 0, 40)
-    ToggleMainGuiBtn.Position = UDim2.new(0, 20, 0, 250)
-    ToggleMainGuiBtn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+    ToggleMainGuiBtn.Size = UDim2.new(0, 160, 0, 44)
+    ToggleMainGuiBtn.Position = UDim2.new(0, 20, 0, 20)
+    ToggleMainGuiBtn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
     ToggleMainGuiBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     ToggleMainGuiBtn.Text = "⚡ Hacked By Hub"
-    ToggleMainGuiBtn.TextSize = 12
+    ToggleMainGuiBtn.TextSize = 13
     ToggleMainGuiBtn.Font = Enum.Font.GothamBold
     ToggleMainGuiBtn.Active = true
     ToggleMainGuiBtn.Draggable = true
-    Instance.new("UICorner", ToggleMainGuiBtn).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", ToggleMainGuiBtn).CornerRadius = UDim.new(0, 12)
+    local MainToggleStroke = Instance.new("UIStroke", ToggleMainGuiBtn)
+    MainToggleStroke.Color = Color3.fromRGB(216, 180, 254)
+    MainToggleStroke.Thickness = 1.5
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
-    MainFrame.Position = UDim2.new(0.5, -225, 0.5, -250)
-    MainFrame.Size = UDim2.new(0, 450, 0, 450)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(14, 14, 20)
+    MainFrame.Position = UDim2.new(0.5, -235, 0.5, -260)
+    MainFrame.Size = UDim2.new(0, 470, 0, 480)
     MainFrame.Active = true
     MainFrame.Draggable = true
     MainFrame.Visible = true
-    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 18)
 
     ToggleMainGuiBtn.MouseButton1Click:Connect(function()
         MainFrame.Visible = not MainFrame.Visible
     end)
 
     local MainStroke = Instance.new("UIStroke", MainFrame)
-    MainStroke.Color = Color3.fromRGB(138, 43, 226)
+    MainStroke.Color = Color3.fromRGB(168, 85, 247)
     MainStroke.Thickness = 2
 
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Parent = MainFrame
-    TitleLabel.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
-    TitleLabel.Size = UDim2.new(1, 0, 0, 50)
+    TitleLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+    TitleLabel.Size = UDim2.new(1, 0, 0, 55)
     TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.Text = "⚡ Hacked By - Murder Mystery 2"
+    TitleLabel.Text = "⚡ Hacked By - Murder Mystery 2 Elite"
     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLabel.TextSize = 15
-    Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 14)
+    Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 18)
 
     local TabContainer = Instance.new("Frame", MainFrame)
     TabContainer.BackgroundTransparency = 1
-    TabContainer.Position = UDim2.new(0, 10, 0, 58)
-    TabContainer.Size = UDim2.new(1, -20, 0, 35)
+    TabContainer.Position = UDim2.new(0, 12, 0, 65)
+    TabContainer.Size = UDim2.new(1, -24, 0, 38)
 
     local TabListLayout = Instance.new("UIListLayout", TabContainer)
     TabListLayout.FillDirection = Enum.FillDirection.Horizontal
-    TabListLayout.Padding = UDim.new(0, 10)
+    TabListLayout.Padding = UDim.new(0, 12)
 
     local function CreateTabButton(name, index)
         local btn = Instance.new("TextButton", TabContainer)
         btn.Size = UDim2.new(0.48, 0, 1, 0)
-        btn.BackgroundColor3 = index == 1 and Color3.fromRGB(138, 43, 226) or Color3.fromRGB(25, 25, 35)
+        btn.BackgroundColor3 = index == 1 and Color3.fromRGB(168, 85, 247) or Color3.fromRGB(24, 24, 34)
         btn.Text = name
         btn.TextColor3 = Color3.fromRGB(255, 255, 255)
         btn.TextSize = 13
         btn.Font = Enum.Font.GothamBold
-        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
         return btn
     end
 
@@ -212,8 +219,8 @@ local function StartMainHub()
 
     local PageContainer = Instance.new("Frame", MainFrame)
     PageContainer.BackgroundTransparency = 1
-    PageContainer.Position = UDim2.new(0, 10, 0, 100)
-    PageContainer.Size = UDim2.new(1, -20, 1, -110)
+    PageContainer.Position = UDim2.new(0, 12, 0, 115)
+    PageContainer.Size = UDim2.new(1, -24, 1, -125)
 
     local function CreateScrollingPage()
         local sf = Instance.new("ScrollingFrame", PageContainer)
@@ -224,7 +231,7 @@ local function StartMainHub()
         sf.Visible = false
         local layout = Instance.new("UIListLayout", sf)
         layout.SortOrder = Enum.SortOrder.LayoutOrder
-        layout.Padding = UDim.new(0, 10)
+        layout.Padding = UDim.new(0, 12)
         return sf
     end
 
@@ -234,37 +241,37 @@ local function StartMainHub()
 
     Tab1Btn.MouseButton1Click:Connect(function()
         Page1.Visible, Page2.Visible = true, false
-        Tab1Btn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
-        Tab2Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        Tab1Btn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
+        Tab2Btn.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
     end)
 
     Tab2Btn.MouseButton1Click:Connect(function()
         Page1.Visible, Page2.Visible = false, true
-        Tab1Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        Tab2Btn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+        Tab1Btn.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+        Tab2Btn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
     end)
 
     local function CreateToggle(parent, name, callback)
         local Button = Instance.new("TextButton")
         Button.Parent = parent
-        Button.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        Button.Size = UDim2.new(1, 0, 0, 42)
+        Button.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+        Button.Size = UDim2.new(1, 0, 0, 46)
         Button.Font = Enum.Font.GothamSemibold
         Button.Text = name .. " : [OFF]"
-        Button.TextColor3 = Color3.fromRGB(200, 200, 200)
+        Button.TextColor3 = Color3.fromRGB(180, 180, 200)
         Button.TextSize = 13
-        Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 8)
+        Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 10)
         
         local toggled = false
         Button.MouseButton1Click:Connect(function()
             toggled = not toggled
             if toggled then
-                Button.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+                Button.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
                 Button.TextColor3 = Color3.fromRGB(255, 255, 255)
                 Button.Text = name .. " : [ON]"
             else
-                Button.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-                Button.TextColor3 = Color3.fromRGB(200, 200, 200)
+                Button.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+                Button.TextColor3 = Color3.fromRGB(180, 180, 200)
                 Button.Text = name .. " : [OFF]"
             end
             pcall(function() callback(toggled) end)
@@ -273,31 +280,31 @@ local function StartMainHub()
 
     local function CreateSlider(parent, name, min, max, default, callback)
         local Frame = Instance.new("Frame", parent)
-        Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        Frame.Size = UDim2.new(1, 0, 0, 55)
-        Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 8)
+        Frame.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+        Frame.Size = UDim2.new(1, 0, 0, 58)
+        Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
 
         local Label = Instance.new("TextLabel", Frame)
         Label.BackgroundTransparency = 1
-        Label.Position = UDim2.new(0, 10, 0, 5)
-        Label.Size = UDim2.new(1, -20, 0, 20)
+        Label.Position = UDim2.new(0, 12, 0, 6)
+        Label.Size = UDim2.new(1, -24, 0, 20)
         Label.Font = Enum.Font.GothamBold
         Label.Text = name .. ": " .. default
-        Label.TextColor3 = Color3.fromRGB(220, 220, 220)
+        Label.TextColor3 = Color3.fromRGB(220, 220, 230)
         Label.TextSize = 13
         Label.TextXAlignment = Enum.TextXAlignment.Left
 
         local SliderBar = Instance.new("TextButton", Frame)
-        SliderBar.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
-        SliderBar.Position = UDim2.new(0, 10, 0, 32)
-        SliderBar.Size = UDim2.new(1, -20, 0, 12)
+        SliderBar.BackgroundColor3 = Color3.fromRGB(40, 40, 58)
+        SliderBar.Position = UDim2.new(0, 12, 0, 34)
+        SliderBar.Size = UDim2.new(1, -24, 0, 14)
         SliderBar.Text = ""
-        Instance.new("UICorner", SliderBar).CornerRadius = UDim.new(0, 6)
+        Instance.new("UICorner", SliderBar).CornerRadius = UDim.new(0, 7)
 
         local Fill = Instance.new("Frame", SliderBar)
-        Fill.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+        Fill.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
         Fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-        Instance.new("UICorner", Fill).CornerRadius = UDim.new(0, 6)
+        Instance.new("UICorner", Fill).CornerRadius = UDim.new(0, 7)
 
         local dragging = false
         SliderBar.InputBegan:Connect(function(input)
@@ -353,9 +360,9 @@ local function StartMainHub()
                     local bp = player:FindFirstChild("Backpack")
                     local hasK = (bp and bp:FindFirstChild("Knife")) or char:FindFirstChild("Knife")
                     local hasG = (bp and bp:FindFirstChild("Gun")) or char:FindFirstChild("Gun")
-                    if hasK then hl.FillColor = Color3.fromRGB(255, 0, 0)
-                    elseif hasG then hl.FillColor = Color3.fromRGB(0, 0, 255)
-                    else hl.FillColor = Color3.fromRGB(0, 255, 0) end
+                    if hasK then hl.FillColor = Color3.fromRGB(255, 50, 50)
+                    elseif hasG then hl.FillColor = Color3.fromRGB(50, 150, 255)
+                    else hl.FillColor = Color3.fromRGB(50, 255, 100) end
                 end
             end
         end)
@@ -363,20 +370,19 @@ local function StartMainHub()
 
     local NotificationLabel = Instance.new("TextLabel", ScreenGui)
     NotificationLabel.Name = "NotificationLabel"
-    NotificationLabel.Size = UDim2.new(0, 350, 0, 40)
-    NotificationLabel.Position = UDim2.new(0.5, -175, 0, 15)
-    NotificationLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-    NotificationLabel.TextColor3 = Color3.fromRGB(255, 60, 60)
+    NotificationLabel.Size = UDim2.new(0, 360, 0, 42)
+    NotificationLabel.Position = UDim2.new(0.5, -180, 0, 18)
+    NotificationLabel.BackgroundColor3 = Color3.fromRGB(18, 18, 26)
+    NotificationLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
     NotificationLabel.TextSize = 13
     NotificationLabel.Font = Enum.Font.GothamBold
     NotificationLabel.Text = ""
     NotificationLabel.Visible = false
-    Instance.new("UICorner", NotificationLabel).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", NotificationLabel).CornerRadius = UDim.new(0, 10)
     
-    -- BEYAZ DIŞ ÇEVRE (WHITE BORDER)
     local notifStroke = Instance.new("UIStroke", NotificationLabel)
     notifStroke.Color = Color3.fromRGB(255, 255, 255)
-    notifStroke.Thickness = 2
+    notifStroke.Thickness = 1.5
 
     local function ShowNotification(msg)
         NotificationLabel.Text = msg
@@ -402,7 +408,6 @@ local function StartMainHub()
                 pcall(function()
                     local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
                     if tradeGui and tradeGui.Enabled then
-                        -- 1. Freeze & Lock Trade Loop simulation via Remotes
                         for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
                             if remote:IsA("RemoteEvent") then
                                 local rName = remote.Name:lower()
@@ -463,37 +468,39 @@ local function StartMainHub()
         _G.AutoFarm = state
         _G.AutoNoclip = state
 
-        task.spawn(function()
-            while _G.AutoFarm do
-                task.wait(0.15)
-                pcall(function()
-                    local foundCoin = false
-                    for _, obj in ipairs(Workspace:GetDescendants()) do
-                        if not _G.AutoFarm then break end
-                        if obj:IsA("BasePart") then
-                            local n = obj.Name:lower()
-                            if n == "coin" or n == "coinvisual" or n == "coin_visual" or string.find(n, "coin") or string.find(n, "event") or string.find(n, "drop") or string.find(n, "collect") or string.find(n, "token") then
-                                SmoothFlyTo(obj.CFrame + Vector3.new(0, 1.8, 0))
-                                foundCoin = true
+        if _G.AutoFarm then
+            task.spawn(function()
+                while _G.AutoFarm do
+                    task.wait(0.15)
+                    pcall(function()
+                        local foundCoin = false
+                        for _, obj in ipairs(Workspace:GetDescendants()) do
+                            if not _G.AutoFarm then break end
+                            if obj:IsA("BasePart") then
+                                local n = obj.Name:lower()
+                                if n == "coin" or n == "coinvisual" or n == "coin_visual" or string.find(n, "coin") or string.find(n, "event") or string.find(n, "drop") or string.find(n, "collect") or string.find(n, "token") then
+                                    SmoothFlyTo(obj.CFrame + Vector3.new(0, 1.8, 0))
+                                    foundCoin = true
+                                end
                             end
                         end
-                    end
-                    if not foundCoin then
-                        for _, containerName in ipairs({"CoinContainer", "Coins", "MapCoins", "EventContainer"}) do
-                            local container = Workspace:FindFirstChild(containerName)
-                            if container then
-                                for _, obj in ipairs(container:GetChildren()) do
-                                    if not _G.AutoFarm then break end
-                                    if obj:IsA("BasePart") then
-                                        SmoothFlyTo(obj.CFrame + Vector3.new(0, 1.8, 0))
+                        if not foundCoin then
+                            for _, containerName in ipairs({"CoinContainer", "Coins", "MapCoins", "EventContainer"}) do
+                                local container = Workspace:FindFirstChild(containerName)
+                                if container then
+                                    for _, obj in ipairs(container:GetChildren()) do
+                                        if not _G.AutoFarm then break end
+                                        if obj:IsA("BasePart") then
+                                            SmoothFlyTo(obj.CFrame + Vector3.new(0, 1.8, 0))
+                                        end
                                     end
                                 end
                             end
                         end
-                    end
-                end)
-            end
-        end)
+                    end)
+                end
+            end)
+        end
     end)
 
     RunService.Stepped:Connect(function()
@@ -537,58 +544,69 @@ local function StartMainHub()
 
     CreateToggle(Page2, "Kill All (As Murderer)", function(state)
         _G.KillAllActive = state
-        task.spawn(function()
-            while _G.KillAllActive do
-                task.wait(0.4)
-                pcall(function()
-                    local char = LocalPlayer.Character
-                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    if not hrp then return end
+        if _G.KillAllActive then
+            task.spawn(function()
+                while _G.KillAllActive do
+                    task.wait(0.4)
+                    pcall(function()
+                        local char = LocalPlayer.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        if not hrp then return end
 
-                    local knife = char:FindFirstChild("Knife") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Knife"))
-                    if knife then knife.Parent = char end
+                        local knife = char:FindFirstChild("Knife") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Knife"))
+                        if knife then knife.Parent = char end
 
-                    for _, p in ipairs(Players:GetPlayers()) do
-                        if not _G.KillAllActive then break end
-                        if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                            local targetHrp = p.Character.HumanoidRootPart
-                            local targetHumanoid = p.Character:FindFirstChildOfClass("Humanoid")
-                            if targetHumanoid and targetHumanoid.Health > 0 then
-                                hrp.CFrame = targetHrp.CFrame * CFrame.new(0, 0, 2)
-                                task.wait(0.1)
-                                if knife and knife:FindFirstChild("Stab") then
-                                    knife.Stab:FireServer()
-                                end
-                                if knife and knife:FindFirstChild("Activate") then
-                                    pcall(function() knife:Activate() end)
+                        for _, p in ipairs(Players:GetPlayers()) do
+                            if not _G.KillAllActive then break end
+                            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                                local targetHrp = p.Character.HumanoidRootPart
+                                local targetHumanoid = p.Character:FindFirstChildOfClass("Humanoid")
+                                if targetHumanoid and targetHumanoid.Health > 0 then
+                                    hrp.CFrame = targetHrp.CFrame * CFrame.new(0, 0, 2)
+                                    task.wait(0.1)
+                                    if knife and knife:FindFirstChild("Stab") then
+                                        knife.Stab:FireServer()
+                                    end
+                                    if knife and knife:FindFirstChild("Activate") then
+                                        pcall(function() knife:Activate() end)
+                                    end
                                 end
                             end
                         end
-                    end
-                end)
-            end
-        end)
+                    end)
+                end
+            end)
+        end
     end)
 
     -- ==========================================
     -- 3. FLOATING ACTION BUTTONS
     -- ==========================================
 
-    -- SHOOT MURDER BUTTON
-    local FloatShootBtn = Instance.new("TextButton", ScreenGui)
-    FloatShootBtn.Name = "FloatShootBtn"
-    FloatShootBtn.Size = UDim2.new(0, 160, 0, 40)
-    FloatShootBtn.Position = UDim2.new(0, 20, 0, 20)
-    FloatShootBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    FloatShootBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    FloatShootBtn.Text = "🎯 SHOOT MURDER"
-    FloatShootBtn.TextSize = 12
-    FloatShootBtn.Font = Enum.Font.GothamBold
-    FloatShootBtn.Active = true
-    FloatShootBtn.Draggable = true
-    Instance.new("UICorner", FloatShootBtn).CornerRadius = UDim.new(0, 8)
+    local function CreateFloatingButton(name, text, color, positionY, callback)
+        local FloatBtn = Instance.new("TextButton", ScreenGui)
+        FloatBtn.Name = name
+        FloatBtn.Size = UDim2.new(0, 175, 0, 42)
+        FloatBtn.Position = UDim2.new(0, 20, 0, positionY)
+        FloatBtn.BackgroundColor3 = color
+        FloatBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        FloatBtn.Text = text
+        FloatBtn.TextSize = 13
+        FloatBtn.Font = Enum.Font.GothamBold
+        FloatBtn.Active = true
+        FloatBtn.Draggable = true
+        Instance.new("UICorner", FloatBtn).CornerRadius = UDim.new(0, 10)
+        local btnStroke = Instance.new("UIStroke", FloatBtn)
+        btnStroke.Color = Color3.fromRGB(255, 255, 255)
+        btnStroke.Transparency = 0.5
+        btnStroke.Thickness = 1
+        
+        FloatBtn.MouseButton1Click:Connect(callback)
+        return FloatBtn
+    end
 
-    FloatShootBtn.MouseButton1Click:Connect(function()
+    -- SHOOT MURDER BUTTON
+    CreateFloatingButton("FloatShootBtn", "🎯 SHOOT MURDER", Color3.fromRGB(239, 68, 68), 74, function()
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -605,7 +623,7 @@ local function StartMainHub()
                     local hasKnife = (bp and bp:FindFirstChild("Knife")) or pChar:FindFirstChild("Knife")
                     local highlight = pChar:FindFirstChild("HBHighlight")
                     
-                    if hasKnife or (highlight and highlight.FillColor == Color3.fromRGB(255, 0, 0)) then
+                    if hasKnife or (highlight and highlight.FillColor == Color3.fromRGB(255, 50, 50)) then
                         murdererTarget = pChar
                         break
                     end
@@ -646,21 +664,49 @@ local function StartMainHub()
         end)
     end)
 
-    -- TELEPORT TO MAP BUTTON
-    local FloatTpMapBtn = Instance.new("TextButton", ScreenGui)
-    FloatTpMapBtn.Name = "FloatTpMapBtn"
-    FloatTpMapBtn.Size = UDim2.new(0, 160, 0, 40)
-    FloatTpMapBtn.Position = UDim2.new(0, 20, 0, 70)
-    FloatTpMapBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
-    FloatTpMapBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    FloatTpMapBtn.Text = "🗺️ Teleport to Map"
-    FloatTpMapBtn.TextSize = 12
-    FloatTpMapBtn.Font = Enum.Font.GothamBold
-    FloatTpMapBtn.Active = true
-    FloatTpMapBtn.Draggable = true
-    Instance.new("UICorner", FloatTpMapBtn).CornerRadius = UDim.new(0, 8)
+    -- KILL ALL FLOATING BUTTON
+    CreateFloatingButton("FloatKillAllBtn", "⚔️ KILL ALL (AUTO)", Color3.fromRGB(220, 38, 38), 128, function()
+        _G.KillAllActive = not _G.KillAllActive
+        if _G.KillAllActive then
+            ShowNotification("⚔️ Kill All Activated!")
+            task.spawn(function()
+                while _G.KillAllActive do
+                    task.wait(0.4)
+                    pcall(function()
+                        local char = LocalPlayer.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        if not hrp then return end
 
-    FloatTpMapBtn.MouseButton1Click:Connect(function()
+                        local knife = char:FindFirstChild("Knife") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Knife"))
+                        if knife then knife.Parent = char end
+
+                        for _, p in ipairs(Players:GetPlayers()) do
+                            if not _G.KillAllActive then break end
+                            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                                local targetHrp = p.Character.HumanoidRootPart
+                                local targetHumanoid = p.Character:FindFirstChildOfClass("Humanoid")
+                                if targetHumanoid and targetHumanoid.Health > 0 then
+                                    hrp.CFrame = targetHrp.CFrame * CFrame.new(0, 0, 2)
+                                    task.wait(0.1)
+                                    if knife and knife:FindFirstChild("Stab") then
+                                        knife.Stab:FireServer()
+                                    end
+                                    if knife and knife:FindFirstChild("Activate") then
+                                        pcall(function() knife:Activate() end)
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                end
+            end)
+        else
+            ShowNotification("❌ Kill All Deactivated!")
+        end
+    end)
+
+    -- TELEPORT TO MAP BUTTON
+    CreateFloatingButton("FloatTpMapBtn", "🗺️ Teleport to Map", Color3.fromRGB(59, 130, 246), 182, function()
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -716,20 +762,7 @@ local function StartMainHub()
     end)
 
     -- TELEPORT TO LOBBY BUTTON
-    local FloatTpLobbyBtn = Instance.new("TextButton", ScreenGui)
-    FloatTpLobbyBtn.Name = "FloatTpLobbyBtn"
-    FloatTpLobbyBtn.Size = UDim2.new(0, 160, 0, 40)
-    FloatTpLobbyBtn.Position = UDim2.new(0, 20, 0, 120)
-    FloatTpLobbyBtn.BackgroundColor3 = Color3.fromRGB(39, 174, 96)
-    FloatTpLobbyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    FloatTpLobbyBtn.Text = "🏠 Teleport to Lobby"
-    FloatTpLobbyBtn.TextSize = 12
-    FloatTpLobbyBtn.Font = Enum.Font.GothamBold
-    FloatTpLobbyBtn.Active = true
-    FloatTpLobbyBtn.Draggable = true
-    Instance.new("UICorner", FloatTpLobbyBtn).CornerRadius = UDim.new(0, 8)
-
-    FloatTpLobbyBtn.MouseButton1Click:Connect(function()
+    CreateFloatingButton("FloatTpLobbyBtn", "🏠 Teleport to Lobby", Color3.fromRGB(16, 185, 129), 236, function()
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -766,8 +799,8 @@ LoginBtn.MouseButton1Click:Connect(function()
         StartMainHub()
     else
         KeyTextBox.Text = ""
-        KeyTextBox.PlaceholderText = "WRONG KEY!"
+        KeyTextBox.PlaceholderText = "INVALID KEY!"
         task.wait(1.5)
-        KeyTextBox.PlaceholderText = "Enter your key here..."
+        KeyTextBox.PlaceholderText = "Enter your license key..."
     end
 end)
