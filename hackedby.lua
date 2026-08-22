@@ -5,7 +5,7 @@
 local p = game:GetService("Players")
 local pl = p.LocalPlayer
 
-local LOOTLABS_LINK = "https://loot-link.com/s?9K7cNpua"
+local LOOTLABS_LINK = "https://lootdest.org/s?CRVogxNA"
 local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
 
 -- Anahtar Giriş Arayüzü Oluşturma
