@@ -314,7 +314,7 @@ loginBtn.MouseButton1Click:Connect(function()
             if silentAimActive then
                 silentAimButton.Text = "Silent Aim: ON"
                 silentAimButton.TextColor3 = Color3.fromRGB(50, 255, 50)
-                sendNotification("Silent Aim", "Enhanced with Air Prediction!", 1.5)
+                sendNotification("Silent Aim", "Direct Bullet Hook Activated!", 1.5)
             else
                 silentAimButton.Text = "Silent Aim: OFF"
                 silentAimButton.TextColor3 = Color3.fromRGB(255, 50, 50)
@@ -692,50 +692,55 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- GELİŞTİRİLMİŞ SİLEN AIM (Hava ve Hareket Tahmini - Air Prediction)
-        task.spawn(function()
-            while true do
-                task.wait(0.01)
-                pcall(function()
-                    if silentAimActive then
-                        local c2 = pl.Character
-                        local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
-                        if gun then
-                            local bestTarget = nil
-                            local shortestDistance = silentAimFOV
-                            
-                            for _, v in pairs(p:GetPlayers()) do
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
-                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                                    if hasKnife and v.Character.Humanoid.Health > 0 then
-                                        local targetPart = v.Character.HumanoidRootPart
-                                        local screenPos, onScreen = camera:WorldToViewportPoint(targetPart.Position)
-                                        
-                                        if onScreen then
-                                            local mousePos = uis:GetMouseLocation()
-                                            local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
-                                            
-                                            if dist < shortestDistance then
-                                                shortestDistance = dist
-                                                bestTarget = targetPart
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                            
-                            if bestTarget then
-                                local targetVel = bestTarget.Velocity
-                                -- Yatay ve Dikey hız hesabı optimize edildi
-                                local predictionFactorX = 0.08
-                                local predictionFactorY = 0.05
-                                local predictedPos = bestTarget.Position + Vector3.new(targetVel.X * predictionFactorX, targetVel.Y * predictionFactorY, targetVel.Z * predictionFactorX)
-                                camera.CFrame = CFrame.new(camera.CFrame.Position, predictedPos)
+        -- KESİN ÇÖZÜLEN SİLENT AIM (Doğrudan RemoteEvent Üzerinden Akıllı Hedef Yönlendirmesi)
+        local function getClosestMurdererInFOV()
+            local bestTarget = nil
+            local shortestDist = silentAimFOV
+            for _, v in pairs(p:GetPlayers()) do
+                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
+                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                    if hasKnife and v.Character.Humanoid.Health > 0 then
+                        local targetPart = v.Character.HumanoidRootPart
+                        local screenPos, onScreen = camera:WorldToViewportPoint(targetPart.Position)
+                        if onScreen then
+                            local mousePos = uis:GetMouseLocation()
+                            local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+                            if dist < shortestDist then
+                                shortestDist = dist
+                                bestTarget = targetPart
                             end
                         end
                     end
-                end)
+                end
             end
+            return bestTarget
+        end
+
+        pcall(function()
+            local mt = getrawmetatable(game)
+            setreadonly(mt, false)
+            local oldNameCall = mt.__namecall
+            mt.__namecall = newcclosure(function(self, ...)
+                local method = getnamecallmethod()
+                local args = {...}
+                if silentAimActive and tostring(method) == "FireServer" and (self.Name == "Shoot" or self.Name == "GunEvent" or self.Name:lower():find("gun")) then
+                    local target = getClosestMurdererInFOV()
+                    if target then
+                        local targetVel = target.Velocity
+                        local predictedPos = target.Position + Vector3.new(targetVel.X * 0.08, targetVel.Y * 0.05, targetVel.Z * 0.08)
+                        for i, v in ipairs(args) do
+                            if typeof(v) == "Vector3" then
+                                args[i] = predictedPos
+                            elseif typeof(v) == "Instance" and v:IsA("BasePart") then
+                                args[i] = target
+                            end
+                        end
+                        return oldNameCall(self, unpack(args))
+                    end
+                end
+                return oldNameCall(self, ...)
+            end)
+            setreadonly(mt, true)
         end)
 
         task.spawn(function()
@@ -774,7 +779,6 @@ loginBtn.MouseButton1Click:Connect(function()
                             for _, obj in pairs(workspace:GetDescendants()) do
                                 if obj.Name == "GunDrop" and obj:IsA("BasePart") then
                                     local savedCFrame = hrp.CFrame
-                                    -- Işık hızında silahın üstüne ışınlanıp anında eski yerine dönüyor (Katil fark edemez)
                                     hrp.CFrame = obj.CFrame + Vector3.new(0, 0.2, 0)
                                     task.wait(0.02)
                                     hrp.CFrame = savedCFrame
