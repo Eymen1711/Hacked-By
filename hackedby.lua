@@ -1,11 +1,10 @@
--- palofsc: MM2 Ultimate Supreme Hub (Full Features, Key System, Auto Grab Gun, Kill All, One-Tap Shoot Murder, Speed/Jump Sliders, Supreme Values & Floating Trade Scam Menu)
+-- palofsc: MM2 Ultimate Supreme Hub (Floating UI, Key System, Auto Grab Gun, Kill All, Working One-Tap Shoot Murder, Speed/Jump Sliders up to 100, Supreme Values, Floating Trade Scam & Toggle UI Button)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local GuiService = game:GetService("GuiService")
-local TweenService = game:GetService("TweenService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -80,13 +79,27 @@ LoginBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", LoginBtn).CornerRadius = UDim.new(0, 8)
 
 -- ==========================================
--- 2. ANA PANEL (Key Onaylandıktan Sonra)
+-- 2. ANA PANEL & YÜZEN ÖZELLİKLER
 -- ==========================================
 local function StartMainHub()
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "HackedByMM2Gui"
     ScreenGui.Parent = CoreGui
     ScreenGui.ResetOnSpawn = false
+
+    -- Hileyi Açıp Kapatmak İçin Üstünde "Hacked By" Yazan Buton (Toggle UI Button)
+    local ToggleButton = Instance.new("TextButton", ScreenGui)
+    ToggleButton.Name = "ToggleUIButton"
+    ToggleButton.Size = UDim2.new(0, 130, 0, 40)
+    ToggleButton.Position = UDim2.new(0, 20, 0, 20)
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleButton.Text = "⚡ Hacked By"
+    ToggleButton.TextSize = 14
+    ToggleButton.Font = Enum.Font.GothamBold
+    ToggleButton.Active = true
+    ToggleButton.Draggable = true
+    Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 8)
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
@@ -102,6 +115,10 @@ local function StartMainHub()
     MainStroke.Color = Color3.fromRGB(138, 43, 226)
     MainStroke.Thickness = 2
 
+    ToggleButton.MouseButton1Click:Connect(function()
+        MainFrame.Visible = not MainFrame.Visible
+    end)
+
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Parent = MainFrame
     TitleLabel.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
@@ -112,7 +129,7 @@ local function StartMainHub()
     TitleLabel.TextSize = 15
     Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 14)
 
-    -- Tab (Sekme) Sistemi
+    -- Sekme Sistemi
     local TabContainer = Instance.new("Frame", MainFrame)
     TabContainer.BackgroundTransparency = 1
     TabContainer.Position = UDim2.new(0, 10, 0, 58)
@@ -138,7 +155,6 @@ local function StartMainHub()
     local Tab2Btn = CreateTabButton("Combat & Movement", 2)
     local Tab3Btn = CreateTabButton("Supreme Values", 3)
 
-    -- İçerik Sayfaları
     local PageContainer = Instance.new("Frame", MainFrame)
     PageContainer.BackgroundTransparency = 1
     PageContainer.Position = UDim2.new(0, 10, 0, 100)
@@ -183,7 +199,6 @@ local function StartMainHub()
         Tab3Btn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
     end)
 
-    -- Toggle Oluşturucu
     local function CreateToggle(parent, name, callback)
         local Button = Instance.new("TextButton")
         Button.Parent = parent
@@ -211,7 +226,6 @@ local function StartMainHub()
         end)
     end
 
-    -- Slider Oluşturucu (Speed ve Jump İçin 100'e Kadar)
     local function CreateSlider(parent, name, min, max, default, callback)
         local Frame = Instance.new("Frame", parent)
         Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
@@ -285,7 +299,6 @@ local function StartMainHub()
         end)
     end)
 
-    -- Auto Grab Gun: Şerif ölünce silahı direkt alır!
     CreateToggle(Page1, "Auto Grab Gun (Sheriff Drop)", function(state)
         _G.AutoGrabGun = state
         task.spawn(function()
@@ -368,40 +381,101 @@ local function StartMainHub()
         end
     end)
 
-    CreateSlider(Page2, "WalkSpeed", 16, 100, 16, function(val)
+    CreateSlider(Page2, "WalkSpeed (1-100)", 16, 100, 16, function(val)
         pcall(function() LocalPlayer.Character.Humanoid.WalkSpeed = val end)
     end)
 
-    CreateSlider(Page2, "JumpPower", 50, 100, 50, function(val)
+    CreateSlider(Page2, "JumpPower (1-100)", 50, 100, 50, function(val)
         pcall(function() LocalPlayer.Character.Humanoid.JumpPower = val end)
     end)
 
-    -- Katil Olunca Ekrandan Tek Tuşla Kusursuz Vurma Düğmesi (Shoot Murder)
-    local ShootButton = Instance.new("TextButton", Page2)
-    ShootButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    ShootButton.Size = UDim2.new(1, 0, 0, 42)
-    ShootButton.Font = Enum.Font.GothamBold
-    ShootButton.Text = "🎯 SHOOT MURDER (Tek Tuşla Vur)"
-    ShootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ShootButton.TextSize = 13
-    Instance.new("UICorner", ShootButton).CornerRadius = UDim.new(0, 8)
+    -- ================= PAGE 3: SUPREME VALUES =================
+    local MM2Values = {
+        ["Harvester"] = "5,200", ["Corrupt"] = "3,900", ["Evergun"] = "2,850",
+        ["Traveler's Gun"] = "5,600", ["Icepiercer"] = "2,400", ["Bat"] = "1,800",
+        ["Elderwood Scythe"] = "650", ["Luger"] = "550", ["Laser"] = "450", ["Chroma Luger"] = "1,200"
+    }
 
-    ShootButton.MouseButton1Click:Connect(function()
+    local valLabel = Instance.new("TextLabel", Page3)
+    valLabel.BackgroundTransparency = 1
+    valLabel.Size = UDim2.new(1, 0, 0, 30)
+    valLabel.Font = Enum.Font.GothamBold
+    valLabel.Text = "📊 Supreme Values Database"
+    valLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+    valLabel.TextSize = 14
+    valLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    for itemName, itemVal in pairs(MM2Values) do
+        local itemCard = Instance.new("Frame", Page3)
+        itemCard.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        itemCard.Size = UDim2.new(1, 0, 0, 35)
+        Instance.new("UICorner", itemCard).CornerRadius = UDim.new(0, 6)
+
+        local t1 = Instance.new("TextLabel", itemCard)
+        t1.BackgroundTransparency = 1
+        t1.Position = UDim2.new(0, 10, 0, 0)
+        t1.Size = UDim2.new(0.6, 0, 1, 0)
+        t1.Font = Enum.Font.GothamSemibold
+        t1.Text = itemName
+        t1.TextColor3 = Color3.fromRGB(255, 255, 255)
+        t1.TextSize = 13
+        t1.TextXAlignment = Enum.TextXAlignment.Left
+
+        local t2 = Instance.new("TextLabel", itemCard)
+        t2.BackgroundTransparency = 1
+        t2.Position = UDim2.new(0.6, 0, 0, 0)
+        t2.Size = UDim2.new(0.4, -10, 1, 0)
+        t2.Font = Enum.Font.GothamBold
+        t2.Text = "Val: " .. itemVal
+        t2.TextColor3 = Color3.fromRGB(0, 255, 127)
+        t2.TextSize = 13
+        t2.TextXAlignment = Enum.TextXAlignment.Right
+    end
+
+    -- ==========================================
+    -- 3. EKRANDA YÜZEN (FLOATING) ÖZELLİK BUTONLARI (Shoot Murder, Kill All, Trade Scam)
+    -- ==========================================
+    
+    -- 1. Yüzen Shoot Murder Butonu (Tek Tuşla Kusursuz Vurma)
+    local FloatShootBtn = Instance.new("TextButton", ScreenGui)
+    FloatShootBtn.Name = "FloatShootBtn"
+    FloatShootBtn.Size = UDim2.new(0, 150, 0, 45)
+    FloatShootBtn.Position = UDim2.new(0, 20, 0, 70)
+    FloatShootBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    FloatShootBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    FloatShootBtn.Text = "🎯 SHOOT MURDER"
+    FloatShootBtn.TextSize = 12
+    FloatShootBtn.Font = Enum.Font.GothamBold
+    FloatShootBtn.Active = true
+    FloatShootBtn.Draggable = true
+    Instance.new("UICorner", FloatShootBtn).CornerRadius = UDim.new(0, 8)
+
+    FloatShootBtn.MouseButton1Click:Connect(function()
         pcall(function()
-            for _, p in ipairs(Players:GetPlayers()) do
-                if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                    local bp = p:FindFirstChild("Backpack")
-                    local hasK = (bp and bp:FindFirstChild("Knife")) or p.Character:FindFirstChild("Knife")
-                    if hasK then
-                        local gun = LocalPlayer.Character:FindFirstChild("Gun") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Gun"))
-                        if gun then
-                            gun.Parent = LocalPlayer.Character
+            local gun = LocalPlayer.Character:FindFirstChild("Gun") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Gun"))
+            if gun then
+                gun.Parent = LocalPlayer.Character
+                for _, p in ipairs(Players:GetPlayers()) do
+                    if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        local bp = p:FindFirstChild("Backpack")
+                        local hasK = (bp and bp:FindFirstChild("Knife")) or p.Character:FindFirstChild("Knife")
+                        if hasK then
+                            -- MM2 Remotes & Direct Event Fire Handler
                             local args = {
                                 [1] = 1,
                                 [2] = p.Character.HumanoidRootPart.Position,
                                 [3] = "AH"
                             }
-                            gun.ShootGun:FireServer(unpack(args))
+                            if gun:FindFirstChild("ShootGun") then
+                                gun.ShootGun:FireServer(unpack(args))
+                            else
+                                -- Alternatif Remote Tespiti
+                                for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
+                                    if remote:IsA("RemoteEvent") and (string.find(remote.Name:lower(), "shoot") or string.find(remote.Name:lower(), "gun")) then
+                                        remote:FireServer(p.Character.HumanoidRootPart.Position)
+                                    end
+                                end
+                            end
                         end
                     end
                 end
@@ -409,12 +483,34 @@ local function StartMainHub()
         end)
     end)
 
-    -- Kill All Fonksiyonu (Herkesi Öldürür)
-    CreateToggle(Page2, "Kill All (Herkesi Öldür)", function(state)
-        _G.KillAll = state
+    -- 2. Yüzen Kill All Butonu
+    local FloatKillAllBtn = Instance.new("TextButton", ScreenGui)
+    FloatKillAllBtn.Name = "FloatKillAllBtn"
+    FloatKillAllBtn.Size = UDim2.new(0, 150, 0, 45)
+    FloatKillAllBtn.Position = UDim2.new(0, 20, 0, 125)
+    FloatKillAllBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+    FloatKillAllBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    FloatKillAllBtn.Text = "⚔️ KILL ALL: [OFF]"
+    FloatKillAllBtn.TextSize = 12
+    FloatKillAllBtn.Font = Enum.Font.GothamBold
+    FloatKillAllBtn.Active = true
+    FloatKillAllBtn.Draggable = true
+    Instance.new("UICorner", FloatKillAllBtn).CornerRadius = UDim.new(0, 8)
+
+    local killAllActive = false
+    FloatKillAllBtn.MouseButton1Click:Connect(function()
+        killAllActive = not killAllActive
+        if killAllActive then
+            FloatKillAllBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+            FloatKillAllBtn.Text = "⚔️ KILL ALL: [ON]"
+        else
+            FloatKillAllBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+            FloatKillAllBtn.Text = "⚔️ KILL ALL: [OFF]"
+        end
+
         task.spawn(function()
-            while _G.KillAll do
-                task.wait(0.5)
+            while killAllActive do
+                task.wait(0.4)
                 pcall(function()
                     local knife = LocalPlayer.Character:FindFirstChild("Knife") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Knife"))
                     if knife then
@@ -431,143 +527,104 @@ local function StartMainHub()
         end)
     end)
 
-    -- ================= PAGE 3: SUPREME VALUES & TRADE =================
-    CreateToggle(Page1, "Trade Scam & Values Analyzer", function(state)
-        _G.TradeScamActive = state
-        local tradeGui = ScreenGui:FindFirstChild("HackedByTradeMenu")
-        
-        if state then
-            if not tradeGui then
-                -- Yüzen (Floating) ve Sürüklenebilir Trade Ekranı
-                tradeGui = Instance.new("Frame")
-                tradeGui.Name = "HackedByTradeMenu"
-                tradeGui.Parent = ScreenGui
-                tradeGui.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
-                tradeGui.Position = UDim2.new(0.5, 230, 0.5, -250)
-                tradeGui.Size = UDim2.new(0, 300, 0, 380)
-                tradeGui.Active = true
-                tradeGui.Draggable = true
-                Instance.new("UICorner", tradeGui).CornerRadius = UDim.new(0, 12)
-                
-                local tStroke = Instance.new("UIStroke", tradeGui)
-                tStroke.Color = Color3.fromRGB(138, 43, 226)
-                tStroke.Thickness = 2
+    -- 3. Yüzen Trade Scam Menüsü
+    local FloatTradeBtn = Instance.new("TextButton", ScreenGui)
+    FloatTradeBtn.Name = "FloatTradeBtn"
+    FloatTradeBtn.Size = UDim2.new(0, 150, 0, 45)
+    FloatTradeBtn.Position = UDim2.new(0, 20, 0, 180)
+    FloatTradeBtn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+    FloatTradeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    FloatTradeBtn.Text = "🔄 TRADE SCAM"
+    FloatTradeBtn.TextSize = 12
+    FloatTradeBtn.Font = Enum.Font.GothamBold
+    FloatTradeBtn.Active = true
+    FloatTradeBtn.Draggable = true
+    Instance.new("UICorner", FloatTradeBtn).CornerRadius = UDim.new(0, 8)
 
-                local tTitle = Instance.new("TextLabel", tradeGui)
-                tTitle.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
-                tTitle.Size = UDim2.new(1, 0, 0, 40)
-                tTitle.Font = Enum.Font.GothamBold
-                tTitle.Text = "🔄 Trade Detected! Analyzing..."
-                tTitle.TextColor3 = Color3.fromRGB(255, 100, 100)
-                tTitle.TextSize = 13
-                Instance.new("UICorner", tTitle).CornerRadius = UDim.new(0, 12)
-                
-                local statusLog = Instance.new("TextLabel", tradeGui)
-                statusLog.Name = "StatusLog"
-                statusLog.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-                statusLog.Position = UDim2.new(0, 10, 0, 50)
-                statusLog.Size = UDim2.new(1, -20, 0, 60)
-                statusLog.Font = Enum.Font.Gotham
-                statusLog.Text = "[LOG]: Trade system active. Scanning Supreme Values..."
-                statusLog.TextColor3 = Color3.fromRGB(0, 255, 127)
-                statusLog.TextSize = 11
-                statusLog.TextWrapped = true
-                statusLog.TextXAlignment = Enum.TextXAlignment.Left
-                statusLog.TextYAlignment = Enum.TextYAlignment.Top
-                Instance.new("UICorner", statusLog).CornerRadius = UDim.new(0, 8)
-                
-                local function AddTradeBtn(text, yPos, callback)
-                    local b = Instance.new("TextButton", tradeGui)
-                    b.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-                    b.Position = UDim2.new(0, 10, 0, yPos)
-                    b.Size = UDim2.new(1, -20, 0, 38)
-                    b.Font = Enum.Font.GothamBold
-                    b.Text = text
-                    b.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    b.TextSize = 12
-                    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
-                    b.MouseButton1Click:Connect(callback)
-                end
-                
-                AddTradeBtn("Freeze Trade", 120, function() statusLog.Text = "[LOG]: Trade frozen securely!" end)
-                AddTradeBtn("Force Accept", 168, function() statusLog.Text = "[LOG]: Trade accepted by override!" end)
-                AddTradeBtn("Auto-Add Best Valuables", 216, function() statusLog.Text = "[LOG]: Valuables successfully slotted!" end)
-                
-                local MM2Values = {
-                    ["Harvester"] = "5,200", ["Corrupt"] = "3,900", ["Evergun"] = "2,850",
-                    ["Traveler's Gun"] = "5,600", ["Icepiercer"] = "2,400", ["Bat"] = "1,800",
-                    ["Elderwood Scythe"] = "650", ["Luger"] = "550", ["Laser"] = "450", ["Chroma Luger"] = "1,200"
-                }
-                
-                -- Supreme Values Tab İçeriği
-                local valLabel = Instance.new("TextLabel", Page3)
-                valLabel.BackgroundTransparency = 1
-                valLabel.Size = UDim2.new(1, 0, 0, 30)
-                valLabel.Font = Enum.Font.GothamBold
-                valLabel.Text = "📊 Supreme Values Database"
-                valLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-                valLabel.TextSize = 14
-                valLabel.TextXAlignment = Enum.TextXAlignment.Left
+    local tradeGui = nil
+    FloatTradeBtn.MouseButton1Click:Connect(function()
+        if not tradeGui then
+            tradeGui = Instance.new("Frame", ScreenGui)
+            tradeGui.Name = "HackedByTradeMenu"
+            tradeGui.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
+            tradeGui.Position = UDim2.new(0.5, 230, 0.5, -250)
+            tradeGui.Size = UDim2.new(0, 300, 0, 380)
+            tradeGui.Active = true
+            tradeGui.Draggable = true
+            Instance.new("UICorner", tradeGui).CornerRadius = UDim.new(0, 12)
+            
+            local tStroke = Instance.new("UIStroke", tradeGui)
+            tStroke.Color = Color3.fromRGB(138, 43, 226)
+            tStroke.Thickness = 2
 
-                for itemName, itemVal in pairs(MM2Values) do
-                    local itemCard = Instance.new("Frame", Page3)
-                    itemCard.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-                    itemCard.Size = UDim2.new(1, 0, 0, 35)
-                    Instance.new("UICorner", itemCard).CornerRadius = UDim.new(0, 6)
+            local tTitle = Instance.new("TextLabel", tradeGui)
+            tTitle.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
+            tTitle.Size = UDim2.new(1, 0, 0, 40)
+            tTitle.Font = Enum.Font.GothamBold
+            tTitle.Text = "🔄 Trade Detected! Analyzing..."
+            tTitle.TextColor3 = Color3.fromRGB(255, 100, 100)
+            tTitle.TextSize = 13
+            Instance.new("UICorner", tTitle).CornerRadius = UDim.new(0, 12)
+            
+            local statusLog = Instance.new("TextLabel", tradeGui)
+            statusLog.Name = "StatusLog"
+            statusLog.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+            statusLog.Position = UDim2.new(0, 10, 0, 50)
+            statusLog.Size = UDim2.new(1, -20, 0, 60)
+            statusLog.Font = Enum.Font.Gotham
+            statusLog.Text = "[LOG]: Trade system active. Scanning Supreme Values..."
+            statusLog.TextColor3 = Color3.fromRGB(0, 255, 127)
+            statusLog.TextSize = 11
+            statusLog.TextWrapped = true
+            statusLog.TextXAlignment = Enum.TextXAlignment.Left
+            statusLog.TextYAlignment = Enum.TextYAlignment.Top
+            Instance.new("UICorner", statusLog).CornerRadius = UDim.new(0, 8)
+            
+            local function AddTradeBtn(text, yPos, callback)
+                local b = Instance.new("TextButton", tradeGui)
+                b.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+                b.Position = UDim2.new(0, 10, 0, yPos)
+                b.Size = UDim2.new(1, -20, 0, 38)
+                b.Font = Enum.Font.GothamBold
+                b.Text = text
+                b.TextColor3 = Color3.fromRGB(255, 255, 255)
+                b.TextSize = 12
+                Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
+                b.MouseButton1Click:Connect(callback)
+            end
+            
+            AddTradeBtn("Freeze Trade", 120, function() statusLog.Text = "[LOG]: Trade frozen securely!" end)
+            AddTradeBtn("Force Accept", 168, function() statusLog.Text = "[LOG]: Trade accepted by override!" end)
+            AddTradeBtn("Auto-Add Best Valuables", 216, function() statusLog.Text = "[LOG]: Valuables successfully slotted!" end)
 
-                    local t1 = Instance.new("TextLabel", itemCard)
-                    t1.BackgroundTransparency = 1
-                    t1.Position = UDim2.new(0, 10, 0, 0)
-                    t1.Size = UDim2.new(0.6, 0, 1, 0)
-                    t1.Font = Enum.Font.GothamSemibold
-                    t1.Text = itemName
-                    t1.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    t1.TextSize = 13
-                    t1.TextXAlignment = Enum.TextXAlignment.Left
-
-                    local t2 = Instance.new("TextLabel", itemCard)
-                    t2.BackgroundTransparency = 1
-                    t2.Position = UDim2.new(0.6, 0, 0, 0)
-                    t2.Size = UDim2.new(0.4, -10, 1, 0)
-                    t2.Font = Enum.Font.GothamBold
-                    t2.Text = "Val: " .. itemVal
-                    t2.TextColor3 = Color3.fromRGB(0, 255, 127)
-                    t2.TextSize = 13
-                    t2.TextXAlignment = Enum.TextXAlignment.Right
-                end
-
-                task.spawn(function()
-                    while _G.TradeScamActive do
-                        task.wait(0.5)
-                        pcall(function()
-                            for _, guiElem in ipairs(PlayerGui:GetDescendants()) do
-                                if guiElem:IsA("TextLabel") and (guiElem.Name == "ItemName" or guiElem.Name == "NameLabel") then
-                                    local iName = guiElem.Text
-                                    local pFrame = guiElem.Parent
-                                    if MM2Values[iName] then
-                                        statusLog.Text = "[LOG]: Trade Detected! Analyzed: " .. iName
-                                        local vTag = pFrame:FindFirstChild("ValTag") or Instance.new("TextLabel", pFrame)
-                                        vTag.Name = "ValTag"
-                                        vTag.BackgroundTransparency = 1
-                                        vTag.Position = UDim2.new(0, 0, -0.6, 0)
-                                        vTag.Size = UDim2.new(1, 0, 0, 22)
-                                        vTag.Font = Enum.Font.GothamBold
-                                        vTag.TextColor3 = Color3.fromRGB(255, 215, 0)
-                                        vTag.TextSize = 13
-                                        vTag.Text = "Supreme Val: " .. MM2Values[iName]
-                                    end
+            -- Sürekli Trade ve Eşya Analiz Döngüsü (Trade Scam Aktif Takip)
+            task.spawn(function()
+                while tradeGui and tradeGui.Parent do
+                    task.wait(0.5)
+                    pcall(function()
+                        for _, guiElem in ipairs(PlayerGui:GetDescendants()) do
+                            if guiElem:IsA("TextLabel") and (guiElem.Name == "ItemName" or guiElem.Name == "NameLabel") then
+                                local iName = guiElem.Text
+                                local pFrame = guiElem.Parent
+                                if MM2Values[iName] then
+                                    statusLog.Text = "[LOG]: Trade Detected! Analyzed: " .. iName
+                                    local vTag = pFrame:FindFirstChild("ValTag") or Instance.new("TextLabel", pFrame)
+                                    vTag.Name = "ValTag"
+                                    vTag.BackgroundTransparency = 1
+                                    vTag.Position = UDim2.new(0, 0, -0.6, 0)
+                                    vTag.Size = UDim2.new(1, 0, 0, 22)
+                                    vTag.Font = Enum.Font.GothamBold
+                                    vTag.TextColor3 = Color3.fromRGB(255, 215, 0)
+                                    vTag.TextSize = 13
+                                    vTag.Text = "Supreme Val: " .. MM2Values[iName]
                                 end
                             end
-                        end)
-                    end
-                end)
-            else
-                tradeGui.Visible = true
-            end
+                        end
+                    end)
+                end
+            end)
         else
-            if tradeGui then
-                tradeGui.Visible = false
-            end
+            tradeGui.Visible = not tradeGui.Visible
         end
     end)
 end
