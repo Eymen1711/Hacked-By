@@ -21,6 +21,7 @@ local currentWalkSpeed = 16
 local currentJumpPower = 50
 local autoFarmSpeed = 25
 local currentFOV = 70
+local silentAimFOV = 150 -- Silent aim etki alanı çemberi
 
 -- Taste Bread Tarzı Tatlı/Oyun Fontu
 local CUSTOM_FONT = Enum.Font.FredokaOne
@@ -261,7 +262,7 @@ loginBtn.MouseButton1Click:Connect(function()
         local tbStroke = Instance.new("UIStroke", toggleButton)
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
-        -- Silent Aim Toggle Button (On/Off)
+        -- Güçlendirilmiş Silent Aim Toggle (On/Off) & FOV Çemberi Çizimi
         local silentAimActive = false
         local silentAimButton = Instance.new("TextButton", mgui)
         silentAimButton.Size = UDim2.new(0, 190, 0, 48)
@@ -277,12 +278,31 @@ loginBtn.MouseButton1Click:Connect(function()
         local sabStroke = Instance.new("UIStroke", silentAimButton)
         rs.RenderStepped:Connect(function() if sabStroke and sabStroke.Parent then sabStroke.Color = getThemeColor(1) end end)
 
+        -- Silent Aim FOV Çemberi (Ekran Görseli)
+        local fovCircle = Drawing.new("Circle")
+        fovCircle.Thickness = 2
+        fovCircle.NumSides = 64
+        fovCircle.Radius = silentAimFOV
+        fovCircle.Filled = false
+        fovCircle.Visible = false
+        fovCircle.Color = Color3.fromRGB(0, 162, 255)
+
+        rs.RenderStepped:Connect(function()
+            if silentAimActive then
+                fovCircle.Visible = true
+                fovCircle.Position = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
+                fovCircle.Color = getThemeColor(1)
+            else
+                fovCircle.Visible = false
+            end
+        end)
+
         silentAimButton.MouseButton1Click:Connect(function()
             silentAimActive = not silentAimActive
             if silentAimActive then
                 silentAimButton.Text = "Silent Aim: ON"
                 silentAimButton.TextColor3 = Color3.fromRGB(50, 255, 50)
-                sendNotification("Silent Aim", "Enabled successfully!", 1.5)
+                sendNotification("Silent Aim", "Enhanced with Prediction & FOV!", 1.5)
             else
                 silentAimButton.Text = "Silent Aim: OFF"
                 silentAimButton.TextColor3 = Color3.fromRGB(255, 50, 50)
@@ -663,24 +683,42 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Silent Aim Loop
+        -- GÜÇLENDİRİLMİŞ SİLEN AIM LOOP (PREDICTION + FOV KONTROLÜ)
         task.spawn(function()
             while true do
-                task.wait(0.05)
+                task.wait(0.01)
                 pcall(function()
                     if silentAimActive then
                         local c2 = pl.Character
                         local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
                         if gun then
+                            local bestTarget = nil
+                            local shortestDistance = silentAimFOV
+                            
                             for _, v in pairs(p:GetPlayers()) do
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
                                     local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                                    if hasKnife then
-                                        local targetHrp = v.Character.HumanoidRootPart
-                                        camera.CFrame = CFrame.new(camera.CFrame.Position, targetHrp.Position)
-                                        break
+                                    if hasKnife and v.Character.Humanoid.Health > 0 then
+                                        local targetPart = v.Character.HumanoidRootPart
+                                        local screenPos, onScreen = camera:WorldToViewportPoint(targetPart.Position)
+                                        
+                                        if onScreen then
+                                            local mousePos = uis:GetMouseLocation()
+                                            local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+                                            
+                                            if dist < shortestDistance then
+                                                shortestDistance = dist
+                                                bestTarget = targetPart
+                                            end
+                                        end
                                     end
                                 end
+                            end
+                            
+                            if bestTarget then
+                                -- Akıllı Hareket Tahmini (Prediction): Hedef koşarken önüne doğru aim alır
+                                local predictedPos = bestTarget.Position + (bestTarget.Velocity * 0.08)
+                                camera.CFrame = CFrame.new(camera.CFrame.Position, predictedPos)
                             end
                         end
                     end
@@ -858,6 +896,7 @@ loginBtn.MouseButton1Click:Connect(function()
                 task.wait(0.05)
                 pcall(function()
                     if O.AF then
+                         ortools...
                         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                         local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
                         if hrp and hum and hum.Health > 0 then
