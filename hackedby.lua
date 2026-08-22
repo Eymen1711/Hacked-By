@@ -1,4 +1,4 @@
--- palofsc: MM2 Ultimate Supreme Hub (Fixed Auto Shoot Murder, Full Updated Supreme Values, TP to Map & Lobby, Floating UI, Key System, Auto Grab Gun, Kill All, Speed/Jump Sliders)
+-- palofsc: MM2 Ultimate Supreme Hub (Configurable Smooth Flight Auto Farm, Anti-Kick Safe, FPS Toggle & Supreme Values)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -6,45 +6,62 @@ local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Camera = Workspace.CurrentCamera
 
+-- Global Uçma Hızı Değişkeni (Güvenli Varsayılan Değer: 75 - Oyundan Atmaz)
+_G.FlightSpeed = 75
+
 -- ==========================================
--- 0. SOL ALT KÖŞE FPS GÖSTERGESİ
+-- 0. SOL ALT KÖŞE FPS GÖSTERGE BUTONU
 -- ==========================================
 local FpsGui = Instance.new("ScreenGui")
 FpsGui.Name = "HackedBy_FpsCounter"
 FpsGui.Parent = CoreGui
 FpsGui.ResetOnSpawn = false
 
-local FpsLabel = Instance.new("TextLabel", FpsGui)
-FpsLabel.Size = UDim2.new(0, 110, 0, 30)
-FpsLabel.Position = UDim2.new(0, 15, 1, -45)
-FpsLabel.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
-FpsLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
-FpsLabel.TextSize = 13
-FpsLabel.Font = Enum.Font.GothamBold
-FpsLabel.Text = "FPS: 60"
-Instance.new("UICorner", FpsLabel).CornerRadius = UDim.new(0, 8)
-local FpsStroke = Instance.new("UIStroke", FpsLabel)
+local FpsToggleButton = Instance.new("TextButton", FpsGui)
+FpsToggleButton.Size = UDim2.new(0, 120, 0, 32)
+FpsToggleButton.Position = UDim2.new(0, 15, 1, -45)
+FpsToggleButton.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
+FpsToggleButton.TextColor3 = Color3.fromRGB(0, 255, 127)
+FpsToggleButton.TextSize = 13
+FpsToggleButton.Font = Enum.Font.GothamBold
+FpsToggleButton.Text = "FPS: 60 [ON]"
+FpsToggleButton.Active = true
+FpsToggleButton.Draggable = true
+Instance.new("UICorner", FpsToggleButton).CornerRadius = UDim.new(0, 8)
+local FpsStroke = Instance.new("UIStroke", FpsToggleButton)
 FpsStroke.Color = Color3.fromRGB(138, 43, 226)
 FpsStroke.Thickness = 1.5
 
+local fpsActive = true
+FpsToggleButton.MouseButton1Click:Connect(function()
+    fpsActive = not fpsActive
+    if not fpsActive then
+        FpsToggleButton.Text = "FPS: Hidden [OFF]"
+        FpsToggleButton.TextColor3 = Color3.fromRGB(150, 150, 150)
+    end
+end)
+
 local frameCount, lastUpdate = 0, tick()
 RunService.RenderStepped:Connect(function()
+    if not fpsActive then return end
     frameCount = frameCount + 1
     local now = tick()
     if now - lastUpdate >= 1 then
         local fps = math.floor(frameCount / (now - lastUpdate))
-        FpsLabel.Text = "FPS: " .. fps
+        FpsToggleButton.Text = "FPS: " .. fps .. " [ON]"
+        FpsToggleButton.TextColor3 = Color3.fromRGB(0, 255, 127)
         frameCount, lastUpdate = 0, now
     end
 end)
 
 -- ==========================================
--- 1. ŞIK KEY SİSTEMİ (LootLabs & Doğrulama Giriş Ekranı)
+-- 1. ŞIK KEY SİSTEMİ
 -- ==========================================
 local KeySystemGui = Instance.new("ScreenGui")
 KeySystemGui.Name = "HackedBy_KeySystem"
@@ -93,7 +110,7 @@ GetKeyBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 8)
 
 GetKeyBtn.MouseButton1Click:Connect(function()
-    local lootlabsUrl = "https://lootdest.org/s?CRVogxNA"
+    local lootlabsUrl = "https://lootdest.org/s/CRVogxNA"
     pcall(function() setclipboard(lootlabsUrl) end)
     pcall(function() GuiService:OpenBrowserWindow(lootlabsUrl) end)
     GetKeyBtn.Text = "✔️ Link Copied & Opened!"
@@ -120,7 +137,6 @@ local function StartMainHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.ResetOnSpawn = false
 
-    -- Hileyi Açıp Kapatmak İçin Üstünde "Hacked By" Yazan Buton
     local ToggleButton = Instance.new("TextButton", ScreenGui)
     ToggleButton.Name = "ToggleUIButton"
     ToggleButton.Size = UDim2.new(0, 130, 0, 40)
@@ -162,7 +178,6 @@ local function StartMainHub()
     TitleLabel.TextSize = 15
     Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 14)
 
-    -- Sekme Sistemi
     local TabContainer = Instance.new("Frame", MainFrame)
     TabContainer.BackgroundTransparency = 1
     TabContainer.Position = UDim2.new(0, 10, 0, 58)
@@ -311,6 +326,25 @@ local function StartMainHub()
         end)
     end
 
+    -- AYARLANABİLİR VE ANTI-KICK GÜVENLİ UÇMA FONKSİYONU
+    local function SmoothFlyTo(targetCFrame)
+        pcall(function()
+            local char = LocalPlayer.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                local distance = (hrp.Position - targetCFrame.Position).Magnitude
+                -- Hız değerini kullanıcı slider ile belirler, 0'a bölünmeyi önlemek için math.max kullanılır
+                local currentSpeed = math.clamp(_G.FlightSpeed or 75, 20, 140)
+                local flightTime = distance / currentSpeed 
+                
+                local tweenInfo = TweenInfo.new(flightTime, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+                local tween = TweenService:Create(hrp, tweenInfo, {CFrame = targetCFrame})
+                tween:Play()
+                task.wait(flightTime)
+            end
+        end)
+    end
+
     -- ================= PAGE 1: MAIN FEATURES =================
     CreateToggle(Page1, "Role ESP", function(state)
         _G.RoleESP = state
@@ -332,18 +366,16 @@ local function StartMainHub()
         end)
     end)
 
-    CreateToggle(Page1, "Auto Grab Gun (Sheriff Drop)", function(state)
+    CreateToggle(Page1, "Auto Grab Gun (Uçarak Al)", function(state)
         _G.AutoGrabGun = state
         task.spawn(function()
             while _G.AutoGrabGun do
-                task.wait(0.1)
+                task.wait(0.2)
                 pcall(function()
-                    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        for _, obj in ipairs(Workspace:GetDescendants()) do
-                            if obj.Name == "GunDrop" and obj:IsA("BasePart") then
-                                hrp.CFrame = obj.CFrame
-                            end
+                    for _, obj in ipairs(Workspace:GetDescendants()) do
+                        if not _G.AutoGrabGun then break end
+                        if obj.Name == "GunDrop" and obj:IsA("BasePart") then
+                            SmoothFlyTo(obj.CFrame)
                         end
                     end
                 end)
@@ -351,31 +383,32 @@ local function StartMainHub()
         end)
     end)
 
-    CreateToggle(Page1, "Summer/Normal Auto Farm", function(state)
+    CreateToggle(Page1, "Kusursuz Auto Farm (Uçarak Topla)", function(state)
         _G.AutoFarm = state
         task.spawn(function()
             while _G.AutoFarm do
-                task.wait(0.15)
+                task.wait(0.1)
                 pcall(function()
-                    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local found = false
-                        for _, obj in ipairs(Workspace:GetDescendants()) do
-                            if not _G.AutoFarm then break end
-                            if obj:IsA("BasePart") then
-                                local nameLower = obj.Name:lower()
-                                if nameLower == "coin" or nameLower == "coinvisual" or nameLower == "beachball" or nameLower == "shell" or nameLower == "gundrop" or string.find(nameLower, "coin") or string.find(nameLower, "beach") or string.find(nameLower, "ball") or string.find(nameLower, "drop") or string.find(nameLower, "collect") then
-                                    hrp.CFrame = obj.CFrame + Vector3.new(0, 0.5, 0)
-                                    found = true
-                                    task.wait(0.05)
-                                end
+                    local foundCoin = false
+                    for _, obj in ipairs(Workspace:GetDescendants()) do
+                        if not _G.AutoFarm then break end
+                        if obj:IsA("BasePart") then
+                            local n = obj.Name:lower()
+                            if n == "coin" or n == "coinvisual" or n == "coin_visual" or string.find(n, "coin") or string.find(n, "event") or string.find(n, "drop") or string.find(n, "collect") or string.find(n, "token") then
+                                SmoothFlyTo(obj.CFrame + Vector3.new(0, 0.5, 0))
+                                foundCoin = true
                             end
                         end
-                        if not found and Workspace:FindFirstChild("CoinContainer") then
-                            for _, obj in ipairs(Workspace.CoinContainer:GetChildren()) do
-                                if obj:IsA("BasePart") then
-                                    hrp.CFrame = obj.CFrame + Vector3.new(0, 0.5, 0)
-                                    task.wait(0.05)
+                    end
+                    if not foundCoin then
+                        for _, containerName in ipairs({"CoinContainer", "Coins", "MapCoins", "EventContainer"}) do
+                            local container = Workspace:FindFirstChild(containerName)
+                            if container then
+                                for _, obj in ipairs(container:GetChildren()) do
+                                    if not _G.AutoFarm then break end
+                                    if obj:IsA("BasePart") then
+                                        SmoothFlyTo(obj.CFrame + Vector3.new(0, 0.5, 0))
+                                    end
                                 end
                             end
                         end
@@ -397,6 +430,10 @@ local function StartMainHub()
     end)
 
     -- ================= PAGE 2: COMBAT & MOVEMENT =================
+    CreateSlider(Page2, "Flight Speed (20-140 Safe)", 20, 140, 75, function(val)
+        _G.FlightSpeed = val
+    end)
+
     CreateSlider(Page2, "WalkSpeed (1-100)", 16, 100, 16, function(val)
         pcall(function() LocalPlayer.Character.Humanoid.WalkSpeed = val end)
     end)
@@ -405,28 +442,31 @@ local function StartMainHub()
         pcall(function() LocalPlayer.Character.Humanoid.JumpPower = val end)
     end)
 
-    -- ================= PAGE 3: SUPREME VALUES & SEARCH =================
+    -- ================= PAGE 3: TÜM GÜNCEL SUPREME VALUES =================
     local MM2Values = {
         ["Harvester"] = "5,300", ["Corrupt"] = "4,000", ["Evergun"] = "2,900",
-        ["Traveler's Gun"] = "5,700", ["Icepiercer"] = "2,450", ["Bat"] = "1,850",
-        ["Elderwood Scythe"] = "670", ["Luger"] = "560", ["Laser"] = "460", 
-        ["Chroma Luger"] = "1,250", ["Ew Revolver"] = "620", ["Cookieblade"] = "55",
-        ["Gingerblade"] = "60", ["Logchopper"] = "250", ["Minty"] = "230",
-        ["Blaster"] = "320", ["Virtual"] = "320", ["Darkbringer"] = "400",
-        ["Lightbringer"] = "390", ["Hallow's Edge"] = "180", ["Battleaxe II"] = "140",
-        ["Boneblade"] = "100", ["Phantasm"] = "1,150", ["Evergreen"] = "3,100",
-        ["Traveler's Axe"] = "4,500", ["Rainbow"] = "2,300", ["Wasteland"] = "1,200",
-        ["Spectre"] = "1,600", ["Sunset"] = "1,100", ["Ocean"] = "1,750",
-        ["Watergun"] = "2,100", ["Swirly Axe"] = "1,950", ["Swirly Gun"] = "2,050",
-        ["Icebreaker"] = "1,400", ["Hallowgun"] = "220", ["Hallowscythe"] = "350",
-        ["Bramble"] = "35", ["Clockwork"] = "120", ["Fang"] = "45",
-        ["Slasher"] = "70", ["Saw"] = "40", ["Heat"] = "50",
-        ["Tides"] = "45", ["Shark"] = "55", ["Deathspike"] = "800",
-        ["Candy"] = "900", ["Sugar"] = "850", ["Pixel"] = "110",
-        ["Prismatic"] = "30", ["Red Seer"] = "35", ["Blue Seer"] = "35",
-        ["Purple Seer"] = "35", ["Orange Seer"] = "35", ["Yellow Seer"] = "35",
-        ["Icewing"] = "25", ["Hallow's Blade"] = "40", ["Battleaxe"] = "30",
-        ["Ghostblade"] = "30", ["Vampire's Edge"] = "30"
+        ["Traveler's Gun"] = "5,700", ["Traveler's Axe"] = "4,500", ["Icepiercer"] = "2,450", 
+        ["Bat"] = "1,850", ["Evergreen"] = "3,100", ["Rainbow"] = "2,300", 
+        ["Watergun"] = "2,100", ["Swirly Gun"] = "2,050", ["Swirly Axe"] = "1,950",
+        ["Ocean"] = "1,750", ["Spectre"] = "1,600", ["Icebreaker"] = "1,400",
+        ["Wasteland"] = "1,200", ["Phantasm"] = "1,150", ["Sunset"] = "1,100",
+        ["Elderwood Scythe"] = "670", ["Ew Revolver"] = "620", ["Luger"] = "560",
+        ["Laser"] = "460", ["Darkbringer"] = "400", ["Lightbringer"] = "390",
+        ["Hallowscythe"] = "350", ["Blaster"] = "320", ["Virtual"] = "320",
+        ["Logchopper"] = "250", ["Hallowgun"] = "220", ["Minty"] = "230",
+        ["Hallow's Edge"] = "180", ["Battleaxe II"] = "140", ["Clockwork"] = "120",
+        ["Pixel"] = "110", ["Boneblade"] = "100", ["Candy"] = "900", 
+        ["Sugar"] = "850", ["Deathspike"] = "800", ["Chroma Luger"] = "1,250",
+        ["Chroma Laser"] = "1,050", ["Chroma Darkbringer"] = "950", ["Chroma Lightbringer"] = "900",
+        ["Chroma Slasher"] = "450", ["Chroma Fang"] = "380", ["Chroma Tides"] = "350",
+        ["Chroma Heat"] = "340", ["Chroma Saw"] = "300", ["Chroma Boneblade"] = "280",
+        ["Slasher"] = "70", ["Shark"] = "55", ["Cookieblade"] = "55",
+        ["Gingerblade"] = "60", ["Heat"] = "50", ["Fang"] = "45",
+        ["Tides"] = "45", ["Saw"] = "40", ["Hallow's Blade"] = "40",
+        ["Red Seer"] = "35", ["Blue Seer"] = "35", ["Purple Seer"] = "35",
+        ["Orange Seer"] = "35", ["Yellow Seer"] = "35", ["Bramble"] = "35",
+        ["Battleaxe"] = "30", ["Ghostblade"] = "30", ["Vampire's Edge"] = "30",
+        ["Prismatic"] = "30", ["Icewing"] = "25"
     }
 
     local SearchBox = Instance.new("TextBox", Page3)
@@ -490,10 +530,9 @@ local function StartMainHub()
     end)
 
     -- ==========================================
-    -- 3. EKRANDA YÜZEN (FLOATING) ÖZELLİK BUTONLARI
+    -- 3. EKRANDA YÜZEN ÖZELLİK BUTONLARI
     -- ==========================================
     
-    -- 1. Yüzen Güçlendirilmiş Shoot Murder Butonu (Kırmızı ESP Tespiti Uyumlu)
     local FloatShootBtn = Instance.new("TextButton", ScreenGui)
     FloatShootBtn.Name = "FloatShootBtn"
     FloatShootBtn.Size = UDim2.new(0, 150, 0, 40)
@@ -513,13 +552,9 @@ local function StartMainHub()
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
             if not hrp then return end
 
-            -- Tabancayı eline al (Backpack veya Character)
             local gun = char:FindFirstChild("Gun") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Gun"))
-            if gun then
-                gun.Parent = char
-            end
+            if gun then gun.Parent = char end
 
-            -- Kırmızı ESP sahibi (Murderer) oyuncuyu otomatik bul
             local murdererTarget = nil
             for _, p in ipairs(Players:GetPlayers()) do
                 if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -528,7 +563,6 @@ local function StartMainHub()
                     local hasKnife = (bp and bp:FindFirstChild("Knife")) or pChar:FindFirstChild("Knife")
                     local highlight = pChar:FindFirstChild("HBHighlight")
                     
-                    -- Kırmızı renk (Knife veya Highlight kırmızı olan hedef)
                     if hasKnife or (highlight and highlight.FillColor == Color3.fromRGB(255, 0, 0)) then
                         murdererTarget = pChar
                         break
@@ -538,9 +572,7 @@ local function StartMainHub()
 
             if murdererTarget and murdererTarget:FindFirstChild("HumanoidRootPart") then
                 local mHrp = murdererTarget.HumanoidRootPart
-                
-                -- Karakteri suçluya doğru döndür ve vurma sinyallerini tetikle
-                hrp.CFrame = CFrame.new(hrp.Position, Vector3.new(mHrp.Position.X, hrp.Position.Y, mHrp.Position.Z))
+                SmoothFlyTo(mHrp.CFrame + Vector3.new(0, 0, 3))
 
                 if gun and gun:FindFirstChild("ShootGun") then
                     gun.ShootGun:FireServer(1, mHrp.Position, "AH")
@@ -562,7 +594,6 @@ local function StartMainHub()
         end)
     end)
 
-    -- 2. Yüzen Kill All Butonu
     local FloatKillAllBtn = Instance.new("TextButton", ScreenGui)
     FloatKillAllBtn.Name = "FloatKillAllBtn"
     FloatKillAllBtn.Size = UDim2.new(0, 150, 0, 40)
@@ -589,14 +620,14 @@ local function StartMainHub()
 
         task.spawn(function()
             while killAllActive do
-                task.wait(0.4)
+                task.wait(0.5)
                 pcall(function()
                     local knife = LocalPlayer.Character:FindFirstChild("Knife") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Knife"))
                     if knife then
                         knife.Parent = LocalPlayer.Character
                         for _, p in ipairs(Players:GetPlayers()) do
                             if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                                LocalPlayer.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+                                SmoothFlyTo(p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1))
                                 knife:Activate()
                             end
                         end
@@ -606,14 +637,13 @@ local function StartMainHub()
         end)
     end)
 
-    -- 3. Yüzen TP to Map Butonu
     local FloatTpMapBtn = Instance.new("TextButton", ScreenGui)
     FloatTpMapBtn.Name = "FloatTpMapBtn"
     FloatTpMapBtn.Size = UDim2.new(0, 150, 0, 40)
     FloatTpMapBtn.Position = UDim2.new(0, 20, 0, 160)
     FloatTpMapBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
     FloatTpMapBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    FloatTpMapBtn.Text = "🗺️ TP to Map"
+    FloatTpMapBtn.Text = "🗺️ Fly to Map"
     FloatTpMapBtn.TextSize = 12
     FloatTpMapBtn.Font = Enum.Font.GothamBold
     FloatTpMapBtn.Active = true
@@ -622,41 +652,32 @@ local function StartMainHub()
 
     FloatTpMapBtn.MouseButton1Click:Connect(function()
         pcall(function()
-            local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                local foundMap = false
-                for _, obj in ipairs(Workspace:GetChildren()) do
-                    if obj:IsA("Model") and (obj:FindFirstChild("Spawns") or obj:FindFirstChild("SpawnLocations") or obj:FindFirstChild("CoinContainer") or obj:FindFirstChild("Map")) then
+            local foundMap = false
+            for _, obj in ipairs(Workspace:GetChildren()) do
+                local nameLower = obj.Name:lower()
+                if obj:IsA("Model") and (nameLower ~= "normal" and nameLower ~= "lounge" and nameLower ~= "lobby" and nameLower ~= "camera" and nameLower ~= "terrain") then
+                    if obj:FindFirstChild("Spawns") or obj:FindFirstChild("SpawnLocations") or obj:FindFirstChild("CoinContainer") or obj:FindFirstChild("Map") or #obj:GetChildren() > 5 then
                         for _, part in ipairs(obj:GetDescendants()) do
                             if part:IsA("BasePart") then
-                                hrp.CFrame = part.CFrame + Vector3.new(0, 5, 0)
+                                SmoothFlyTo(part.CFrame + Vector3.new(0, 5, 0))
                                 foundMap = true
                                 break
                             end
                         end
                     end
-                    if foundMap then break end
                 end
-                if not foundMap and Workspace:FindFirstChild("Map") then
-                    for _, part in ipairs(Workspace.Map:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            hrp.CFrame = part.CFrame + Vector3.new(0, 5, 0)
-                            break
-                        end
-                    end
-                end
+                if foundMap then break end
             end
         end)
     end)
 
-    -- 4. Yüzen TP to Lobby Butonu
     local FloatTpLobbyBtn = Instance.new("TextButton", ScreenGui)
     FloatTpLobbyBtn.Name = "FloatTpLobbyBtn"
     FloatTpLobbyBtn.Size = UDim2.new(0, 150, 0, 40)
     FloatTpLobbyBtn.Position = UDim2.new(0, 20, 0, 205)
     FloatTpLobbyBtn.BackgroundColor3 = Color3.fromRGB(39, 174, 96)
     FloatTpLobbyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    FloatTpLobbyBtn.Text = "🏠 TP to Lobby"
+    FloatTpLobbyBtn.Text = "🏠 Fly to Lobby"
     FloatTpLobbyBtn.TextSize = 12
     FloatTpLobbyBtn.Font = Enum.Font.GothamBold
     FloatTpLobbyBtn.Active = true
@@ -665,19 +686,15 @@ local function StartMainHub()
 
     FloatTpLobbyBtn.MouseButton1Click:Connect(function()
         pcall(function()
-            local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                local lobbySpawn = Workspace:FindFirstChild("Lobby") or Workspace:FindFirstChild("SpawnLocation") or Workspace:FindFirstChild("Spawns")
-                if lobbySpawn and lobbySpawn:IsA("BasePart") then
-                    hrp.CFrame = lobbySpawn.CFrame + Vector3.new(0, 5, 0)
-                else
-                    hrp.CFrame = CFrame.new(0, 10, 0)
-                end
+            local lobbySpawn = Workspace:FindFirstChild("Lobby") or Workspace:FindFirstChild("SpawnLocation") or Workspace:FindFirstChild("Spawns")
+            if lobbySpawn and lobbySpawn:IsA("BasePart") then
+                SmoothFlyTo(lobbySpawn.CFrame + Vector3.new(0, 5, 0))
+            else
+                SmoothFlyTo(CFrame.new(0, 10, 0))
             end
         end)
     end)
 
-    -- 5. Yüzen Trade Scam Menüsü
     local FloatTradeBtn = Instance.new("TextButton", ScreenGui)
     FloatTradeBtn.Name = "FloatTradeBtn"
     FloatTradeBtn.Size = UDim2.new(0, 150, 0, 40)
