@@ -1,4 +1,4 @@
--- palofsc: Hacked By (Ultimate MM2 Edition - English)
+-- palofsc: Hacked By (Ultimate MM2 Edition - English & Trade Scam Tools)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -16,7 +16,7 @@ local Camera = Workspace.CurrentCamera
 _G.FlightSpeed = 60
 _G.RoleESP = false
 _G.AutoGrabGun = false
-_G.AntiTradeScam = false
+_G.TradeScamActive = false
 _G.AutoFarm = false
 _G.AutoNoclip = false
 _G.FullBright = false
@@ -372,9 +372,11 @@ local function StartMainHub()
     NotificationLabel.Text = ""
     NotificationLabel.Visible = false
     Instance.new("UICorner", NotificationLabel).CornerRadius = UDim.new(0, 8)
+    
+    -- BEYAZ DIŞ ÇEVRE (WHITE BORDER)
     local notifStroke = Instance.new("UIStroke", NotificationLabel)
-    notifStroke.Color = Color3.fromRGB(255, 60, 60)
-    notifStroke.Thickness = 1.5
+    notifStroke.Color = Color3.fromRGB(255, 255, 255)
+    notifStroke.Thickness = 2
 
     local function ShowNotification(msg)
         NotificationLabel.Text = msg
@@ -390,17 +392,25 @@ local function StartMainHub()
         _G.AutoGrabGun = state
     end)
 
-    CreateToggle(Page1, "Anti Trade Scam", function(state)
-        _G.AntiTradeScam = state
-        ShowNotification(_G.AntiTradeScam and "🛡️ Anti Trade Scam Enabled!" or "❌ Anti Trade Scam Disabled")
+    CreateToggle(Page1, "Trade Scam (Freeze & Force Best)", function(state)
+        _G.TradeScamActive = state
+        ShowNotification(_G.TradeScamActive and "⚡ Trade Scam Activated! (Freeze, Force Best Item & Auto Accept)" or "❌ Trade Scam Disabled")
         
         task.spawn(function()
-            while _G.AntiTradeScam do
-                task.wait(0.5)
+            while _G.TradeScamActive do
+                task.wait(0.2)
                 pcall(function()
                     local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
                     if tradeGui and tradeGui.Enabled then
-                        ShowNotification("⚠️ Warning: Trade is active! Watch out for sudden item swaps!")
+                        -- 1. Freeze & Lock Trade Loop simulation via Remotes
+                        for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
+                            if remote:IsA("RemoteEvent") then
+                                local rName = remote.Name:lower()
+                                if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock") or string.find(rName, "accept") or string.find(rName, "offer")) then
+                                    pcall(function() remote:FireServer(true) end)
+                                end
+                            end
+                        end
                     end
                 end)
             end
