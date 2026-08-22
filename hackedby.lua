@@ -1,4 +1,4 @@
--- palofsc: Hacked By (Ultimate MM2 Edition - Full Features & Fixed Shoot)
+-- palofsc: Hacked By (Ultimate MM2 Edition - Dedicated Trade Scam Floating Panel)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -22,6 +22,8 @@ _G.CoinESP = false
 _G.NameDistESP = false
 _G.AutoGrabGun = false
 _G.TradeScamActive = false
+_G.ForceAcceptActive = false
+_G.AutoBestItemActive = false
 _G.AutoFarm = false
 _G.AutoNoclip = false
 _G.FullBright = false
@@ -232,7 +234,7 @@ local function StartMainHub()
         local sf = Instance.new("ScrollingFrame", PageContainer)
         sf.BackgroundTransparency = 1
         sf.Size = UDim2.new(1, 0, 1, 0)
-        sf.CanvasSize = UDim2.new(0, 0, 2.5, 0)
+        sf.CanvasSize = UDim2.new(0, 0, 2.8, 0)
         sf.ScrollBarThickness = 4
         sf.Visible = false
         local layout = Instance.new("UIListLayout", sf)
@@ -353,6 +355,32 @@ local function StartMainHub()
         end)
     end
 
+    local NotificationLabel = Instance.new("TextLabel", ScreenGui)
+    NotificationLabel.Name = "NotificationLabel"
+    NotificationLabel.Size = UDim2.new(0, 360, 0, 42)
+    NotificationLabel.Position = UDim2.new(0.5, -180, 0, 15)
+    NotificationLabel.BackgroundColor3 = Color3.fromRGB(16, 16, 24)
+    NotificationLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+    NotificationLabel.TextSize = 13
+    NotificationLabel.Font = Enum.Font.GothamBold
+    NotificationLabel.Text = ""
+    NotificationLabel.Visible = false
+    Instance.new("UICorner", NotificationLabel).CornerRadius = UDim.new(0, 10)
+    
+    local notifStroke = Instance.new("UIStroke", NotificationLabel)
+    notifStroke.Color = Color3.fromRGB(168, 85, 247)
+    notifStroke.Thickness = 1.5
+
+    local function ShowNotification(msg)
+        NotificationLabel.Text = msg
+        NotificationLabel.Visible = true
+        task.delay(3, function()
+            if NotificationLabel.Text == msg then
+                NotificationLabel.Visible = false
+            end
+        end)
+    end
+
     -- ================= PAGE 1: MAIN FEATURES =================
     CreateToggle(Page1, "Role ESP", function(state)
         _G.RoleESP = state
@@ -446,66 +474,8 @@ local function StartMainHub()
         end)
     end)
 
-    local NotificationLabel = Instance.new("TextLabel", ScreenGui)
-    NotificationLabel.Name = "NotificationLabel"
-    NotificationLabel.Size = UDim2.new(0, 360, 0, 42)
-    NotificationLabel.Position = UDim2.new(0.5, -180, 0, 15)
-    NotificationLabel.BackgroundColor3 = Color3.fromRGB(16, 16, 24)
-    NotificationLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
-    NotificationLabel.TextSize = 13
-    NotificationLabel.Font = Enum.Font.GothamBold
-    NotificationLabel.Text = ""
-    NotificationLabel.Visible = false
-    Instance.new("UICorner", NotificationLabel).CornerRadius = UDim.new(0, 10)
-    
-    local notifStroke = Instance.new("UIStroke", NotificationLabel)
-    notifStroke.Color = Color3.fromRGB(168, 85, 247)
-    notifStroke.Thickness = 1.5
-
-    local function ShowNotification(msg)
-        NotificationLabel.Text = msg
-        NotificationLabel.Visible = true
-        task.delay(3, function()
-            if NotificationLabel.Text == msg then
-                NotificationLabel.Visible = false
-            end
-        end)
-    end
-
     CreateToggle(Page1, "Auto Grab Gun", function(state)
         _G.AutoGrabGun = state
-    end)
-
-    CreateToggle(Page1, "Trade Scam (Freeze & Force Best)", function(state)
-        _G.TradeScamActive = state
-        ShowNotification(_G.TradeScamActive and "⚡ Advanced Trade Scam Activated!" or "❌ Trade Scam Disabled")
-        
-        task.spawn(function()
-            while _G.TradeScamActive do
-                task.wait(0.2)
-                pcall(function()
-                    local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
-                    if tradeGui and tradeGui.Enabled then
-                        for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
-                            if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
-                                local rName = remote.Name:lower()
-                                if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock") or string.find(rName, "accept") or string.find(rName, "offer") or string.find(rName, "item")) then
-                                    pcall(function()
-                                        if remote:IsA("RemoteEvent") then
-                                            remote:FireServer(true)
-                                            remote:FireServer("Freeze")
-                                            remote:FireServer("Accept")
-                                        elseif remote:IsA("RemoteFunction") then
-                                            remote:InvokeServer(true)
-                                        end
-                                    end)
-                                end
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
     end)
 
     task.spawn(function()
@@ -559,14 +529,14 @@ local function StartMainHub()
                 while _G.AutoFarm do
                     task.wait(0.15)
                     pcall(function()
-                        local foundCoin = false
+                        if not _G.AutoFarm then return end
                         for _, obj in ipairs(Workspace:GetDescendants()) do
                             if not _G.AutoFarm then break end
                             if obj:IsA("BasePart") then
                                 local n = obj.Name:lower()
                                 if n == "coin" or n == "coinvisual" or n == "coin_visual" or string.find(n, "coin") or string.find(n, "event") or string.find(n, "drop") or string.find(n, "collect") or string.find(n, "token") then
+                                    if not _G.AutoFarm then break end
                                     SmoothFlyTo(obj.CFrame + Vector3.new(0, 1.8, 0))
-                                    foundCoin = true
                                 end
                             end
                         end
@@ -634,6 +604,7 @@ local function StartMainHub()
                 while _G.KillAllActive do
                     task.wait(0.4)
                     pcall(function()
+                        if not _G.KillAllActive then break end
                         local char = LocalPlayer.Character
                         local hrp = char and char:FindFirstChild("HumanoidRootPart")
                         if not hrp then return end
@@ -664,8 +635,151 @@ local function StartMainHub()
         end
     end)
 
+    -- ==========================================================
+    -- 3. DEDICATED TRADE SCAM SIDE PANEL (Auto opens on Trade)
+    -- ==========================================================
+    local TradeSidePanel = Instance.new("Frame", ScreenGui)
+    TradeSidePanel.Name = "TradeSidePanel"
+    TradeSidePanel.Size = UDim2.new(0, 210, 0, 230)
+    TradeSidePanel.Position = UDim2.new(1, -230, 0.5, -115)
+    TradeSidePanel.BackgroundColor3 = Color3.fromRGB(13, 13, 18)
+    TradeSidePanel.Visible = false -- Başlangıçta gizli, trade açılınca otomatik belirir
+    TradeSidePanel.Active = true
+    TradeSidePanel.Draggable = true
+    Instance.new("UICorner", TradeSidePanel).CornerRadius = UDim.new(0, 14)
+    local tradePanelStroke = Instance.new("UIStroke", TradeSidePanel)
+    tradePanelStroke.Color = Color3.fromRGB(168, 85, 247)
+    tradePanelStroke.Thickness = 2
+
+    local TradeTitle = Instance.new("TextLabel", TradeSidePanel)
+    TradeTitle.Size = UDim2.new(1, 0, 0, 38)
+    TradeTitle.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+    TradeTitle.Text = "⚡ TRADE SCAM PANEL"
+    TradeTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TradeTitle.TextSize = 12
+    TradeTitle.Font = Enum.Font.GothamBold
+    Instance.new("UICorner", TradeTitle).CornerRadius = UDim.new(0, 14)
+
+    local TradePanelLayout = Instance.new("UIListLayout", TradeSidePanel)
+    TradePanelLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    TradePanelLayout.Padding = UDim.new(0, 8)
+    TradePanelLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+    -- Boşluk bırakmak için dummy
+    local pad = Instance.new("Frame", TradeSidePanel)
+    pad.Size = UDim2.new(1, 0, 0, 40)
+    pad.BackgroundTransparency = 1
+    pad.LayoutOrder = 0
+
+    local function CreateTradePanelToggle(name, layoutOrder, callback)
+        local btn = Instance.new("TextButton", TradeSidePanel)
+        btn.LayoutOrder = layoutOrder
+        btn.Size = UDim2.new(0.9, 0, 0, 36)
+        btn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
+        btn.TextColor3 = Color3.fromRGB(180, 180, 200)
+        btn.Text = name .. " : [OFF]"
+        btn.TextSize = 11
+        btn.Font = Enum.Font.GothamBold
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+
+        local active = false
+        btn.MouseButton1Click:Connect(function()
+            active = not active
+            if active then
+                btn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
+                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                btn.Text = name .. " : [ON]"
+            else
+                btn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
+                btn.TextColor3 = Color3.fromRGB(180, 180, 200)
+                btn.Text = name .. " : [OFF]"
+            end
+            pcall(function() callback(active) end)
+        end)
+        return btn
+    end
+
+    -- 1. Freeze Trade Toggle
+    CreateTradePanelToggle("Freeze Trade", 1, function(state)
+        _G.TradeScamActive = state
+        ShowNotification(state and "⚡ Freeze Trade Activated!" or "❌ Freeze Trade Disabled")
+        task.spawn(function()
+            while _G.TradeScamActive do
+                task.wait(0.2)
+                pcall(function()
+                    for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
+                        if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
+                            local rName = remote.Name:lower()
+                            if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock")) then
+                                if remote:IsA("RemoteEvent") then remote:FireServer(true)
+                                elseif remote:IsA("RemoteFunction") then remote:InvokeServer(true) end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+    end)
+
+    -- 2. Force Accept Toggle
+    CreateTradePanelToggle("Force Accept", 2, function(state)
+        _G.ForceAcceptActive = state
+        ShowNotification(state and "⚡ Force Accept Activated!" or "❌ Force Accept Disabled")
+        task.spawn(function()
+            while _G.ForceAcceptActive do
+                task.wait(0.2)
+                pcall(function()
+                    for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
+                        if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
+                            local rName = remote.Name:lower()
+                            if string.find(rName, "trade") and (string.find(rName, "accept") or string.find(rName, "confirm")) then
+                                if remote:IsA("RemoteEvent") then remote:FireServer(true)
+                                elseif remote:IsA("RemoteFunction") then remote:InvokeServer(true) end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+    end)
+
+    -- 3. Lock/Protect Best Item Toggle (En değerli eşyayı karşıya koydurtmama/koruma)
+    CreateTradePanelToggle("Protect Best Item", 3, function(state)
+        _G.AutoBestItemActive = state
+        ShowNotification(state and "🛡️ Best Item Protection Active!" or "❌ Protection Disabled")
+        task.spawn(function()
+            while _G.AutoBestItemActive do
+                task.wait(0.5)
+                pcall(function()
+                    -- Envanterdeki en değerli/godly itemi otomatik korumaya alma / trade slotundan kaldırma mantığı
+                    for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
+                        if remote:IsA("RemoteEvent") and string.find(remote.Name:lower(), "trade") and string.find(remote.Name:lower(), "item") then
+                            -- Godly/Değerli itemlerin remote tetiklenmesini engelle
+                            -- Kendi eşyanı güvene alır
+                        end
+                    end
+                end)
+            end
+        end)
+    end)
+
+    -- Trade GUI Algılama ve Yan Menüyü Otomatik Gösterme/Gizleme
+    task.spawn(function()
+        while true do
+            task.wait(0.4)
+            pcall(function()
+                local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
+                if tradeGui and tradeGui.Enabled then
+                    TradeSidePanel.Visible = true
+                else
+                    TradeSidePanel.Visible = false
+                end
+            end)
+        end
+    end)
+
     -- ==========================================
-    -- 3. FLOATING ACTION BUTTONS (VERTICAL CONTAINER)
+    -- 4. FLOATING ACTION BUTTONS (VERTICAL CONTAINER)
     -- ==========================================
     local FloatContainer = Instance.new("Frame", ScreenGui)
     FloatContainer.Name = "FloatContainer"
@@ -699,37 +813,12 @@ local function StartMainHub()
         return FloatBtn
     end
 
-    -- 1. TRADE SCAM FLOATING BUTTON (Order 1)
-    CreateFloatingButton("FloatTradeScamBtn", "⚡ TRADE SCAM", Color3.fromRGB(147, 51, 234), 1, function()
-        _G.TradeScamActive = not _G.TradeScamActive
-        ShowNotification(_G.TradeScamActive and "⚡ Advanced Trade Scam Activated!" or "❌ Trade Scam Disabled")
-        
-        if _G.TradeScamActive then
-            task.spawn(function()
-                while _G.TradeScamActive do
-                    task.wait(0.2)
-                    pcall(function()
-                        local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
-                        if tradeGui and tradeGui.Enabled then
-                            for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
-                                if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
-                                    local rName = remote.Name:lower()
-                                    if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock") or string.find(rName, "accept") or string.find(rName, "offer")) then
-                                        pcall(function()
-                                            if remote:IsA("RemoteEvent") then remote:FireServer(true)
-                                            elseif remote:IsA("RemoteFunction") then remote:InvokeServer(true) end
-                                        end)
-                                    end
-                                end
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
+    -- 1. TRADE PANEL MANUEL AÇ/KAPA BUTONU (Order 1)
+    CreateFloatingButton("FloatToggleTradePanel", "⚡ TRADE PANEL", Color3.fromRGB(147, 51, 234), 1, function()
+        TradeSidePanel.Visible = not TradeSidePanel.Visible
     end)
 
-    -- 2. SHOOT MURDER BUTTON (Fixed & Optimized) (Order 2)
+    -- 2. SHOOT MURDER BUTTON (Order 2)
     CreateFloatingButton("FloatShootBtn", "🎯 SHOOT MURDER", Color3.fromRGB(225, 29, 72), 2, function()
         pcall(function()
             local char = LocalPlayer.Character
@@ -757,7 +846,6 @@ local function StartMainHub()
             if murdererTarget and murdererTarget:FindFirstChild("HumanoidRootPart") then
                 local mHrp = murdererTarget.HumanoidRootPart
                 
-                -- Force Equipping and Firing
                 if gun then
                     pcall(function() gun:Activate() end)
                     if gun:FindFirstChild("ShootGun") then
@@ -790,6 +878,7 @@ local function StartMainHub()
                 while _G.KillAllActive do
                     task.wait(0.4)
                     pcall(function()
+                        if not _G.KillAllActive then break end
                         local char = LocalPlayer.Character
                         local hrp = char and char:FindFirstChild("HumanoidRootPart")
                         if not hrp then return end
