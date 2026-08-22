@@ -586,6 +586,7 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(pageFrames[4], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
         Tog(pageFrames[4], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
         Tog(pageFrames[4], "Infinite Jump", false, function(s) O.InfJump = s end)
+        Tog(pageFrames[4], "Noclip (Walk Through Walls)", false, function(s) O.Noclip = s end)
         Tog(pageFrames[4], "FullBright", false, function(s) 
             lighting.Brightness = s and 2 or 1
             lighting.ClockTime = s and 14 or 0
@@ -620,6 +621,9 @@ loginBtn.MouseButton1Click:Connect(function()
                         for _, v in pairs(p:GetPlayers()) do
                             if v ~= pl and v.Character then
                                 local hl = v.Character:FindFirstChild("PerfectESP")
+                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                                local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
+                                
                                 if not hl then
                                     hl = Instance.new("Highlight", v.Character)
                                     hl.Name = "PerfectESP"
@@ -628,8 +632,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                     hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                                     hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 end
-                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                                local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
+                                
                                 if hasKnife then hl.FillColor = Color3.fromRGB(255, 0, 0)
                                 elseif hasGun then hl.FillColor = Color3.fromRGB(0, 150, 255)
                                 else hl.FillColor = Color3.fromRGB(0, 255, 0) end
@@ -638,6 +641,22 @@ loginBtn.MouseButton1Click:Connect(function()
                     else
                         for _, v in pairs(p:GetPlayers()) do
                             if v.Character and v.Character:FindFirstChild("PerfectESP") then v.Character.PerfectESP:Destroy() end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- Noclip Loop
+        rs.Stepped:Connect(function()
+            if O.Noclip then
+                pcall(function()
+                    local char = pl.Character
+                    if char then
+                        for _, part in pairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") then
+                                part.CanCollide = false
+                            end
                         end
                     end
                 end)
@@ -694,26 +713,22 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- AUTO GRAB GUN (Konumu kaydedip geri dönme özellikli)
+        -- AUTO GRAB GUN
         task.spawn(function()
             while true do
-                task.wait(0.2)
+                task.wait(0.1)
                 pcall(function()
                     if O.AutoGrabGun then
                         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                         if hrp then
                             for _, obj in pairs(workspace:GetDescendants()) do
                                 if obj.Name == "GunDrop" and obj:IsA("BasePart") then
-                                    -- 1. Silahı almadan HEMEN ÖNCE mevcut konumu kaydet
                                     local savedCFrame = hrp.CFrame
-                                    
-                                    -- 2. Silahın konumuna ışınlan
-                                    hrp.CFrame = obj.CFrame
-                                    task.wait(0.15)
-                                    
-                                    -- 3. Kaydedilen eski yere geri dön
+                                    hrp.CFrame = obj.CFrame + Vector3.new(0, 0.5, 0)
+                                    task.wait(0.2)
                                     hrp.CFrame = savedCFrame
-                                    sendNotification("Auto Grab", "Gun grabbed & returned!", 2)
+                                    sendNotification("Auto Grab", "Gun grabbed & returned to old spot!", 2)
+                                    task.wait(1)
                                     break 
                                 end
                             end
