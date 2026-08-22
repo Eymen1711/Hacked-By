@@ -1,5 +1,5 @@
 -- ==========================================
--- ULTIMATE MM2 SCRIPT (FULL FEATURES v26)
+-- ULTIMATE MM2 SCRIPT (EXACTLY LIKE VIDEO v30)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -9,7 +9,7 @@ local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
 local camera = workspace.CurrentCamera
 
-local MENU_TITLE = "Hacked By" -- İstediğin ismi buraya yazabilirsin
+local MENU_TITLE = "Hacked By"
 local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
 
 local customThemeColor = Color3.fromRGB(0, 255, 200)
@@ -19,14 +19,19 @@ local CUSTOM_FONT = Enum.Font.FredokaOne
 local currentWalkSpeed = 16
 local currentJumpPower = 50
 local silentAimEnabled = false
+local espEnabled = false
+local autoFarmEnabled = false
+local infJumpActive = false
 
 -- Eski pencereleri temizle
 pcall(function()
-    for _, guiName in ipairs({"HackedBy_KeySystem", "HackedBy_MasterMenu", "HackedBy_Notifications", "HackedBy_KeySystem_v22", "HackedBy_MasterMenu_v22", "HackedBy_Notifications_v22", "HackedBy_KeySystem_v23", "HackedBy_MasterMenu_v23", "HackedBy_Notifications_v23", "HackedBy_KeySystem_v24", "HackedBy_MasterMenu_v24", "HackedBy_Notifications_v24", "HackedBy_KeySystem_v25", "HackedBy_MasterMenu_v25", "HackedBy_Notifications_v25", "HackedBy_KeySystem_v26", "HackedBy_MasterMenu_v26", "HackedBy_Notifications_v26"}) do
-        local old = game:GetService("CoreGui"):FindFirstChild(guiName)
+    for i = 22, 30 do
+        local old = game:GetService("CoreGui"):FindFirstChild("HackedBy_MasterMenu_v" .. i)
         if old then old:Destroy() end
-        local oldPlayerGui = pl.PlayerGui:FindFirstChild(guiName)
-        if oldPlayerGui then oldPlayerGui:Destroy() end
+        local oldKey = game:GetService("CoreGui"):FindFirstChild("HackedBy_KeySystem_v" .. i)
+        if oldKey then oldKey:Destroy() end
+        local oldNotif = game:GetService("CoreGui"):FindFirstChild("HackedBy_Notifications_v" .. i)
+        if oldNotif then oldNotif:Destroy() end
     end
 end)
 
@@ -49,7 +54,7 @@ end
 
 -- Bildirim Sistemi
 local notifGui = Instance.new("ScreenGui")
-notifGui.Name = "HackedBy_Notifications_v26"
+notifGui.Name = "HackedBy_Notifications_v30"
 notifGui.ResetOnSpawn = false
 pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
 if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -106,7 +111,7 @@ end
 
 -- Key System
 local gui = Instance.new("ScreenGui")
-gui.Name = "HackedBy_KeySystem_v26"
+gui.Name = "HackedBy_KeySystem_v30"
 gui.ResetOnSpawn = false
 pcall(function() gui.Parent = game:GetService("CoreGui") end)
 if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -158,9 +163,9 @@ loginBtn.MouseButton1Click:Connect(function()
         gui:Destroy()
         sendNotification("Success", "Key verified successfully!", 3)
         
-        -- MASTER MENU v26
+        -- MASTER MENU v30
         local mgui = Instance.new("ScreenGui")
-        mgui.Name = "HackedBy_MasterMenu_v26"
+        mgui.Name = "HackedBy_MasterMenu_v30"
         mgui.ResetOnSpawn = false
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -183,13 +188,18 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- ==========================================
+        -- SOL TARAFTAKI SABİT BUTONLAR (Videodaki gibi)
+        -- ==========================================
+        
+        -- 1. Toggle Menu Butonu
         local toggleButton = Instance.new("TextButton", mgui)
-        toggleButton.Size = UDim2.new(0, 190, 0, 48)
-        toggleButton.Position = UDim2.new(0, 40, 0, 40)
+        toggleButton.Size = UDim2.new(0, 150, 0, 40)
+        toggleButton.Position = UDim2.new(0, 20, 0, 20)
         toggleButton.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-        toggleButton.Text = "Toggle Menu (K)"
+        toggleButton.Text = "Toggle Menu"
         toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        toggleButton.TextSize = 17
+        toggleButton.TextSize = 15
         toggleButton.Font = CUSTOM_FONT
         toggleButton.Active = true
         toggleButton.Draggable = true
@@ -197,154 +207,49 @@ loginBtn.MouseButton1Click:Connect(function()
         local tbStroke = Instance.new("UIStroke", toggleButton)
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
-        local f = Instance.new("Frame", mgui)
-        f.Size = UDim2.new(0, 560, 0, 400)
-        f.Position = UDim2.new(0.5, -280, 0.5, -200)
-        f.BackgroundColor3 = Color3.fromRGB(8, 8, 12)
-        f.Active = true
-        f.Draggable = true
-        f.ClipsDescendants = true
-        f.Visible = false
+        -- 2. Silent Aim Butonu (Sol üstte)
+        local leftSilentBtn = Instance.new("TextButton", mgui)
+        leftSilentBtn.Size = UDim2.new(0, 150, 0, 40)
+        leftSilentBtn.Position = UDim2.new(0, 20, 0, 70)
+        leftSilentBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+        leftSilentBtn.Text = "Silent Aim OFF"
+        leftSilentBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        leftSilentBtn.TextSize = 15
+        leftSilentBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", leftSilentBtn).CornerRadius = UDim.new(0, 8)
+        local lsStroke = Instance.new("UIStroke", leftSilentBtn)
+        rs.RenderStepped:Connect(function() if lsStroke and lsStroke.Parent then lsStroke.Color = getThemeColor(1) end end)
 
-        toggleButton.MouseButton1Click:Connect(function() f.Visible = not f.Visible end)
-        uis.InputBegan:Connect(function(input, gpe)
-            if not gpe and input.KeyCode == Enum.KeyCode.K then
-                f.Visible = not f.Visible
-            end
-        end)
-
-        Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
-        local fStroke = Instance.new("UIStroke", f)
-        rs.RenderStepped:Connect(function() if fStroke and fStroke.Parent then fStroke.Color = getThemeColor(1) end end)
-
-        -- Sol Kategori Butonları
-        local sidebar = Instance.new("Frame", f)
-        sidebar.Size = UDim2.new(0, 140, 1, -52)
-        sidebar.Position = UDim2.new(0, 0, 0, 52)
-        sidebar.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
-        sidebar.BackgroundTransparency = 0.5
-
-        local sideLayout = Instance.new("UIListLayout", sidebar)
-        sideLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        sideLayout.Padding = UDim.new(0, 5)
-
-        -- Sağ İçerik Alanı (Sayfalar)
-        local contentArea = Instance.new("Frame", f)
-        contentArea.Size = UDim2.new(1, -145, 1, -60)
-        contentArea.Position = UDim2.new(0, 145, 0, 58)
-        contentArea.BackgroundTransparency = 1
-
-        local function createPage()
-            local page = Instance.new("ScrollingFrame", contentArea)
-            page.Size = UDim2.new(1, 0, 1, 0)
-            page.BackgroundTransparency = 1
-            page.CanvasSize = UDim2.new(0, 0, 2, 0)
-            page.ScrollBarThickness = 4
-            page.Visible = false
-            local layout = Instance.new("UIListLayout", page)
-            layout.SortOrder = Enum.SortOrder.LayoutOrder
-            layout.Padding = UDim.new(0, 8)
-            return page
-        end
-
-        local pageVisuals = createPage()
-        local pagePlayers = createPage()
-        local pageTeleports = createPage()
-        local pageSettings = createPage()
-
-        pageVisuals.Visible = true
-
-        local function createTabButton(name, targetPage)
-            local btn = Instance.new("TextButton", sidebar)
-            btn.Size = UDim2.new(1, 0, 0, 40)
-            btn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-            btn.Text = name
-            btn.TextColor3 = Color3.fromRGB(200, 200, 200)
-            btn.TextSize = 14
-            btn.Font = CUSTOM_FONT
-            
-            btn.MouseButton1Click:Connect(function()
-                pageVisuals.Visible = false
-                pagePlayers.Visible = false
-                pageTeleports.Visible = false
-                pageSettings.Visible = false
-                targetPage.Visible = true
-            end)
-        end
-
-        createTabButton("Visuals (ESP)", pageVisuals)
-        createTabButton("Player Mods", pagePlayers)
-        createTabButton("Teleports", pageTeleports)
-        createTabButton("Settings", pageSettings)
-
-        -- ==========================================
-        -- 1. VISUALS & SILENT AIM SEKMESİ İÇERİĞİ
-        -- ==========================================
-        local silentAimBtn = Instance.new("TextButton", pageVisuals)
-        silentAimBtn.Size = UDim2.new(0.95, 0, 0, 40)
-        silentAimBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        silentAimBtn.Text = "Silent Aim: OFF"
-        silentAimBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        silentAimBtn.TextSize = 14
-        silentAimBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", silentAimBtn).CornerRadius = UDim.new(0, 6)
-
-        silentAimBtn.MouseButton1Click:Connect(function()
+        leftSilentBtn.MouseButton1Click:Connect(function()
             silentAimEnabled = not silentAimEnabled
             if silentAimEnabled then
-                silentAimBtn.Text = "Silent Aim: ON"
-                silentAimBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
+                leftSilentBtn.Text = "Silent Aim ON"
+                leftSilentBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
                 sendNotification("Silent Aim", "Silent Aim Activated!", 2)
             else
-                silentAimBtn.Text = "Silent Aim: OFF"
-                silentAimBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                leftSilentBtn.Text = "Silent Aim OFF"
+                leftSilentBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
                 sendNotification("Silent Aim", "Silent Aim Deactivated!", 2)
             end
         end)
 
-        -- ==========================================
-        -- 2. PLAYER MODS SEKMESİ İÇERİĞİ
-        -- ==========================================
-        local speedBtn = Instance.new("TextButton", pagePlayers)
-        speedBtn.Size = UDim2.new(0.95, 0, 0, 40)
-        speedBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        speedBtn.Text = "Toggle Fast Speed (100)"
-        speedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        speedBtn.TextSize = 14
-        speedBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", speedBtn).CornerRadius = UDim.new(0, 6)
+        -- 3. TP to Map Butonu
+        local leftMapBtn = Instance.new("TextButton", mgui)
+        leftMapBtn.Size = UDim2.new(0, 150, 0, 40)
+        leftMapBtn.Position = UDim2.new(0, 20, 0, 120)
+        leftMapBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+        leftMapBtn.Text = "TP to Map"
+        leftMapBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        leftMapBtn.TextSize = 15
+        leftMapBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", leftMapBtn).CornerRadius = UDim.new(0, 8)
+        local lmStroke = Instance.new("UIStroke", leftMapBtn)
+        rs.RenderStepped:Connect(function() if lmStroke and lmStroke.Parent then lmStroke.Color = getThemeColor(1) end end)
 
-        local fastActive = false
-        speedBtn.MouseButton1Click:Connect(function()
-            fastActive = not fastActive
-            if fastActive then
-                currentWalkSpeed = 100
-                speedBtn.Text = "Fast Speed: ON"
-                speedBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-            else
-                currentWalkSpeed = 16
-                speedBtn.Text = "Toggle Fast Speed (100)"
-                speedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-            end
-        end)
-
-        -- ==========================================
-        -- 3. TELEPORTS SEKMESİ İÇERİĞİ (Map ve Lobby)
-        -- ==========================================
-        local tpMapBtn = Instance.new("TextButton", pageTeleports)
-        tpMapBtn.Size = UDim2.new(0.95, 0, 0, 40)
-        tpMapBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        tpMapBtn.Text = "Teleport to Map"
-        tpMapBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tpMapBtn.TextSize = 14
-        tpMapBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", tpMapBtn).CornerRadius = UDim.new(0, 6)
-
-        tpMapBtn.MouseButton1Click:Connect(function()
+        leftMapBtn.MouseButton1Click:Connect(function()
             pcall(function()
                 local foundMap = workspace:FindFirstChild("Map") or workspace:FindFirstChild("CurrentMap")
                 if foundMap and pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
-                    -- Harita içindeki herhangi bir parçayı bulup ışınlanalım
                     for _, obj in ipairs(foundMap:GetDescendants()) do
                         if obj:IsA("BasePart") then
                             pl.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
@@ -358,41 +263,344 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        local tpLobbyBtn = Instance.new("TextButton", pageTeleports)
-        tpLobbyBtn.Size = UDim2.new(0.95, 0, 0, 40)
-        tpLobbyBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        tpLobbyBtn.Text = "Teleport to Lobby"
-        tpLobbyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tpLobbyBtn.TextSize = 14
-        tpLobbyBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", tpLobbyBtn).CornerRadius = UDim.new(0, 6)
+        -- 4. TP to Lobby Butonu
+        local leftLobbyBtn = Instance.new("TextButton", mgui)
+        leftLobbyBtn.Size = UDim2.new(0, 150, 0, 40)
+        leftLobbyBtn.Position = UDim2.new(0, 20, 0, 170)
+        leftLobbyBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+        leftLobbyBtn.Text = "TP to Lobby"
+        leftLobbyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        leftLobbyBtn.TextSize = 15
+        leftLobbyBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", leftLobbyBtn).CornerRadius = UDim.new(0, 8)
+        local llStroke = Instance.new("UIStroke", leftLobbyBtn)
+        rs.RenderStepped:Connect(function() if llStroke and llStroke.Parent then llStroke.Color = getThemeColor(1) end end)
 
-        tpLobbyBtn.MouseButton1Click:Connect(function()
+        leftLobbyBtn.MouseButton1Click:Connect(function()
             pcall(function()
                 if pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
-                    -- MM2 lobi genellikle başlangıç spawn noktasıdır
-                    local spawnLocation = workspace:FindFirstChild("Lobby") or workspace:FindFirstChild("SpawnLocation")
-                    if spawnLocation and spawnLocation:IsA("BasePart") then
-                        pl.Character.HumanoidRootPart.CFrame = spawnLocation.CFrame + Vector3.new(0, 5, 0)
-                    else
-                        -- Varsayılan lobi koordinatı
-                        pl.Character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
-                    end
+                    pl.Character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
                     sendNotification("Teleport", "Teleported to Lobby!", 2)
                 end
             end)
         end)
 
-        local t = Instance.new("TextLabel", f)
-        t.Size = UDim2.new(1, 0, 0, 52)
-        t.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-        t.Text = MENU_TITLE .. " - Panel v26"
-        t.TextColor3 = Color3.fromRGB(255, 255, 255)
-        t.TextSize = 18
-        t.Font = CUSTOM_FONT
-        Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
+        -- ==========================================
+        -- ANA MENÜ PENCERESİ (SEKMELİ YAPI)
+        -- ==========================================
+        local f = Instance.new("Frame", mgui)
+        f.Size = UDim2.new(0, 520, 0, 380)
+        f.Position = UDim2.new(0.5, -260, 0.5, -190)
+        f.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
+        f.Active = true
+        f.Draggable = true
+        f.ClipsDescendants = true
+        f.Visible = true
 
-        sendNotification("Loaded", "Panel v26 successfully loaded with Teleports & Silent Aim!", 3)
+        toggleButton.MouseButton1Click:Connect(function() f.Visible = not f.Visible end)
+        uis.InputBegan:Connect(function(input, gpe)
+            if not gpe and input.KeyCode == Enum.KeyCode.K then
+                f.Visible = not f.Visible
+            end
+        end)
+
+        Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
+        local fStroke = Instance.new("UIStroke", f)
+        rs.RenderStepped:Connect(function() if fStroke and fStroke.Parent then fStroke.Color = getThemeColor(1) end end)
+
+        -- Üst Başlık Barı
+        local menuTitleLbl = Instance.new("TextLabel", f)
+        menuTitleLbl.Size = UDim2.new(1, 0, 0, 40)
+        menuTitleLbl.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        menuTitleLbl.Text = MENU_TITLE .. " - Panel"
+        menuTitleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+        menuTitleLbl.TextSize = 16
+        menuTitleLbl.Font = CUSTOM_FONT
+        Instance.new("UICorner", menuTitleLbl).CornerRadius = UDim.new(0, 12)
+
+        -- Üst Kategori Sekmeleri (Theme, ESP & X-Key, Combat & Aim, Trade & Misc, Auto Farm)
+        local tabsHolder = Instance.new("Frame", f)
+        tabsHolder.Size = UDim2.new(1, -10, 0, 35)
+        tabsHolder.Position = UDim2.new(0, 5, 0, 45)
+        tabsHolder.BackgroundTransparency = 1
+
+        local tabsLayout = Instance.new("UIListLayout", tabsHolder)
+        tabsLayout.FillDirection = Enum.FillDirection.Horizontal
+        tabsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        tabsLayout.Padding = UDim.new(0, 4)
+
+        -- İçerik Sayfaları Alanı
+        local pagesHolder = Instance.new("Frame", f)
+        pagesHolder.Size = UDim2.new(1, -10, 1, -90)
+        pagesHolder.Position = UDim2.new(0, 5, 0, 85)
+        pagesHolder.BackgroundTransparency = 1
+
+        local function createTabPage()
+            local page = Instance.new("ScrollingFrame", pagesHolder)
+            page.Size = UDim2.new(1, 0, 1, 0)
+            page.BackgroundTransparency = 1
+            page.CanvasSize = UDim2.new(0, 0, 1.8, 0)
+            page.ScrollBarThickness = 4
+            page.Visible = false
+            local l = Instance.new("UIListLayout", page)
+            l.SortOrder = Enum.SortOrder.LayoutOrder
+            l.Padding = UDim.new(0, 6)
+            return page
+        end
+
+        local pageTheme = createTabPage()
+        local pageEsp = createTabPage()
+        local pageCombat = createTabPage()
+        local pageTrade = createTabPage()
+        local pageAutoFarm = createTabPage()
+
+        pageTheme.Visible = true -- İlk açılan sekme
+
+        local function addTabButton(name, targetPage)
+            local tBtn = Instance.new("TextButton", tabsHolder)
+            tBtn.Size = UDim2.new(0.19, 0, 1, 0)
+            tBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
+            tBtn.Text = name
+            tBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+            tBtn.TextSize = 12
+            tBtn.Font = CUSTOM_FONT
+            Instance.new("UICorner", tBtn).CornerRadius = UDim.new(0, 6)
+
+            tBtn.MouseButton1Click:Connect(function()
+                pageTheme.Visible = false
+                pageEsp.Visible = false
+                pageCombat.Visible = false
+                pageTrade.Visible = false
+                pageAutoFarm.Visible = false
+                targetPage.Visible = true
+            end)
+        end
+
+        addTabButton("Theme", pageTheme)
+        addTabButton("ESP & Key", pageEsp)
+        addTabButton("Combat", pageCombat)
+        addTabButton("Trade & Misc", pageTrade)
+        addTabButton("Auto Farm", pageAutoFarm)
+
+        -- ==========================================
+        -- SEKME İÇERİKLERİ
+        -- ==========================================
+
+        -- 1. THEME SEKMESİ
+        local themeToggleBtn = Instance.new("TextButton", pageTheme)
+        themeToggleBtn.Size = UDim2.new(1, 0, 0, 38)
+        themeToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        themeToggleBtn.Text = "Rainbow Theme: ON"
+        themeToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
+        themeToggleBtn.TextSize = 14
+        themeToggleBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", themeToggleBtn).CornerRadius = UDim.new(0, 6)
+
+        themeToggleBtn.MouseButton1Click:Connect(function()
+            rainbowModeActive = not rainbowModeActive
+            if rainbowModeActive then
+                themeToggleBtn.Text = "Rainbow Theme: ON"
+                themeToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
+            else
+                themeToggleBtn.Text = "Rainbow Theme: OFF"
+                themeToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            end
+        end)
+
+        -- 2. ESP & KEY SEKMESİ
+        local espToggleBtn = Instance.new("TextButton", pageEsp)
+        espToggleBtn.Size = UDim2.new(1, 0, 0, 38)
+        espToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        espToggleBtn.Text = "Perfect Role ESP: OFF"
+        espToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        espToggleBtn.TextSize = 14
+        espToggleBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", espToggleBtn).CornerRadius = UDim.new(0, 6)
+
+        espToggleBtn.MouseButton1Click:Connect(function()
+            espEnabled = not espEnabled
+            if espEnabled then
+                espToggleBtn.Text = "Perfect Role ESP: ON"
+                espToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
+                sendNotification("ESP", "ESP Activated!", 2)
+            else
+                espToggleBtn.Text = "Perfect Role ESP: OFF"
+                espToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                sendNotification("ESP", "ESP Deactivated!", 2)
+            end
+        end)
+
+        -- 3. COMBAT & MISC SEKMESİ (Infinite Jump, Speed, Jump, Fullbright)
+        local infJumpBtn = Instance.new("TextButton", pageCombat)
+        infJumpBtn.Size = UDim2.new(1, 0, 0, 38)
+        infJumpBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        infJumpBtn.Text = "Infinite Jump: OFF"
+        infJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        infJumpBtn.TextSize = 14
+        infJumpBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", infJumpBtn).CornerRadius = UDim.new(0, 6)
+
+        infJumpBtn.MouseButton1Click:Connect(function()
+            infJumpActive = not infJumpActive
+            if infJumpActive then
+                infJumpBtn.Text = "Infinite Jump: ON"
+                infJumpBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
+            else
+                infJumpBtn.Text = "Infinite Jump: OFF"
+                infJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            end
+        end)
+
+        uis.JumpRequest:Connect(function()
+            if infJumpActive then
+                pcall(function()
+                    pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end)
+            end
+        end)
+
+        local fullBrightBtn = Instance.new("TextButton", pageCombat)
+        fullBrightBtn.Size = UDim2.new(1, 0, 0, 38)
+        fullBrightBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        fullBrightBtn.Text = "Fullbright (Night Vision)"
+        fullBrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        fullBrightBtn.TextSize = 14
+        fullBrightBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", fullBrightBtn).CornerRadius = UDim.new(0, 6)
+
+        fullBrightBtn.MouseButton1Click:Connect(function()
+            pcall(function()
+                game:GetService("Lighting").Brightness = 2
+                game:GetService("Lighting").ClockTime = 14
+                game:GetService("Lighting").GlobalShadows = false
+                sendNotification("Fullbright", "Brightness maximum!", 2)
+            end)
+        end)
+
+        -- Speed Ayarı (+ / -)
+        local speedFrame = Instance.new("Frame", pageCombat)
+        speedFrame.Size = UDim2.new(1, 0, 0, 42)
+        speedFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        Instance.new("UICorner", speedFrame).CornerRadius = UDim.new(0, 6)
+
+        local speedLabel = Instance.new("TextLabel", speedFrame)
+        speedLabel.Size = UDim2.new(0.5, 0, 1, 0)
+        speedLabel.Position = UDim2.new(0, 10, 0, 0)
+        speedLabel.BackgroundTransparency = 1
+        speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        speedLabel.TextSize = 14
+        speedLabel.Font = CUSTOM_FONT
+        speedLabel.TextXAlignment = Enum.TextXAlignment.Left
+        speedLabel.Text = "WalkSpeed: " .. currentWalkSpeed
+
+        local speedMinus = Instance.new("TextButton", speedFrame)
+        speedMinus.Size = UDim2.new(0, 35, 0, 30)
+        speedMinus.Position = UDim2.new(0.65, 0, 0.15, 0)
+        speedMinus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
+        speedMinus.Text = "-"
+        speedMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
+        speedMinus.Font = CUSTOM_FONT
+        Instance.new("UICorner", speedMinus).CornerRadius = UDim.new(0, 4)
+
+        local speedPlus = Instance.new("TextButton", speedFrame)
+        speedPlus.Size = UDim2.new(0, 35, 0, 30)
+        speedPlus.Position = UDim2.new(0.82, 0, 0.15, 0)
+        speedPlus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
+        speedPlus.Text = "+"
+        speedPlus.TextColor3 = Color3.fromRGB(255, 255, 255)
+        speedPlus.Font = CUSTOM_FONT
+        Instance.new("UICorner", speedPlus).CornerRadius = UDim.new(0, 4)
+
+        speedMinus.MouseButton1Click:Connect(function()
+            currentWalkSpeed = math.max(16, currentWalkSpeed - 10)
+            speedLabel.Text = "WalkSpeed: " .. currentWalkSpeed
+        end)
+        speedPlus.MouseButton1Click:Connect(function()
+            currentWalkSpeed = math.min(250, currentWalkSpeed + 10)
+            speedLabel.Text = "WalkSpeed: " .. currentWalkSpeed
+        end)
+
+        -- Jump Ayarı (+ / -)
+        local jumpFrame = Instance.new("Frame", pageCombat)
+        jumpFrame.Size = UDim2.new(1, 0, 0, 42)
+        jumpFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        Instance.new("UICorner", jumpFrame).CornerRadius = UDim.new(0, 6)
+
+        local jumpLabel = Instance.new("TextLabel", jumpFrame)
+        jumpLabel.Size = UDim2.new(0.5, 0, 1, 0)
+        jumpLabel.Position = UDim2.new(0, 10, 0, 0)
+        jumpLabel.BackgroundTransparency = 1
+        jumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        jumpLabel.TextSize = 14
+        jumpLabel.Font = CUSTOM_FONT
+        jumpLabel.TextXAlignment = Enum.TextXAlignment.Left
+        jumpLabel.Text = "JumpPower: " .. currentJumpPower
+
+        local jumpMinus = Instance.new("TextButton", jumpFrame)
+        jumpMinus.Size = UDim2.new(0, 35, 0, 30)
+        jumpMinus.Position = UDim2.new(0.65, 0, 0.15, 0)
+        jumpMinus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
+        jumpMinus.Text = "-"
+        jumpMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
+        jumpMinus.Font = CUSTOM_FONT
+        Instance.new("UICorner", jumpMinus).CornerRadius = UDim.new(0, 4)
+
+        local jumpPlus = Instance.new("TextButton", jumpFrame)
+        jumpPlus.Size = UDim2.new(0, 35, 0, 30)
+        jumpPlus.Position = UDim2.new(0.82, 0, 0.15, 0)
+        jumpPlus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
+        jumpPlus.Text = "+"
+        jumpPlus.TextColor3 = Color3.fromRGB(255, 255, 255)
+        jumpPlus.Font = CUSTOM_FONT
+        Instance.new("UICorner", jumpPlus).CornerRadius = UDim.new(0, 4)
+
+        jumpMinus.MouseButton1Click:Connect(function()
+            currentJumpPower = math.max(50, currentJumpPower - 20)
+            jumpLabel.Text = "JumpPower: " .. currentJumpPower
+        end)
+        jumpPlus.MouseButton1Click:Connect(function()
+            currentJumpPower = math.min(300, currentJumpPower + 20)
+            jumpLabel.Text = "JumpPower: " .. currentJumpPower
+        end)
+
+        -- 4. TRADE & MISC SEKMESİ
+        local rejoiningBtn = Instance.new("TextButton", pageTrade)
+        rejoiningBtn.Size = UDim2.new(1, 0, 0, 38)
+        rejoiningBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        rejoiningBtn.Text = "Rejoin Server"
+        rejoiningBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        rejoiningBtn.TextSize = 14
+        rejoiningBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", rejoiningBtn).CornerRadius = UDim.new(0, 6)
+
+        rejoiningBtn.MouseButton1Click:Connect(function()
+            game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, pl)
+        end)
+
+        -- 5. AUTO FARM SEKMESİ
+        local autoFarmBtn = Instance.new("TextButton", pageAutoFarm)
+        autoFarmBtn.Size = UDim2.new(1, 0, 0, 38)
+        autoFarmBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        autoFarmBtn.Text = "Auto Farm Coins: OFF"
+        autoFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        autoFarmBtn.TextSize = 14
+        autoFarmBtn.Font = CUSTOM_FONT
+        Instance.new("UICorner", autoFarmBtn).CornerRadius = UDim.new(0, 6)
+
+        autoFarmBtn.MouseButton1Click:Connect(function()
+            autoFarmEnabled = not autoFarmEnabled
+            if autoFarmEnabled then
+                autoFarmBtn.Text = "Auto Farm Coins: ON"
+                autoFarmBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
+                sendNotification("Farm", "Auto Farm Enabled!", 2)
+            else
+                autoFarmBtn.Text = "Auto Farm Coins: OFF"
+                autoFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                sendNotification("Farm", "Auto Farm Disabled!", 2)
+            end
+        end)
+
+        sendNotification("Loaded", "Panel v30 successfully loaded!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
