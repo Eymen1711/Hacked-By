@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (BIGGER MENU & TEXT)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (REBUILT & FIXED)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -17,8 +17,8 @@ local rainbowModeActive = true
 
 -- Global Speed & Jump Settings
 local currentWalkSpeed = 16
-local currentJumpPower = 16
-local autoFarmSpeed = 16
+local currentJumpPower = 50
+local autoFarmSpeed = 25
 
 local function getThemeColor(speed)
     if rainbowModeActive then
@@ -52,8 +52,8 @@ pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
 if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
 
 local notifHolder = Instance.new("Frame", notifGui)
-notifHolder.Size = UDim2.new(0, 280, 0, 400)
-notifHolder.Position = UDim2.new(1, -295, 1, -415)
+notifHolder.Size = UDim2.new(0, 300, 0, 400)
+notifHolder.Position = UDim2.new(1, -315, 1, -415)
 notifHolder.BackgroundTransparency = 1
 local notifLayout = Instance.new("UIListLayout", notifHolder)
 notifLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -63,7 +63,7 @@ notifLayout.Padding = UDim.new(0, 8)
 local function sendNotification(titleText, msgText, duration)
     task.spawn(function()
         local box = Instance.new("Frame", notifHolder)
-        box.Size = UDim2.new(1, 0, 0, 60)
+        box.Size = UDim2.new(1, 0, 0, 65)
         box.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
         box.BackgroundTransparency = 0.1
         box.Position = UDim2.new(1, 50, 0, 0)
@@ -82,22 +82,22 @@ local function sendNotification(titleText, msgText, duration)
         end)
 
         local tLbl = Instance.new("TextLabel", box)
-        tLbl.Size = UDim2.new(1, -15, 0, 22)
+        tLbl.Size = UDim2.new(1, -15, 0, 24)
         tLbl.Position = UDim2.new(0, 12, 0, 6)
         tLbl.BackgroundTransparency = 1
         tLbl.Text = titleText
         tLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tLbl.TextSize = 15
+        tLbl.TextSize = 16
         tLbl.Font = Enum.Font.Antique
         tLbl.TextXAlignment = Enum.TextXAlignment.Left
 
         local mLbl = Instance.new("TextLabel", box)
-        mLbl.Size = UDim2.new(1, -15, 0, 22)
-        mLbl.Position = UDim2.new(0, 12, 0, 28)
+        mLbl.Size = UDim2.new(1, -15, 0, 24)
+        mLbl.Position = UDim2.new(0, 12, 0, 30)
         mLbl.BackgroundTransparency = 1
         mLbl.Text = msgText
-        mLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
-        mLbl.TextSize = 13
+        mLbl.TextColor3 = Color3.fromRGB(190, 190, 190)
+        mLbl.TextSize = 14
         mLbl.Font = Enum.Font.Antique
         mLbl.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -118,8 +118,8 @@ pcall(function() gui.Parent = game:GetService("CoreGui") end)
 if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
 
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 380, 0, 230)
-frame.Position = UDim2.new(0.5, -190, 0.5, -115)
+frame.Size = UDim2.new(0, 400, 0, 240)
+frame.Position = UDim2.new(0.5, -200, 0.5, -120)
 frame.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
 frame.Active = true
 frame.Draggable = true
@@ -130,34 +130,34 @@ stroke.Thickness = 2
 rs.RenderStepped:Connect(function() if stroke and stroke.Parent then stroke.Color = getThemeColor(1) end end)
 
 local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 45)
+title.Size = UDim2.new(1, 0, 0, 50)
 title.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
 title.Text = "Hacked by (Key System)"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 16
+title.TextSize = 18
 title.Font = Enum.Font.Antique
 Instance.new("UICorner", title).CornerRadius = UDim.new(0, 12)
 
 local textBox = Instance.new("TextBox", frame)
-textBox.Size = UDim2.new(0.85, 0, 0, 45)
+textBox.Size = UDim2.new(0.85, 0, 0, 48)
 textBox.Position = UDim2.new(0.075, 0, 0.3, 0)
 textBox.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
 textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 textBox.PlaceholderText = "Enter key..."
 textBox.Text = ""
-textBox.TextSize = 15
+textBox.TextSize = 16
 textBox.Font = Enum.Font.Antique
-Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 6)
+Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 8)
 
 local getKeyBtn = Instance.new("TextButton", frame)
-getKeyBtn.Size = UDim2.new(0.4, 0, 0, 40)
+getKeyBtn.Size = UDim2.new(0.4, 0, 0, 45)
 getKeyBtn.Position = UDim2.new(0.075, 0, 0.62, 0)
 getKeyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 getKeyBtn.Text = "Get Key"
 getKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-getKeyBtn.TextSize = 15
+getKeyBtn.TextSize = 16
 getKeyBtn.Font = Enum.Font.Antique
-Instance.new("UICorner", getKeyBtn).CornerRadius = UDim.new(0, 6)
+Instance.new("UICorner", getKeyBtn).CornerRadius = UDim.new(0, 8)
 
 getKeyBtn.MouseButton1Click:Connect(function()
     if setclipboard then
@@ -169,14 +169,14 @@ getKeyBtn.MouseButton1Click:Connect(function()
 end)
 
 local loginBtn = Instance.new("TextButton", frame)
-loginBtn.Size = UDim2.new(0.4, 0, 0, 40)
+loginBtn.Size = UDim2.new(0.4, 0, 0, 45)
 loginBtn.Position = UDim2.new(0.525, 0, 0.62, 0)
 loginBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 loginBtn.Text = "Login"
 loginBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-loginBtn.TextSize = 15
+loginBtn.TextSize = 16
 loginBtn.Font = Enum.Font.Antique
-Instance.new("UICorner", loginBtn).CornerRadius = UDim.new(0, 6)
+Instance.new("UICorner", loginBtn).CornerRadius = UDim.new(0, 8)
 
 loginBtn.MouseButton1Click:Connect(function()
     if textBox.Text == CORRECT_KEY then
@@ -190,7 +190,7 @@ loginBtn.MouseButton1Click:Connect(function()
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
 
-        -- Constant Character Loop to enforce WalkSpeed & JumpPower on Respawn
+        -- Constant Character Loop to enforce WalkSpeed & JumpPower
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -213,16 +213,16 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         local fpsLabel = Instance.new("TextLabel", mgui)
-        fpsLabel.Size = UDim2.new(0, 130, 0, 35)
-        fpsLabel.Position = UDim2.new(0, 15, 1, -50)
+        fpsLabel.Size = UDim2.new(0, 140, 0, 40)
+        fpsLabel.Position = UDim2.new(0, 15, 1, -55)
         fpsLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
         fpsLabel.BackgroundTransparency = 0.3
         fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        fpsLabel.TextSize = 15
+        fpsLabel.TextSize = 16
         fpsLabel.Font = Enum.Font.Antique
         fpsLabel.Text = "FPS: 0"
         fpsLabel.Visible = false
-        Instance.new("UICorner", fpsLabel).CornerRadius = UDim.new(0, 6)
+        Instance.new("UICorner", fpsLabel).CornerRadius = UDim.new(0, 8)
         local fpsStroke = Instance.new("UIStroke", fpsLabel)
         rs.RenderStepped:Connect(function() if fpsStroke and fpsStroke.Parent then fpsStroke.Color = getThemeColor(1) end end)
 
@@ -244,12 +244,12 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         local toggleButton = Instance.new("TextButton", mgui)
-        toggleButton.Size = UDim2.new(0, 175, 0, 45)
+        toggleButton.Size = UDim2.new(0, 190, 0, 48)
         toggleButton.Position = UDim2.new(0, 40, 0, 40)
         toggleButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         toggleButton.Text = "Toggle Menu"
         toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        toggleButton.TextSize = 16
+        toggleButton.TextSize = 17
         toggleButton.Font = Enum.Font.Antique
         toggleButton.Active = true
         toggleButton.Draggable = true
@@ -258,12 +258,12 @@ loginBtn.MouseButton1Click:Connect(function()
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
         local shootButton = Instance.new("TextButton", mgui)
-        shootButton.Size = UDim2.new(0, 175, 0, 45)
-        shootButton.Position = UDim2.new(0, 40, 0, 100)
+        shootButton.Size = UDim2.new(0, 190, 0, 48)
+        shootButton.Position = UDim2.new(0, 40, 0, 105)
         shootButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         shootButton.Text = "Shoot Murderer"
         shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        shootButton.TextSize = 15
+        shootButton.TextSize = 16
         shootButton.Font = Enum.Font.Antique
         shootButton.Active = true
         shootButton.Draggable = true
@@ -312,11 +312,7 @@ loginBtn.MouseButton1Click:Connect(function()
                 params.FilterDescendantsInstances = {c2}
 
                 local raycastResult = workspace:Raycast(origin, direction, params)
-                local isVisible = false
-
-                if raycastResult and raycastResult.Instance and raycastResult.Instance:IsDescendantOf(murderer.Character) then
-                    isVisible = true
-                end
+                local isVisible = (raycastResult and raycastResult.Instance and raycastResult.Instance:IsDescendantOf(murderer.Character))
 
                 if isVisible then
                     local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
@@ -347,12 +343,12 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         local mapButton = Instance.new("TextButton", mgui)
-        mapButton.Size = UDim2.new(0, 175, 0, 45)
-        mapButton.Position = UDim2.new(0, 40, 0, 160)
+        mapButton.Size = UDim2.new(0, 190, 0, 48)
+        mapButton.Position = UDim2.new(0, 40, 0, 170)
         mapButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         mapButton.Text = "TP to Map"
         mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        mapButton.TextSize = 16
+        mapButton.TextSize = 17
         mapButton.Font = Enum.Font.Antique
         mapButton.Active = true
         mapButton.Draggable = true
@@ -380,12 +376,12 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         local lobbyButton = Instance.new("TextButton", mgui)
-        lobbyButton.Size = UDim2.new(0, 175, 0, 45)
-        lobbyButton.Position = UDim2.new(0, 40, 0, 220)
+        lobbyButton.Size = UDim2.new(0, 190, 0, 48)
+        lobbyButton.Position = UDim2.new(0, 40, 0, 235)
         lobbyButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         lobbyButton.Text = "TP to Lobby"
         lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        lobbyButton.TextSize = 16
+        lobbyButton.TextSize = 17
         lobbyButton.Font = Enum.Font.Antique
         lobbyButton.Active = true
         lobbyButton.Draggable = true
@@ -403,10 +399,10 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Expanded Main Panel Frame (Bigger width & height)
+        -- Main Panel Frame (Big & Clean)
         local f = Instance.new("Frame", mgui)
-        f.Size = UDim2.new(0, 520, 0, 560)
-        f.Position = UDim2.new(0.5, -260, 0.5, -280)
+        f.Size = UDim2.new(0, 560, 0, 600)
+        f.Position = UDim2.new(0.5, -280, 0.5, -300)
         f.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
         f.Active = true
         f.Draggable = true
@@ -416,24 +412,23 @@ loginBtn.MouseButton1Click:Connect(function()
         toggleButton.MouseButton1Click:Connect(function() f.Visible = not f.Visible end)
         Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
         local fStroke = Instance.new("UIStroke", f)
-        f.Transparency = 0
         fStroke.Transparency = 0.2
         rs.RenderStepped:Connect(function() if fStroke and fStroke.Parent then fStroke.Color = getThemeColor(1) end end)
 
         local t = Instance.new("TextLabel", f)
-        t.Size = UDim2.new(1, 0, 0, 48)
+        t.Size = UDim2.new(1, 0, 0, 52)
         t.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         t.Text = "Hacked by - Panel"
         t.TextColor3 = Color3.fromRGB(255, 255, 255)
-        t.TextSize = 17
+        t.TextSize = 18
         t.Font = Enum.Font.Antique
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
         local catHolder = Instance.new("ScrollingFrame", f)
-        catHolder.Size = UDim2.new(1, -24, 0, 38)
-        catHolder.Position = UDim2.new(0, 12, 0, 54)
+        catHolder.Size = UDim2.new(1, -24, 0, 42)
+        catHolder.Position = UDim2.new(0, 12, 0, 60)
         catHolder.BackgroundTransparency = 1
-        catHolder.CanvasSize = UDim2.new(0, 520, 0, 0)
+        catHolder.CanvasSize = UDim2.new(0, 550, 0, 0)
         catHolder.ScrollBarThickness = 0
 
         local catLayout = Instance.new("UIListLayout", catHolder)
@@ -443,8 +438,8 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local function createPage()
             local sc = Instance.new("ScrollingFrame", f)
-            sc.Size = UDim2.new(1, -24, 1, -110)
-            sc.Position = UDim2.new(0, 12, 0, 100)
+            sc.Size = UDim2.new(1, -24, 1, -120)
+            sc.Position = UDim2.new(0, 12, 0, 110)
             sc.BackgroundTransparency = 1
             sc.BorderSizePixel = 0
             sc.ScrollBarThickness = 6
@@ -454,7 +449,7 @@ loginBtn.MouseButton1Click:Connect(function()
             ll.Padding = UDim.new(0, 10)
             ll.SortOrder = Enum.SortOrder.LayoutOrder
             ll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                sc.CanvasSize = UDim2.new(0, 0, 0, ll.AbsoluteContentSize.Y + 25)
+                sc.CanvasSize = UDim2.new(0, 0, 0, ll.AbsoluteContentSize.Y + 30)
             end)
             return sc
         end
@@ -467,13 +462,13 @@ loginBtn.MouseButton1Click:Connect(function()
             table.insert(pageFrames, page)
 
             local cBtn = Instance.new("TextButton", catHolder)
-            cBtn.Size = UDim2.new(0, 94, 0, 36)
+            cBtn.Size = UDim2.new(0, 100, 0, 40)
             cBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
             cBtn.Text = catName
-            cBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
-            cBtn.TextSize = 13
+            cBtn.TextColor3 = Color3.fromRGB(230, 230, 230)
+            cBtn.TextSize = 14
             cBtn.Font = Enum.Font.Antique
-            Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 6)
+            Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 8)
 
             cBtn.MouseButton1Click:Connect(function()
                 for _, pFrame in ipairs(pageFrames) do pFrame.Visible = false end
@@ -484,45 +479,45 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local function Tog(parentContainer, titleText, defaultState, callbackFunc)
             local f2 = Instance.new("Frame", parentContainer)
-            f2.Size = UDim2.new(1, 0, 0, 44)
+            f2.Size = UDim2.new(1, 0, 0, 50)
             f2.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
             f2.BackgroundTransparency = 0.4
-            Instance.new("UICorner", f2).CornerRadius = UDim.new(0, 6)
+            Instance.new("UICorner", f2).CornerRadius = UDim.new(0, 8)
 
             local lb = Instance.new("TextLabel", f2)
-            lb.Size = UDim2.new(1, -60, 1, 0)
-            lb.Position = UDim2.new(0, 14, 0, 0)
+            lb.Size = UDim2.new(1, -70, 1, 0)
+            lb.Position = UDim2.new(0, 16, 0, 0)
             lb.BackgroundTransparency = 1
             lb.Text = titleText
-            lb.TextColor3 = Color3.fromRGB(235, 235, 235)
-            lb.TextSize = 14
+            lb.TextColor3 = Color3.fromRGB(240, 240, 240)
+            lb.TextSize = 15
             lb.Font = Enum.Font.Antique
             lb.TextXAlignment = Enum.TextXAlignment.Left
 
             local bg2 = Instance.new("Frame", f2)
-            bg2.Size = UDim2.new(0, 42, 0, 24)
-            bg2.Position = UDim2.new(1, -52, 0.5, -12)
+            bg2.Size = UDim2.new(0, 48, 0, 26)
+            bg2.Position = UDim2.new(1, -58, 0.5, -13)
             bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
             bg2.BorderSizePixel = 0
-            Instance.new("UICorner", bg2).CornerRadius = UDim.new(0, 12)
+            Instance.new("UICorner", bg2).CornerRadius = UDim.new(0, 13)
 
             local circ = Instance.new("Frame", bg2)
-            circ.Size = UDim2.new(0, 20, 0, 20)
-            circ.Position = UDim2.new(0, 2, 0.5, -10)
+            circ.Size = UDim2.new(0, 22, 0, 22)
+            circ.Position = UDim2.new(0, 2, 0.5, -11)
             circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
             circ.BorderSizePixel = 0
-            Instance.new("UICorner", circ).CornerRadius = UDim.new(0, 10)
+            Instance.new("UICorner", circ).CornerRadius = UDim.new(0, 11)
 
             local st = defaultState or false
             local function upd()
                 if st then
                     bg2.BackgroundColor3 = getThemeColor(1)
                     circ.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    pcall(function() circ:TweenPosition(UDim2.new(0, 20, 0.5, -10), "Out", "Quad", 0.2, true) end)
+                    pcall(function() circ:TweenPosition(UDim2.new(0, 24, 0.5, -11), "Out", "Quad", 0.2, true) end)
                 else
                     bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
                     circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-                    pcall(function() circ:TweenPosition(UDim2.new(0, 2, 0.5, -10), "Out", "Quad", 0.2, true) end)
+                    pcall(function() circ:TweenPosition(UDim2.new(0, 2, 0.5, -11), "Out", "Quad", 0.2, true) end)
                 end
             end
             upd()
@@ -538,11 +533,66 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end
 
+        -- Artır / Azalt butonlu Kusursuz Değer Kontrolü (Slider Sorununa Son)
+        local function createStepControl(parentContainer, labelName, defaultVal, minVal, maxVal, step, callback)
+            local frameBox = Instance.new("Frame", parentContainer)
+            frameBox.Size = UDim2.new(1, 0, 0, 60)
+            frameBox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+            frameBox.BackgroundTransparency = 0.4
+            Instance.new("UICorner", frameBox).CornerRadius = UDim.new(0, 8)
+
+            local lbl = Instance.new("TextLabel", frameBox)
+            lbl.Size = UDim2.new(1, -140, 1, 0)
+            lbl.Position = UDim2.new(0, 16, 0, 0)
+            lbl.BackgroundTransparency = 1
+            lbl.Text = labelName .. ": " .. defaultVal
+            lbl.TextColor3 = Color3.fromRGB(240, 240, 240)
+            lbl.TextSize = 15
+            lbl.Font = Enum.Font.Antique
+            lbl.TextXAlignment = Enum.TextXAlignment.Left
+
+            local val = defaultVal
+
+            local minusBtn = Instance.new("TextButton", frameBox)
+            minusBtn.Size = UDim2.new(0, 42, 0, 36)
+            minusBtn.Position = UDim2.new(1, -110, 0.5, -18)
+            minusBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+            minusBtn.Text = "-"
+            minusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            minusBtn.TextSize = 20
+            minusBtn.Font = Enum.Font.Antique
+            Instance.new("UICorner", minusBtn).CornerRadius = UDim.new(0, 6)
+
+            local plusBtn = Instance.new("TextButton", frameBox)
+            plusBtn.Size = UDim2.new(0, 42, 0, 36)
+            plusBtn.Position = UDim2.new(1, -58, 0.5, -18)
+            plusBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+            plusBtn.Text = "+"
+            plusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            plusBtn.TextSize = 20
+            plusBtn.Font = Enum.Font.Antique
+            Instance.new("UICorner", plusBtn).CornerRadius = UDim.new(0, 6)
+
+            minusBtn.MouseButton1Click:Connect(function()
+                val = math.clamp(val - step, minVal, maxVal)
+                lbl.Text = labelName .. ": " .. val
+                if callback then pcall(callback, val) end
+            end)
+
+            plusBtn.MouseButton1Click:Connect(function()
+                val = math.clamp(val + step, minVal, maxVal)
+                lbl.Text = labelName .. ": " .. val
+                if callback then pcall(callback, val) end
+            end)
+
+            return frameBox
+        end
+
         local O = {}
         
         Tog(pageFrames[1], "Rainbow Mode", true, function(s) rainbowModeActive = s end)
         local colorContainer = Instance.new("Frame", pageFrames[1])
-        colorContainer.Size = UDim2.new(1, 0, 0, 42)
+        colorContainer.Size = UDim2.new(1, 0, 0, 48)
         colorContainer.BackgroundTransparency = 1
         local colors = {
             {Name = "Red", Color = Color3.fromRGB(255, 50, 50)},
@@ -557,7 +607,7 @@ loginBtn.MouseButton1Click:Connect(function()
             cBtn.Position = UDim2.new((i-1)*0.205, 0, 0, 0)
             cBtn.BackgroundColor3 = colData.Color
             cBtn.Text = ""
-            Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 6)
+            Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 8)
             cBtn.MouseButton1Click:Connect(function()
                 rainbowModeActive = false
                 customThemeColor = colData.Color
@@ -573,8 +623,8 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(pageFrames[3], "Kill All (Murderer)", false, function(s) O.KA = s end)
         Tog(pageFrames[3], "Auto Avoid Knife", false, function(s) O.Avoid = s end)
         Tog(pageFrames[3], "God Mode Shield", false, function(s) O.GodMode = s end)
-        Tog(pageFrames[3], "God Fling Murderer (You Live, Target Dies)", false, function(s) O.FlingMurderer = s end)
-        Tog(pageFrames[3], "God Fling Sheriff (You Live, Target Dies)", false, function(s) O.FlingSheriff = s end)
+        Tog(pageFrames[3], "God Fling Murderer", false, function(s) O.FlingMurderer = s end)
+        Tog(pageFrames[3], "God Fling Sheriff", false, function(s) O.FlingSheriff = s end)
 
         Tog(pageFrames[4], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
         Tog(pageFrames[4], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
@@ -587,65 +637,13 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(pageFrames[4], "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
 
         Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
-        
-        -- Helper function to create custom sliders with bigger sizes
-        local function createSlider(parentContainer, labelName, defaultVal, callback)
-            local frameBox = Instance.new("Frame", parentContainer)
-            frameBox.Size = UDim2.new(1, 0, 0, 58)
-            frameBox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-            frameBox.BackgroundTransparency = 0.4
-            Instance.new("UICorner", frameBox).CornerRadius = UDim.new(0, 6)
 
-            local lbl = Instance.new("TextLabel", frameBox)
-            lbl.Size = UDim2.new(1, -20, 0, 24)
-            lbl.Position = UDim2.new(0, 14, 0, 5)
-            lbl.BackgroundTransparency = 1
-            lbl.Text = labelName .. ": " .. defaultVal
-            lbl.TextColor3 = Color3.fromRGB(235, 235, 235)
-            lbl.TextSize = 14
-            lbl.Font = Enum.Font.Antique
-            lbl.TextXAlignment = Enum.TextXAlignment.Left
-
-            local sliderBg = Instance.new("Frame", frameBox)
-            sliderBg.Size = UDim2.new(1, -28, 0, 10)
-            sliderBg.Position = UDim2.new(0, 14, 0, 36)
-            sliderBg.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-            Instance.new("UICorner", sliderBg).CornerRadius = UDim.new(0, 5)
-
-            local sliderFill = Instance.new("Frame", sliderBg)
-            sliderFill.Size = UDim2.new(defaultVal/100, 0, 1, 0)
-            sliderFill.BackgroundColor3 = customThemeColor
-            Instance.new("UICorner", sliderFill).CornerRadius = UDim.new(0, 5)
-            rs.RenderStepped:Connect(function() if sliderFill and sliderFill.Parent then sliderFill.BackgroundColor3 = getThemeColor(1) end end)
-
-            local val = defaultVal
-            local dragging = false
-            local sliderBtn = Instance.new("TextButton", sliderBg)
-            sliderBtn.Size = UDim2.new(1, 0, 1, 0)
-            sliderBtn.BackgroundTransparency = 1
-            sliderBtn.Text = ""
-
-            sliderBtn.MouseButton1Down:Connect(function() dragging = true end)
-            uis.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
-            uis.InputChanged:Connect(function(input)
-                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                    local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
-                    sliderFill.Size = UDim2.new(pos, 0, 1, 0)
-                    val = math.floor(pos * 100)
-                    if val < 1 then val = 1 end
-                    lbl.Text = labelName .. ": " .. val
-                    if callback then pcall(callback, val) end
-                end
-            end)
-            return frameBox
-        end
-
-        createSlider(pageFrames[5], "Autofarm Fly Speed", 16, function(v) autoFarmSpeed = v end)
-        createSlider(pageFrames[4], "WalkSpeed", 16, function(v)
+        createStepControl(pageFrames[5], "Autofarm Speed", 25, 10, 100, 5, function(v) autoFarmSpeed = v end)
+        createStepControl(pageFrames[4], "WalkSpeed", 16, 16, 200, 4, function(v)
             currentWalkSpeed = v
             pcall(function() pl.Character.Humanoid.WalkSpeed = v end)
         end)
-        createSlider(pageFrames[4], "JumpPower", 16, function(v)
+        createStepControl(pageFrames[4], "JumpPower", 50, 50, 300, 10, function(v)
             currentJumpPower = v
             pcall(function()
                 local hum = pl.Character.Humanoid
@@ -654,6 +652,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
+        -- Background Loops for Features
         task.spawn(function()
             while true do
                 task.wait(0.3)
@@ -814,7 +813,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- God Fling Murderer
         task.spawn(function()
             while true do
                 task.wait(0.1)
@@ -859,7 +857,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- God Fling Sheriff
         task.spawn(function()
             while true do
                 task.wait(0.1)
@@ -910,7 +907,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Smooth Flying Autofarm (Controlled by Autofarm Speed Slider)
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -944,7 +940,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Script fully ready with bigger UI and text!", 3)
+        sendNotification("Loaded", "Script fully ready with button-controlled speed/jump!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
