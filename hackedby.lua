@@ -290,61 +290,9 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        local shootButton = Instance.new("TextButton", mgui)
-        shootButton.Size = UDim2.new(0, 190, 0, 48)
-        shootButton.Position = UDim2.new(0, 40, 0, 170)
-        shootButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-        shootButton.Text = "Shoot Murderer"
-        shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        shootButton.TextSize = 16
-        shootButton.Font = CUSTOM_FONT
-        shootButton.Active = true
-        shootButton.Draggable = true
-        Instance.new("UICorner", shootButton).CornerRadius = UDim.new(0, 8)
-        local sbStroke = Instance.new("UIStroke", shootButton)
-        rs.RenderStepped:Connect(function() if sbStroke and sbStroke.Parent then sbStroke.Color = getThemeColor(1) end end)
-
-        shootButton.MouseButton1Click:Connect(function()
-            pcall(function()
-                local c2 = pl.Character
-                local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
-                if not gun and c2 and c2:FindFirstChild("Humanoid") then
-                    local bpGun = pl.Backpack:FindFirstChild("Gun")
-                    if bpGun then bpGun.Parent = c2; gun = bpGun end
-                end
-
-                if not gun then
-                    sendNotification("Error", "You don't have a gun!", 1.5)
-                    return
-                end
-
-                local murderer = nil
-                for _, v in pairs(p:GetPlayers()) do
-                    if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                        local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                        if hasKnife then
-                            murderer = v
-                            break
-                        end
-                    end
-                end
-
-                if not murderer then
-                    sendNotification("Info", "No Murderer found with knife!", 1.5)
-                    return
-                end
-
-                local murdererHRP = murderer.Character:FindFirstChild("HumanoidRootPart")
-                if not murdererHRP then return end
-                local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
-                if ev then ev:FireServer(murdererHRP.Position) end
-                sendNotification("Success", "Shot Murderer accurately!", 2)
-            end)
-        end)
-
         local mapButton = Instance.new("TextButton", mgui)
         mapButton.Size = UDim2.new(0, 190, 0, 48)
-        mapButton.Position = UDim2.new(0, 40, 0, 235)
+        mapButton.Position = UDim2.new(0, 40, 0, 170)
         mapButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         mapButton.Text = "TP to Map"
         mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -375,7 +323,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local lobbyButton = Instance.new("TextButton", mgui)
         lobbyButton.Size = UDim2.new(0, 190, 0, 48)
-        lobbyButton.Position = UDim2.new(0, 40, 0, 300)
+        lobbyButton.Position = UDim2.new(0, 40, 0, 235)
         lobbyButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         lobbyButton.Text = "TP to Lobby"
         lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -696,7 +644,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- DÜZELTİLMİŞ SİLENT AIM (Senin orijinal kodun baz alınarak esnetildi)
+        -- SILENT AIM LOOP
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -746,7 +694,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- GÜNCELLENEN AUTO GRAB GUN (Konumu kaydedip geri dönme özellikli)
+        -- AUTO GRAB GUN
         task.spawn(function()
             while true do
                 task.wait(0.2)
