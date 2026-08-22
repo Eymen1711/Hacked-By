@@ -1,4 +1,4 @@
--- palofsc: MM2 Ultimate Supreme Hub (Configurable Smooth Flight Auto Farm, Anti-Kick Safe, FPS Toggle & Supreme Values)
+-- palofsc: Hacked By (Configurable Safe Teleport/Flight Auto Farm, Live MM2Values, Anti-Kick, Safe Position & Auto Noclip)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -7,13 +7,14 @@ local CoreGui = game:GetService("CoreGui")
 local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Camera = Workspace.CurrentCamera
 
--- Global Uçma Hızı Değişkeni (Güvenli Varsayılan Değer: 75 - Oyundan Atmaz)
-_G.FlightSpeed = 75
+-- Global Uçma Hızı Değişkeni (Güvenli Varsayılan Değer: 60 - Oyundan Atmaz)
+_G.FlightSpeed = 60
 
 -- ==========================================
 -- 0. SOL ALT KÖŞE FPS GÖSTERGE BUTONU
@@ -133,22 +134,23 @@ Instance.new("UICorner", LoginBtn).CornerRadius = UDim.new(0, 8)
 -- ==========================================
 local function StartMainHub()
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "HackedByMM2Gui"
+    ScreenGui.Name = "HackedByGui"
     ScreenGui.Parent = CoreGui
     ScreenGui.ResetOnSpawn = false
 
-    local ToggleButton = Instance.new("TextButton", ScreenGui)
-    ToggleButton.Name = "ToggleUIButton"
-    ToggleButton.Size = UDim2.new(0, 130, 0, 40)
-    ToggleButton.Position = UDim2.new(0, 20, 0, 20)
-    ToggleButton.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
-    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleButton.Text = "⚡ Hacked By"
-    ToggleButton.TextSize = 14
-    ToggleButton.Font = Enum.Font.GothamBold
-    ToggleButton.Active = true
-    ToggleButton.Draggable = true
-    Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 8)
+    -- ANA PANELİ AÇIP KAPATAN YANSTAKİ HACKED BY BUTONU
+    local ToggleMainGuiBtn = Instance.new("TextButton", ScreenGui)
+    ToggleMainGuiBtn.Name = "ToggleMainGuiBtn"
+    ToggleMainGuiBtn.Size = UDim2.new(0, 150, 0, 40)
+    ToggleMainGuiBtn.Position = UDim2.new(0, 20, 0, 250)
+    ToggleMainGuiBtn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+    ToggleMainGuiBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleMainGuiBtn.Text = "⚡ Hacked By"
+    ToggleMainGuiBtn.TextSize = 12
+    ToggleMainGuiBtn.Font = Enum.Font.GothamBold
+    ToggleMainGuiBtn.Active = true
+    ToggleMainGuiBtn.Draggable = true
+    Instance.new("UICorner", ToggleMainGuiBtn).CornerRadius = UDim.new(0, 8)
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
@@ -158,22 +160,23 @@ local function StartMainHub()
     MainFrame.Size = UDim2.new(0, 450, 0, 500)
     MainFrame.Active = true
     MainFrame.Draggable = true
+    MainFrame.Visible = true
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
+
+    ToggleMainGuiBtn.MouseButton1Click:Connect(function()
+        MainFrame.Visible = not MainFrame.Visible
+    end)
 
     local MainStroke = Instance.new("UIStroke", MainFrame)
     MainStroke.Color = Color3.fromRGB(138, 43, 226)
     MainStroke.Thickness = 2
-
-    ToggleButton.MouseButton1Click:Connect(function()
-        MainFrame.Visible = not MainFrame.Visible
-    end)
 
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Parent = MainFrame
     TitleLabel.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
     TitleLabel.Size = UDim2.new(1, 0, 0, 50)
     TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.Text = "⚡ Hacked By - MM2 Ultimate Supreme"
+    TitleLabel.Text = "⚡ Hacked By"
     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLabel.TextSize = 15
     Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 14)
@@ -201,7 +204,7 @@ local function StartMainHub()
 
     local Tab1Btn = CreateTabButton("Main Features", 1)
     local Tab2Btn = CreateTabButton("Combat & Movement", 2)
-    local Tab3Btn = CreateTabButton("Supreme Values", 3)
+    local Tab3Btn = CreateTabButton("Values", 3)
 
     local PageContainer = Instance.new("Frame", MainFrame)
     PageContainer.BackgroundTransparency = 1
@@ -326,15 +329,14 @@ local function StartMainHub()
         end)
     end
 
-    -- AYARLANABİLİR VE ANTI-KICK GÜVENLİ UÇMA FONKSİYONU
+    -- GÜVENLİ VE ANTI-KICK UÇMA FONKSİYONU
     local function SmoothFlyTo(targetCFrame)
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
             if hrp then
                 local distance = (hrp.Position - targetCFrame.Position).Magnitude
-                -- Hız değerini kullanıcı slider ile belirler, 0'a bölünmeyi önlemek için math.max kullanılır
-                local currentSpeed = math.clamp(_G.FlightSpeed or 75, 20, 140)
+                local currentSpeed = math.clamp(_G.FlightSpeed or 60, 15, 90)
                 local flightTime = distance / currentSpeed 
                 
                 local tweenInfo = TweenInfo.new(flightTime, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
@@ -383,11 +385,14 @@ local function StartMainHub()
         end)
     end)
 
-    CreateToggle(Page1, "Kusursuz Auto Farm (Uçarak Topla)", function(state)
+    -- ÖLÜMÜ ÖNLEYEN, HARİTA DIŞINDAN TOPLAYAN VE AÇILINCA OTOMATİK NOCLIP AÇAN AUTO FARM
+    CreateToggle(Page1, "Kusursuz Auto Farm (Güvenli Topla)", function(state)
         _G.AutoFarm = state
+        _G.AutoNoclip = state
+
         task.spawn(function()
             while _G.AutoFarm do
-                task.wait(0.1)
+                task.wait(0.15)
                 pcall(function()
                     local foundCoin = false
                     for _, obj in ipairs(Workspace:GetDescendants()) do
@@ -395,7 +400,7 @@ local function StartMainHub()
                         if obj:IsA("BasePart") then
                             local n = obj.Name:lower()
                             if n == "coin" or n == "coinvisual" or n == "coin_visual" or string.find(n, "coin") or string.find(n, "event") or string.find(n, "drop") or string.find(n, "collect") or string.find(n, "token") then
-                                SmoothFlyTo(obj.CFrame + Vector3.new(0, 0.5, 0))
+                                SmoothFlyTo(obj.CFrame + Vector3.new(0, 1.8, 0))
                                 foundCoin = true
                             end
                         end
@@ -407,7 +412,7 @@ local function StartMainHub()
                                 for _, obj in ipairs(container:GetChildren()) do
                                     if not _G.AutoFarm then break end
                                     if obj:IsA("BasePart") then
-                                        SmoothFlyTo(obj.CFrame + Vector3.new(0, 0.5, 0))
+                                        SmoothFlyTo(obj.CFrame + Vector3.new(0, 1.8, 0))
                                     end
                                 end
                             end
@@ -416,6 +421,22 @@ local function StartMainHub()
                 end)
             end
         end)
+    end)
+
+    -- Arka Planda Noclip Döngüsü (Auto Farm ile senkronize çalışır)
+    RunService.Stepped:Connect(function()
+        if _G.AutoNoclip then
+            pcall(function()
+                local char = LocalPlayer.Character
+                if char then
+                    for _, part in ipairs(char:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.CanCollide = false
+                        end
+                    end
+                end
+            end)
+        end
     end)
 
     CreateToggle(Page1, "FullBright", function(state)
@@ -430,7 +451,7 @@ local function StartMainHub()
     end)
 
     -- ================= PAGE 2: COMBAT & MOVEMENT =================
-    CreateSlider(Page2, "Flight Speed (20-140 Safe)", 20, 140, 75, function(val)
+    CreateSlider(Page2, "Flight Speed (15-90 Safe)", 15, 90, 60, function(val)
         _G.FlightSpeed = val
     end)
 
@@ -442,32 +463,48 @@ local function StartMainHub()
         pcall(function() LocalPlayer.Character.Humanoid.JumpPower = val end)
     end)
 
-    -- ================= PAGE 3: TÜM GÜNCEL SUPREME VALUES =================
+    -- ================= PAGE 3: GÜNCEL MM2VALUES API/TABLO ENTEGRASYONU =================
     local MM2Values = {
-        ["Harvester"] = "5,300", ["Corrupt"] = "4,000", ["Evergun"] = "2,900",
-        ["Traveler's Gun"] = "5,700", ["Traveler's Axe"] = "4,500", ["Icepiercer"] = "2,450", 
-        ["Bat"] = "1,850", ["Evergreen"] = "3,100", ["Rainbow"] = "2,300", 
-        ["Watergun"] = "2,100", ["Swirly Gun"] = "2,050", ["Swirly Axe"] = "1,950",
-        ["Ocean"] = "1,750", ["Spectre"] = "1,600", ["Icebreaker"] = "1,400",
-        ["Wasteland"] = "1,200", ["Phantasm"] = "1,150", ["Sunset"] = "1,100",
-        ["Elderwood Scythe"] = "670", ["Ew Revolver"] = "620", ["Luger"] = "560",
-        ["Laser"] = "460", ["Darkbringer"] = "400", ["Lightbringer"] = "390",
-        ["Hallowscythe"] = "350", ["Blaster"] = "320", ["Virtual"] = "320",
-        ["Logchopper"] = "250", ["Hallowgun"] = "220", ["Minty"] = "230",
-        ["Hallow's Edge"] = "180", ["Battleaxe II"] = "140", ["Clockwork"] = "120",
-        ["Pixel"] = "110", ["Boneblade"] = "100", ["Candy"] = "900", 
-        ["Sugar"] = "850", ["Deathspike"] = "800", ["Chroma Luger"] = "1,250",
-        ["Chroma Laser"] = "1,050", ["Chroma Darkbringer"] = "950", ["Chroma Lightbringer"] = "900",
-        ["Chroma Slasher"] = "450", ["Chroma Fang"] = "380", ["Chroma Tides"] = "350",
-        ["Chroma Heat"] = "340", ["Chroma Saw"] = "300", ["Chroma Boneblade"] = "280",
-        ["Slasher"] = "70", ["Shark"] = "55", ["Cookieblade"] = "55",
-        ["Gingerblade"] = "60", ["Heat"] = "50", ["Fang"] = "45",
-        ["Tides"] = "45", ["Saw"] = "40", ["Hallow's Blade"] = "40",
-        ["Red Seer"] = "35", ["Blue Seer"] = "35", ["Purple Seer"] = "35",
-        ["Orange Seer"] = "35", ["Yellow Seer"] = "35", ["Bramble"] = "35",
-        ["Battleaxe"] = "30", ["Ghostblade"] = "30", ["Vampire's Edge"] = "30",
-        ["Prismatic"] = "30", ["Icewing"] = "25"
+        ["Harvester"] = "5,400", ["Corrupt"] = "4,100", ["Evergun"] = "3,000",
+        ["Traveler's Gun"] = "5,800", ["Traveler's Axe"] = "4,600", ["Icepiercer"] = "2,500", 
+        ["Bat"] = "1,900", ["Evergreen"] = "3,200", ["Rainbow"] = "2,350", 
+        ["Watergun"] = "2,150", ["Swirly Gun"] = "2,100", ["Swirly Axe"] = "2,000",
+        ["Ocean"] = "1,800", ["Spectre"] = "1,650", ["Icebreaker"] = "1,450",
+        ["Wasteland"] = "1,250", ["Phantasm"] = "1,200", ["Sunset"] = "1,150",
+        ["Elderwood Scythe"] = "690", ["Ew Revolver"] = "640", ["Luger"] = "580",
+        ["Laser"] = "480", ["Darkbringer"] = "420", ["Lightbringer"] = "400",
+        ["Hallowscythe"] = "370", ["Blaster"] = "330", ["Virtual"] = "330",
+        ["Logchopper"] = "260", ["Hallowgun"] = "230", ["Minty"] = "240",
+        ["Hallow's Edge"] = "190", ["Battleaxe II"] = "150", ["Clockwork"] = "130",
+        ["Pixel"] = "120", ["Boneblade"] = "110", ["Candy"] = "920", 
+        ["Sugar"] = "870", ["Deathspike"] = "820", ["Chroma Luger"] = "1,300",
+        ["Chroma Laser"] = "1,100", ["Chroma Darkbringer"] = "980", ["Chroma Lightbringer"] = "930",
+        ["Chroma Slasher"] = "470", ["Chroma Fang"] = "400", ["Chroma Tides"] = "370",
+        ["Chroma Heat"] = "360", ["Chroma Saw"] = "320", ["Chroma Boneblade"] = "290",
+        ["Slasher"] = "75", ["Shark"] = "60", ["Cookieblade"] = "60",
+        ["Gingerblade"] = "65", ["Heat"] = "55", ["Fang"] = "50",
+        ["Tides"] = "50", ["Saw"] = "45", ["Hallow's Blade"] = "45",
+        ["Red Seer"] = "40", ["Blue Seer"] = "40", ["Purple Seer"] = "40",
+        ["Orange Seer"] = "40", ["Yellow Seer"] = "40", ["Bramble"] = "40",
+        ["Battleaxe"] = "35", ["Ghostblade"] = "35", ["Vampire's Edge"] = "35",
+        ["Prismatic"] = "35", ["Icewing"] = "30"
     }
+
+    task.spawn(function()
+        pcall(function()
+            local response = HttpService:GetAsync("https://supremevaluelist.com/mm2/values.json")
+            if response then
+                local decoded = HttpService:JSONDecode(response)
+                if decoded and type(decoded) == "table" then
+                    for k, v in pairs(decoded) do
+                        if type(k) == "string" and type(v) == "string" then
+                            MM2Values[k] = v
+                        end
+                    end
+                end
+            end
+        end)
+    end)
 
     local SearchBox = Instance.new("TextBox", Page3)
     SearchBox.Size = UDim2.new(1, 0, 0, 38)
@@ -536,7 +573,7 @@ local function StartMainHub()
     local FloatShootBtn = Instance.new("TextButton", ScreenGui)
     FloatShootBtn.Name = "FloatShootBtn"
     FloatShootBtn.Size = UDim2.new(0, 150, 0, 40)
-    FloatShootBtn.Position = UDim2.new(0, 20, 0, 70)
+    FloatShootBtn.Position = UDim2.new(0, 20, 0, 20)
     FloatShootBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
     FloatShootBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     FloatShootBtn.Text = "🎯 SHOOT MURDER"
@@ -597,7 +634,7 @@ local function StartMainHub()
     local FloatKillAllBtn = Instance.new("TextButton", ScreenGui)
     FloatKillAllBtn.Name = "FloatKillAllBtn"
     FloatKillAllBtn.Size = UDim2.new(0, 150, 0, 40)
-    FloatKillAllBtn.Position = UDim2.new(0, 20, 0, 115)
+    FloatKillAllBtn.Position = UDim2.new(0, 20, 0, 65)
     FloatKillAllBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
     FloatKillAllBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     FloatKillAllBtn.Text = "⚔️ KILL ALL: [OFF]"
@@ -637,13 +674,14 @@ local function StartMainHub()
         end)
     end)
 
+    -- DOĞRUDAN ANINDA HARİTAYA IŞINLANMA (TELEPORT)
     local FloatTpMapBtn = Instance.new("TextButton", ScreenGui)
     FloatTpMapBtn.Name = "FloatTpMapBtn"
     FloatTpMapBtn.Size = UDim2.new(0, 150, 0, 40)
-    FloatTpMapBtn.Position = UDim2.new(0, 20, 0, 160)
+    FloatTpMapBtn.Position = UDim2.new(0, 20, 0, 110)
     FloatTpMapBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
     FloatTpMapBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    FloatTpMapBtn.Text = "🗺️ Fly to Map"
+    FloatTpMapBtn.Text = "🗺️ Teleport to Map"
     FloatTpMapBtn.TextSize = 12
     FloatTpMapBtn.Font = Enum.Font.GothamBold
     FloatTpMapBtn.Active = true
@@ -652,6 +690,9 @@ local function StartMainHub()
 
     FloatTpMapBtn.MouseButton1Click:Connect(function()
         pcall(function()
+            local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if not hrp then return end
+            
             local foundMap = false
             for _, obj in ipairs(Workspace:GetChildren()) do
                 local nameLower = obj.Name:lower()
@@ -659,7 +700,7 @@ local function StartMainHub()
                     if obj:FindFirstChild("Spawns") or obj:FindFirstChild("SpawnLocations") or obj:FindFirstChild("CoinContainer") or obj:FindFirstChild("Map") or #obj:GetChildren() > 5 then
                         for _, part in ipairs(obj:GetDescendants()) do
                             if part:IsA("BasePart") then
-                                SmoothFlyTo(part.CFrame + Vector3.new(0, 5, 0))
+                                hrp.CFrame = part.CFrame + Vector3.new(0, 5, 0)
                                 foundMap = true
                                 break
                             end
@@ -671,13 +712,14 @@ local function StartMainHub()
         end)
     end)
 
+    -- DOĞRUDAN ANINDA LOBBY'E IŞINLANMA (TELEPORT)
     local FloatTpLobbyBtn = Instance.new("TextButton", ScreenGui)
     FloatTpLobbyBtn.Name = "FloatTpLobbyBtn"
     FloatTpLobbyBtn.Size = UDim2.new(0, 150, 0, 40)
-    FloatTpLobbyBtn.Position = UDim2.new(0, 20, 0, 205)
+    FloatTpLobbyBtn.Position = UDim2.new(0, 20, 0, 155)
     FloatTpLobbyBtn.BackgroundColor3 = Color3.fromRGB(39, 174, 96)
     FloatTpLobbyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    FloatTpLobbyBtn.Text = "🏠 Fly to Lobby"
+    FloatTpLobbyBtn.Text = "🏠 Teleport to Lobby"
     FloatTpLobbyBtn.TextSize = 12
     FloatTpLobbyBtn.Font = Enum.Font.GothamBold
     FloatTpLobbyBtn.Active = true
@@ -686,11 +728,14 @@ local function StartMainHub()
 
     FloatTpLobbyBtn.MouseButton1Click:Connect(function()
         pcall(function()
+            local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if not hrp then return end
+
             local lobbySpawn = Workspace:FindFirstChild("Lobby") or Workspace:FindFirstChild("SpawnLocation") or Workspace:FindFirstChild("Spawns")
             if lobbySpawn and lobbySpawn:IsA("BasePart") then
-                SmoothFlyTo(lobbySpawn.CFrame + Vector3.new(0, 5, 0))
+                hrp.CFrame = lobbySpawn.CFrame + Vector3.new(0, 5, 0)
             else
-                SmoothFlyTo(CFrame.new(0, 10, 0))
+                hrp.CFrame = CFrame.new(0, 10, 0)
             end
         end)
     end)
@@ -698,7 +743,7 @@ local function StartMainHub()
     local FloatTradeBtn = Instance.new("TextButton", ScreenGui)
     FloatTradeBtn.Name = "FloatTradeBtn"
     FloatTradeBtn.Size = UDim2.new(0, 150, 0, 40)
-    FloatTradeBtn.Position = UDim2.new(0, 20, 0, 250)
+    FloatTradeBtn.Position = UDim2.new(0, 20, 0, 200)
     FloatTradeBtn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
     FloatTradeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     FloatTradeBtn.Text = "🔄 TRADE SCAM"
@@ -739,7 +784,7 @@ local function StartMainHub()
             statusLog.Position = UDim2.new(0, 10, 0, 50)
             statusLog.Size = UDim2.new(1, -20, 0, 60)
             statusLog.Font = Enum.Font.Gotham
-            statusLog.Text = "[LOG]: Trade system active. Scanning Supreme Values..."
+            statusLog.Text = "[LOG]: Trade system active. Scanning Values..."
             statusLog.TextColor3 = Color3.fromRGB(0, 255, 127)
             statusLog.TextSize = 11
             statusLog.TextWrapped = true
@@ -797,7 +842,7 @@ local function StartMainHub()
                                     vTag.Font = Enum.Font.GothamBold
                                     vTag.TextColor3 = Color3.fromRGB(255, 215, 0)
                                     vTag.TextSize = 13
-                                    vTag.Text = "Supreme Val: " .. MM2Values[iName]
+                                    vTag.Text = "Val: " .. MM2Values[iName]
                                 end
                             end
                         end
