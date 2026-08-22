@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (ERROR-FREE & CUSTOM SPEED/JUMP)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (BIGGER MENU & TEXT)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -14,6 +14,11 @@ local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36a
 
 local customThemeColor = Color3.fromRGB(0, 162, 255)
 local rainbowModeActive = true
+
+-- Global Speed & Jump Settings
+local currentWalkSpeed = 16
+local currentJumpPower = 16
+local autoFarmSpeed = 16
 
 local function getThemeColor(speed)
     if rainbowModeActive then
@@ -47,8 +52,8 @@ pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
 if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
 
 local notifHolder = Instance.new("Frame", notifGui)
-notifHolder.Size = UDim2.new(0, 260, 0, 400)
-notifHolder.Position = UDim2.new(1, -275, 1, -415)
+notifHolder.Size = UDim2.new(0, 280, 0, 400)
+notifHolder.Position = UDim2.new(1, -295, 1, -415)
 notifHolder.BackgroundTransparency = 1
 local notifLayout = Instance.new("UIListLayout", notifHolder)
 notifLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -58,7 +63,7 @@ notifLayout.Padding = UDim.new(0, 8)
 local function sendNotification(titleText, msgText, duration)
     task.spawn(function()
         local box = Instance.new("Frame", notifHolder)
-        box.Size = UDim2.new(1, 0, 0, 55)
+        box.Size = UDim2.new(1, 0, 0, 60)
         box.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
         box.BackgroundTransparency = 0.1
         box.Position = UDim2.new(1, 50, 0, 0)
@@ -77,22 +82,22 @@ local function sendNotification(titleText, msgText, duration)
         end)
 
         local tLbl = Instance.new("TextLabel", box)
-        tLbl.Size = UDim2.new(1, -15, 0, 20)
+        tLbl.Size = UDim2.new(1, -15, 0, 22)
         tLbl.Position = UDim2.new(0, 12, 0, 6)
         tLbl.BackgroundTransparency = 1
         tLbl.Text = titleText
         tLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tLbl.TextSize = 13
+        tLbl.TextSize = 15
         tLbl.Font = Enum.Font.Antique
         tLbl.TextXAlignment = Enum.TextXAlignment.Left
 
         local mLbl = Instance.new("TextLabel", box)
-        mLbl.Size = UDim2.new(1, -15, 0, 20)
-        mLbl.Position = UDim2.new(0, 12, 0, 26)
+        mLbl.Size = UDim2.new(1, -15, 0, 22)
+        mLbl.Position = UDim2.new(0, 12, 0, 28)
         mLbl.BackgroundTransparency = 1
         mLbl.Text = msgText
         mLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
-        mLbl.TextSize = 12
+        mLbl.TextSize = 13
         mLbl.Font = Enum.Font.Antique
         mLbl.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -113,8 +118,8 @@ pcall(function() gui.Parent = game:GetService("CoreGui") end)
 if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
 
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 360, 0, 220)
-frame.Position = UDim2.new(0.5, -180, 0.5, -110)
+frame.Size = UDim2.new(0, 380, 0, 230)
+frame.Position = UDim2.new(0.5, -190, 0.5, -115)
 frame.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
 frame.Active = true
 frame.Draggable = true
@@ -127,30 +132,30 @@ rs.RenderStepped:Connect(function() if stroke and stroke.Parent then stroke.Colo
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 45)
 title.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-title.Text = "Hacked by (Error-Free System)"
+title.Text = "Hacked by (Key System)"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 15
+title.TextSize = 16
 title.Font = Enum.Font.Antique
 Instance.new("UICorner", title).CornerRadius = UDim.new(0, 12)
 
 local textBox = Instance.new("TextBox", frame)
-textBox.Size = UDim2.new(0.85, 0, 0, 40)
+textBox.Size = UDim2.new(0.85, 0, 0, 45)
 textBox.Position = UDim2.new(0.075, 0, 0.3, 0)
 textBox.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
 textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 textBox.PlaceholderText = "Enter key..."
 textBox.Text = ""
-textBox.TextSize = 14
+textBox.TextSize = 15
 textBox.Font = Enum.Font.Antique
 Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 6)
 
 local getKeyBtn = Instance.new("TextButton", frame)
-getKeyBtn.Size = UDim2.new(0.4, 0, 0, 35)
+getKeyBtn.Size = UDim2.new(0.4, 0, 0, 40)
 getKeyBtn.Position = UDim2.new(0.075, 0, 0.62, 0)
 getKeyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 getKeyBtn.Text = "Get Key"
 getKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-getKeyBtn.TextSize = 14
+getKeyBtn.TextSize = 15
 getKeyBtn.Font = Enum.Font.Antique
 Instance.new("UICorner", getKeyBtn).CornerRadius = UDim.new(0, 6)
 
@@ -164,12 +169,12 @@ getKeyBtn.MouseButton1Click:Connect(function()
 end)
 
 local loginBtn = Instance.new("TextButton", frame)
-loginBtn.Size = UDim2.new(0.4, 0, 0, 35)
+loginBtn.Size = UDim2.new(0.4, 0, 0, 40)
 loginBtn.Position = UDim2.new(0.525, 0, 0.62, 0)
 loginBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 loginBtn.Text = "Login"
 loginBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-loginBtn.TextSize = 14
+loginBtn.TextSize = 15
 loginBtn.Font = Enum.Font.Antique
 Instance.new("UICorner", loginBtn).CornerRadius = UDim.new(0, 6)
 
@@ -185,13 +190,35 @@ loginBtn.MouseButton1Click:Connect(function()
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
 
+        -- Constant Character Loop to enforce WalkSpeed & JumpPower on Respawn
+        task.spawn(function()
+            while true do
+                task.wait(0.2)
+                pcall(function()
+                    local char = pl.Character
+                    if char then
+                        local hum = char:FindFirstChildOfClass("Humanoid")
+                        if hum then
+                            if hum.WalkSpeed ~= currentWalkSpeed then
+                                hum.WalkSpeed = currentWalkSpeed
+                            end
+                            hum.UseJumpPower = true
+                            if hum.JumpPower ~= currentJumpPower then
+                                hum.JumpPower = currentJumpPower
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
         local fpsLabel = Instance.new("TextLabel", mgui)
-        fpsLabel.Size = UDim2.new(0, 120, 0, 30)
-        fpsLabel.Position = UDim2.new(0, 15, 1, -45)
+        fpsLabel.Size = UDim2.new(0, 130, 0, 35)
+        fpsLabel.Position = UDim2.new(0, 15, 1, -50)
         fpsLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
         fpsLabel.BackgroundTransparency = 0.3
         fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        fpsLabel.TextSize = 14
+        fpsLabel.TextSize = 15
         fpsLabel.Font = Enum.Font.Antique
         fpsLabel.Text = "FPS: 0"
         fpsLabel.Visible = false
@@ -217,12 +244,12 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         local toggleButton = Instance.new("TextButton", mgui)
-        toggleButton.Size = UDim2.new(0, 160, 0, 40)
+        toggleButton.Size = UDim2.new(0, 175, 0, 45)
         toggleButton.Position = UDim2.new(0, 40, 0, 40)
         toggleButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         toggleButton.Text = "Toggle Menu"
         toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        toggleButton.TextSize = 15
+        toggleButton.TextSize = 16
         toggleButton.Font = Enum.Font.Antique
         toggleButton.Active = true
         toggleButton.Draggable = true
@@ -231,12 +258,12 @@ loginBtn.MouseButton1Click:Connect(function()
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
         local shootButton = Instance.new("TextButton", mgui)
-        shootButton.Size = UDim2.new(0, 160, 0, 40)
-        shootButton.Position = UDim2.new(0, 40, 0, 95)
+        shootButton.Size = UDim2.new(0, 175, 0, 45)
+        shootButton.Position = UDim2.new(0, 40, 0, 100)
         shootButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         shootButton.Text = "Shoot Murderer"
         shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        shootButton.TextSize = 14
+        shootButton.TextSize = 15
         shootButton.Font = Enum.Font.Antique
         shootButton.Active = true
         shootButton.Draggable = true
@@ -320,12 +347,12 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         local mapButton = Instance.new("TextButton", mgui)
-        mapButton.Size = UDim2.new(0, 160, 0, 40)
-        mapButton.Position = UDim2.new(0, 40, 0, 150)
+        mapButton.Size = UDim2.new(0, 175, 0, 45)
+        mapButton.Position = UDim2.new(0, 40, 0, 160)
         mapButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         mapButton.Text = "TP to Map"
         mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        mapButton.TextSize = 15
+        mapButton.TextSize = 16
         mapButton.Font = Enum.Font.Antique
         mapButton.Active = true
         mapButton.Draggable = true
@@ -353,12 +380,12 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         local lobbyButton = Instance.new("TextButton", mgui)
-        lobbyButton.Size = UDim2.new(0, 160, 0, 40)
-        lobbyButton.Position = UDim2.new(0, 40, 0, 205)
+        lobbyButton.Size = UDim2.new(0, 175, 0, 45)
+        lobbyButton.Position = UDim2.new(0, 40, 0, 220)
         lobbyButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         lobbyButton.Text = "TP to Lobby"
         lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        lobbyButton.TextSize = 15
+        lobbyButton.TextSize = 16
         lobbyButton.Font = Enum.Font.Antique
         lobbyButton.Active = true
         lobbyButton.Draggable = true
@@ -376,9 +403,10 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
+        -- Expanded Main Panel Frame (Bigger width & height)
         local f = Instance.new("Frame", mgui)
-        f.Size = UDim2.new(0, 400, 0, 480)
-        f.Position = UDim2.new(0.5, -200, 0.5, -240)
+        f.Size = UDim2.new(0, 520, 0, 560)
+        f.Position = UDim2.new(0.5, -260, 0.5, -280)
         f.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
         f.Active = true
         f.Draggable = true
@@ -388,44 +416,45 @@ loginBtn.MouseButton1Click:Connect(function()
         toggleButton.MouseButton1Click:Connect(function() f.Visible = not f.Visible end)
         Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
         local fStroke = Instance.new("UIStroke", f)
+        f.Transparency = 0
         fStroke.Transparency = 0.2
         rs.RenderStepped:Connect(function() if fStroke and fStroke.Parent then fStroke.Color = getThemeColor(1) end end)
 
         local t = Instance.new("TextLabel", f)
-        t.Size = UDim2.new(1, 0, 0, 40)
+        t.Size = UDim2.new(1, 0, 0, 48)
         t.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         t.Text = "Hacked by - Panel"
         t.TextColor3 = Color3.fromRGB(255, 255, 255)
-        t.TextSize = 14
+        t.TextSize = 17
         t.Font = Enum.Font.Antique
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
         local catHolder = Instance.new("ScrollingFrame", f)
-        catHolder.Size = UDim2.new(1, -20, 0, 32)
-        catHolder.Position = UDim2.new(0, 10, 0, 46)
+        catHolder.Size = UDim2.new(1, -24, 0, 38)
+        catHolder.Position = UDim2.new(0, 12, 0, 54)
         catHolder.BackgroundTransparency = 1
-        catHolder.CanvasSize = UDim2.new(0, 420, 0, 0)
+        catHolder.CanvasSize = UDim2.new(0, 520, 0, 0)
         catHolder.ScrollBarThickness = 0
 
         local catLayout = Instance.new("UIListLayout", catHolder)
         catLayout.FillDirection = Enum.FillDirection.Horizontal
         catLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        catLayout.Padding = UDim.new(0, 6)
+        catLayout.Padding = UDim.new(0, 8)
 
         local function createPage()
             local sc = Instance.new("ScrollingFrame", f)
-            sc.Size = UDim2.new(1, -20, 1, -90)
-            sc.Position = UDim2.new(0, 10, 0, 86)
+            sc.Size = UDim2.new(1, -24, 1, -110)
+            sc.Position = UDim2.new(0, 12, 0, 100)
             sc.BackgroundTransparency = 1
             sc.BorderSizePixel = 0
-            sc.ScrollBarThickness = 4
+            sc.ScrollBarThickness = 6
             sc.Visible = false
             rs.RenderStepped:Connect(function() if sc and sc.Parent then sc.ScrollBarImageColor3 = getThemeColor(1) end end)
             local ll = Instance.new("UIListLayout", sc)
-            ll.Padding = UDim.new(0, 8)
+            ll.Padding = UDim.new(0, 10)
             ll.SortOrder = Enum.SortOrder.LayoutOrder
             ll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                sc.CanvasSize = UDim2.new(0, 0, 0, ll.AbsoluteContentSize.Y + 20)
+                sc.CanvasSize = UDim2.new(0, 0, 0, ll.AbsoluteContentSize.Y + 25)
             end)
             return sc
         end
@@ -438,11 +467,11 @@ loginBtn.MouseButton1Click:Connect(function()
             table.insert(pageFrames, page)
 
             local cBtn = Instance.new("TextButton", catHolder)
-            cBtn.Size = UDim2.new(0, 85, 0, 30)
+            cBtn.Size = UDim2.new(0, 94, 0, 36)
             cBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
             cBtn.Text = catName
-            cBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-            cBtn.TextSize = 11
+            cBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
+            cBtn.TextSize = 13
             cBtn.Font = Enum.Font.Antique
             Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 6)
 
@@ -455,45 +484,45 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local function Tog(parentContainer, titleText, defaultState, callbackFunc)
             local f2 = Instance.new("Frame", parentContainer)
-            f2.Size = UDim2.new(1, 0, 0, 36)
+            f2.Size = UDim2.new(1, 0, 0, 44)
             f2.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
             f2.BackgroundTransparency = 0.4
             Instance.new("UICorner", f2).CornerRadius = UDim.new(0, 6)
 
             local lb = Instance.new("TextLabel", f2)
-            lb.Size = UDim2.new(1, -50, 1, 0)
-            lb.Position = UDim2.new(0, 12, 0, 0)
+            lb.Size = UDim2.new(1, -60, 1, 0)
+            lb.Position = UDim2.new(0, 14, 0, 0)
             lb.BackgroundTransparency = 1
             lb.Text = titleText
-            lb.TextColor3 = Color3.fromRGB(220, 220, 220)
-            lb.TextSize = 13
+            lb.TextColor3 = Color3.fromRGB(235, 235, 235)
+            lb.TextSize = 14
             lb.Font = Enum.Font.Antique
             lb.TextXAlignment = Enum.TextXAlignment.Left
 
             local bg2 = Instance.new("Frame", f2)
-            bg2.Size = UDim2.new(0, 36, 0, 20)
-            bg2.Position = UDim2.new(1, -44, 0.5, -10)
+            bg2.Size = UDim2.new(0, 42, 0, 24)
+            bg2.Position = UDim2.new(1, -52, 0.5, -12)
             bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
             bg2.BorderSizePixel = 0
-            Instance.new("UICorner", bg2).CornerRadius = UDim.new(0, 10)
+            Instance.new("UICorner", bg2).CornerRadius = UDim.new(0, 12)
 
             local circ = Instance.new("Frame", bg2)
-            circ.Size = UDim2.new(0, 16, 0, 16)
-            circ.Position = UDim2.new(0, 2, 0.5, -8)
+            circ.Size = UDim2.new(0, 20, 0, 20)
+            circ.Position = UDim2.new(0, 2, 0.5, -10)
             circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
             circ.BorderSizePixel = 0
-            Instance.new("UICorner", circ).CornerRadius = UDim.new(0, 8)
+            Instance.new("UICorner", circ).CornerRadius = UDim.new(0, 10)
 
             local st = defaultState or false
             local function upd()
                 if st then
                     bg2.BackgroundColor3 = getThemeColor(1)
                     circ.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    pcall(function() circ:TweenPosition(UDim2.new(0, 18, 0.5, -8), "Out", "Quad", 0.2, true) end)
+                    pcall(function() circ:TweenPosition(UDim2.new(0, 20, 0.5, -10), "Out", "Quad", 0.2, true) end)
                 else
                     bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
                     circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-                    pcall(function() circ:TweenPosition(UDim2.new(0, 2, 0.5, -8), "Out", "Quad", 0.2, true) end)
+                    pcall(function() circ:TweenPosition(UDim2.new(0, 2, 0.5, -10), "Out", "Quad", 0.2, true) end)
                 end
             end
             upd()
@@ -513,7 +542,7 @@ loginBtn.MouseButton1Click:Connect(function()
         
         Tog(pageFrames[1], "Rainbow Mode", true, function(s) rainbowModeActive = s end)
         local colorContainer = Instance.new("Frame", pageFrames[1])
-        colorContainer.Size = UDim2.new(1, 0, 0, 36)
+        colorContainer.Size = UDim2.new(1, 0, 0, 42)
         colorContainer.BackgroundTransparency = 1
         local colors = {
             {Name = "Red", Color = Color3.fromRGB(255, 50, 50)},
@@ -559,34 +588,34 @@ loginBtn.MouseButton1Click:Connect(function()
 
         Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
         
-        -- Helper function to create custom sliders up to 100 with default 16
+        -- Helper function to create custom sliders with bigger sizes
         local function createSlider(parentContainer, labelName, defaultVal, callback)
             local frameBox = Instance.new("Frame", parentContainer)
-            frameBox.Size = UDim2.new(1, 0, 0, 50)
+            frameBox.Size = UDim2.new(1, 0, 0, 58)
             frameBox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
             frameBox.BackgroundTransparency = 0.4
             Instance.new("UICorner", frameBox).CornerRadius = UDim.new(0, 6)
 
             local lbl = Instance.new("TextLabel", frameBox)
-            lbl.Size = UDim2.new(1, -20, 0, 20)
-            lbl.Position = UDim2.new(0, 12, 0, 4)
+            lbl.Size = UDim2.new(1, -20, 0, 24)
+            lbl.Position = UDim2.new(0, 14, 0, 5)
             lbl.BackgroundTransparency = 1
             lbl.Text = labelName .. ": " .. defaultVal
-            lbl.TextColor3 = Color3.fromRGB(220, 220, 220)
-            lbl.TextSize = 12
+            lbl.TextColor3 = Color3.fromRGB(235, 235, 235)
+            lbl.TextSize = 14
             lbl.Font = Enum.Font.Antique
             lbl.TextXAlignment = Enum.TextXAlignment.Left
 
             local sliderBg = Instance.new("Frame", frameBox)
-            sliderBg.Size = UDim2.new(1, -24, 0, 8)
-            sliderBg.Position = UDim2.new(0, 12, 0, 32)
+            sliderBg.Size = UDim2.new(1, -28, 0, 10)
+            sliderBg.Position = UDim2.new(0, 14, 0, 36)
             sliderBg.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-            Instance.new("UICorner", sliderBg).CornerRadius = UDim.new(0, 4)
+            Instance.new("UICorner", sliderBg).CornerRadius = UDim.new(0, 5)
 
             local sliderFill = Instance.new("Frame", sliderBg)
             sliderFill.Size = UDim2.new(defaultVal/100, 0, 1, 0)
             sliderFill.BackgroundColor3 = customThemeColor
-            Instance.new("UICorner", sliderFill).CornerRadius = UDim.new(0, 4)
+            Instance.new("UICorner", sliderFill).CornerRadius = UDim.new(0, 5)
             rs.RenderStepped:Connect(function() if sliderFill and sliderFill.Parent then sliderFill.BackgroundColor3 = getThemeColor(1) end end)
 
             local val = defaultVal
@@ -611,16 +640,17 @@ loginBtn.MouseButton1Click:Connect(function()
             return frameBox
         end
 
-        local autoFarmSpeed = 16
         createSlider(pageFrames[5], "Autofarm Fly Speed", 16, function(v) autoFarmSpeed = v end)
         createSlider(pageFrames[4], "WalkSpeed", 16, function(v)
+            currentWalkSpeed = v
             pcall(function() pl.Character.Humanoid.WalkSpeed = v end)
         end)
         createSlider(pageFrames[4], "JumpPower", 16, function(v)
+            currentJumpPower = v
             pcall(function()
                 local hum = pl.Character.Humanoid
                 hum.UseJumpPower = true
-                hum.JumpPower = v * 3 -- Adjusted scaling for realistic jump feel while keeping UI slider max 100
+                hum.JumpPower = v
             end)
         end)
 
@@ -880,7 +910,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Smooth Flying Autofarm (Controlled by Speed Slider)
+        -- Smooth Flying Autofarm (Controlled by Autofarm Speed Slider)
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -894,7 +924,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                 if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) and v.Transparency < 1 then
                                     local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
                                     local distance = (hrp.Position - targetCF.Position).Magnitude
-                                    local travelTime = math.clamp(distance / (autoFarmSpeed * 10), 0.02, 0.4)
+                                    local travelTime = math.clamp(distance / (autoFarmSpeed * 15), 0.01, 0.3)
                                     
                                     local startTime = tick()
                                     local startCF = hrp.CFrame
@@ -905,7 +935,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                         rs.RenderStepped:Wait()
                                     end
                                     hrp.CFrame = targetCF
-                                    task.wait(0.03 + math.random(1, 5)/100)
+                                    task.wait(0.02 + math.random(1, 3)/100)
                                 end
                             end
                         end
@@ -914,7 +944,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Hacked by script ready with custom speed & jump controls!", 3)
+        sendNotification("Loaded", "Script fully ready with bigger UI and text!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
