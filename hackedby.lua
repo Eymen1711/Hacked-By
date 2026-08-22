@@ -463,36 +463,42 @@ local function StartMainHub()
         pcall(function() LocalPlayer.Character.Humanoid.JumpPower = val end)
     end)
 
-    -- ================= PAGE 3: GÜNCEL MM2VALUES API/TABLO ENTEGRASYONU =================
+    -- ================= PAGE 3: GÜNCEL MM2VALUES.COM LİSTESİ =================
     local MM2Values = {
-        ["Harvester"] = "5,400", ["Corrupt"] = "4,100", ["Evergun"] = "3,000",
-        ["Traveler's Gun"] = "5,800", ["Traveler's Axe"] = "4,600", ["Icepiercer"] = "2,500", 
-        ["Bat"] = "1,900", ["Evergreen"] = "3,200", ["Rainbow"] = "2,350", 
-        ["Watergun"] = "2,150", ["Swirly Gun"] = "2,100", ["Swirly Axe"] = "2,000",
-        ["Ocean"] = "1,800", ["Spectre"] = "1,650", ["Icebreaker"] = "1,450",
-        ["Wasteland"] = "1,250", ["Phantasm"] = "1,200", ["Sunset"] = "1,150",
-        ["Elderwood Scythe"] = "690", ["Ew Revolver"] = "640", ["Luger"] = "580",
-        ["Laser"] = "480", ["Darkbringer"] = "420", ["Lightbringer"] = "400",
-        ["Hallowscythe"] = "370", ["Blaster"] = "330", ["Virtual"] = "330",
+        -- Ancients
+        ["Harvester"] = "5,400", ["Traveler's Gun"] = "5,800", ["Traveler's Axe"] = "4,600",
+        ["Icepiercer"] = "2,500", ["Bat"] = "1,900", ["Evergreen"] = "3,200", 
+        ["Rainbow"] = "2,350", ["Watergun"] = "2,150", ["Swirly Gun"] = "2,100", 
+        ["Swirly Axe"] = "2,000", ["Ocean"] = "1,800", ["Spectre"] = "1,650",
+        ["Elderwood Scythe"] = "690", ["Hallowscythe"] = "370", ["Icebreaker"] = "1,450",
+        -- Godlies
+        ["Corrupt"] = "4,100", ["Evergun"] = "3,000", ["Wasteland"] = "1,250", 
+        ["Phantasm"] = "1,200", ["Sunset"] = "1,150", ["Ew Revolver"] = "640", 
+        ["Luger"] = "580", ["Laser"] = "480", ["Darkbringer"] = "420", 
+        ["Lightbringer"] = "400", ["Blaster"] = "330", ["Virtual"] = "330",
         ["Logchopper"] = "260", ["Hallowgun"] = "230", ["Minty"] = "240",
         ["Hallow's Edge"] = "190", ["Battleaxe II"] = "150", ["Clockwork"] = "130",
         ["Pixel"] = "120", ["Boneblade"] = "110", ["Candy"] = "920", 
-        ["Sugar"] = "870", ["Deathspike"] = "820", ["Chroma Luger"] = "1,300",
-        ["Chroma Laser"] = "1,100", ["Chroma Darkbringer"] = "980", ["Chroma Lightbringer"] = "930",
-        ["Chroma Slasher"] = "470", ["Chroma Fang"] = "400", ["Chroma Tides"] = "370",
-        ["Chroma Heat"] = "360", ["Chroma Saw"] = "320", ["Chroma Boneblade"] = "290",
-        ["Slasher"] = "75", ["Shark"] = "60", ["Cookieblade"] = "60",
-        ["Gingerblade"] = "65", ["Heat"] = "55", ["Fang"] = "50",
-        ["Tides"] = "50", ["Saw"] = "45", ["Hallow's Blade"] = "45",
-        ["Red Seer"] = "40", ["Blue Seer"] = "40", ["Purple Seer"] = "40",
-        ["Orange Seer"] = "40", ["Yellow Seer"] = "40", ["Bramble"] = "40",
-        ["Battleaxe"] = "35", ["Ghostblade"] = "35", ["Vampire's Edge"] = "35",
-        ["Prismatic"] = "35", ["Icewing"] = "30"
+        ["Sugar"] = "870", ["Deathspike"] = "820", ["Slasher"] = "75", 
+        ["Shark"] = "60", ["Cookieblade"] = "60", ["Gingerblade"] = "65", 
+        ["Heat"] = "55", ["Fang"] = "50", ["Tides"] = "50", ["Saw"] = "45", 
+        ["Hallow's Blade"] = "45", ["Red Seer"] = "40", ["Blue Seer"] = "40", 
+        ["Purple Seer"] = "40", ["Orange Seer"] = "40", ["Yellow Seer"] = "40", 
+        ["Bramble"] = "40", ["Battleaxe"] = "35", ["Ghostblade"] = "35", 
+        ["Vampire's Edge"] = "35", ["Prismatic"] = "35", ["Icewing"] = "30",
+        -- Chromas
+        ["Chroma Traveler's Gun"] = "220,000", ["Chroma Evergun"] = "74,500", 
+        ["Chroma Evergreen"] = "48,000", ["Chroma Luger"] = "1,300", 
+        ["Chroma Laser"] = "1,100", ["Chroma Darkbringer"] = "980", 
+        ["Chroma Lightbringer"] = "930", ["Chroma Slasher"] = "470", 
+        ["Chroma Fang"] = "400", ["Chroma Tides"] = "370", ["Chroma Heat"] = "360", 
+        ["Chroma Saw"] = "320", ["Chroma Boneblade"] = "290"
     }
 
+    -- mm2values.com canlı veri çekme denemesi (API fallback)
     task.spawn(function()
         pcall(function()
-            local response = HttpService:GetAsync("https://supremevaluelist.com/mm2/values.json")
+            local response = HttpService:GetAsync("https://mm2values.com/api/values")
             if response then
                 local decoded = HttpService:JSONDecode(response)
                 if decoded and type(decoded) == "table" then
@@ -510,7 +516,7 @@ local function StartMainHub()
     SearchBox.Size = UDim2.new(1, 0, 0, 38)
     SearchBox.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
     SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SearchBox.PlaceholderText = "🔍 Search weapon name (e.g. Harvester)..."
+    SearchBox.PlaceholderText = "🔍 Search mm2values weapon (e.g. Harvester)..."
     SearchBox.Text = ""
     SearchBox.TextSize = 13
     SearchBox.Font = Enum.Font.GothamSemibold
@@ -674,7 +680,7 @@ local function StartMainHub()
         end)
     end)
 
-    -- DOĞRUDAN ANINDA HARİTAYA IŞINLANMA (TELEPORT)
+    -- DÜZELTİLMİŞ: HARİTAYA GÜVENLİ VE HAREKETİ ENGELLEMEYECEK ŞEKİLDE IŞINLANMA
     local FloatTpMapBtn = Instance.new("TextButton", ScreenGui)
     FloatTpMapBtn.Name = "FloatTpMapBtn"
     FloatTpMapBtn.Size = UDim2.new(0, 150, 0, 40)
@@ -690,24 +696,49 @@ local function StartMainHub()
 
     FloatTpMapBtn.MouseButton1Click:Connect(function()
         pcall(function()
-            local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            local char = LocalPlayer.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            local humanoid = char and char:FindFirstChildOfClass("Humanoid")
             if not hrp then return end
             
-            local foundMap = false
+            local foundSpawn = nil
             for _, obj in ipairs(Workspace:GetChildren()) do
                 local nameLower = obj.Name:lower()
                 if obj:IsA("Model") and (nameLower ~= "normal" and nameLower ~= "lounge" and nameLower ~= "lobby" and nameLower ~= "camera" and nameLower ~= "terrain") then
-                    if obj:FindFirstChild("Spawns") or obj:FindFirstChild("SpawnLocations") or obj:FindFirstChild("CoinContainer") or obj:FindFirstChild("Map") or #obj:GetChildren() > 5 then
+                    -- Harita içi spawn veya coin konteynırı bul
+                    local spawnsFolder = obj:FindFirstChild("SpawnLocations") or obj:FindFirstChild("Spawns")
+                    if spawnsFolder and #spawnsFolder:GetChildren() > 0 then
+                        foundSpawn = spawnsFolder:GetChildren()[1]
+                        break
+                    else
                         for _, part in ipairs(obj:GetDescendants()) do
-                            if part:IsA("BasePart") then
-                                hrp.CFrame = part.CFrame + Vector3.new(0, 5, 0)
-                                foundMap = true
+                            if part:IsA("BasePart") and (string.find(part.Name:lower(), "spawn") or string.find(part.Name:lower(), "floor") or string.find(part.Name:lower(), "part")) then
+                                foundSpawn = part
                                 break
                             end
                         end
                     end
                 end
-                if foundMap then break end
+                if foundSpawn then break end
+            end
+
+            if foundSpawn and foundSpawn:IsA("BasePart") then
+                hrp.CFrame = foundSpawn.CFrame + Vector3.new(0, 6, 0)
+            else
+                hrp.CFrame = CFrame.new(0, 50, 0)
+            end
+
+            -- Hareket etmeme (Freeze) sorununu kökten çözmek için hız ve fizik durumunu yeniliyoruz
+            task.wait(0.1)
+            if humanoid then
+                humanoid.PlatformStand = false
+                humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+            end
+            for _, p in ipairs(char:GetDescendants()) do
+                if p:IsA("BasePart") then
+                    p.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    p.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                end
             end
         end)
     end)
@@ -728,7 +759,9 @@ local function StartMainHub()
 
     FloatTpLobbyBtn.MouseButton1Click:Connect(function()
         pcall(function()
-            local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            local char = LocalPlayer.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            local humanoid = char and char:FindFirstChildOfClass("Humanoid")
             if not hrp then return end
 
             local lobbySpawn = Workspace:FindFirstChild("Lobby") or Workspace:FindFirstChild("SpawnLocation") or Workspace:FindFirstChild("Spawns")
@@ -736,6 +769,18 @@ local function StartMainHub()
                 hrp.CFrame = lobbySpawn.CFrame + Vector3.new(0, 5, 0)
             else
                 hrp.CFrame = CFrame.new(0, 10, 0)
+            end
+
+            task.wait(0.1)
+            if humanoid then
+                humanoid.PlatformStand = false
+                humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+            end
+            for _, p in ipairs(char:GetDescendants()) do
+                if p:IsA("BasePart") then
+                    p.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    p.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                end
             end
         end)
     end)
