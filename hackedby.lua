@@ -1,4 +1,4 @@
--- palofsc: Hacked By (Map Teleport & Anti-Trade Scam Fix Edition)
+-- palofsc: Hacked By (Ultimate MM2 Edition - English)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -12,11 +12,18 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Camera = Workspace.CurrentCamera
 
--- Global Uçma Hızı Değişkeni
+-- Global Variables
 _G.FlightSpeed = 60
+_G.RoleESP = false
+_G.AutoGrabGun = false
+_G.AntiTradeScam = false
+_G.AutoFarm = false
+_G.AutoNoclip = false
+_G.FullBright = false
+_G.KillAllActive = false
 
 -- ==========================================
--- 0. SOL ALT KÖŞE FPS GÖSTERGE BUTONU
+-- 0. BOTTOM LEFT FPS COUNTER
 -- ==========================================
 local FpsGui = Instance.new("ScreenGui")
 FpsGui.Name = "HackedBy_FpsCounter"
@@ -61,7 +68,7 @@ RunService.RenderStepped:Connect(function()
 end)
 
 -- ==========================================
--- 1. ŞIK KEY SİSTEMİ
+-- 1. KEY SYSTEM GUI
 -- ==========================================
 local KeySystemGui = Instance.new("ScreenGui")
 KeySystemGui.Name = "HackedBy_KeySystem"
@@ -129,7 +136,7 @@ LoginBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", LoginBtn).CornerRadius = UDim.new(0, 8)
 
 -- ==========================================
--- 2. ANA PANEL & YÜZEN ÖZELLİKLER
+-- 2. MAIN HUB & TABS
 -- ==========================================
 local function StartMainHub()
     local ScreenGui = Instance.new("ScreenGui")
@@ -137,14 +144,13 @@ local function StartMainHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.ResetOnSpawn = false
 
-    -- SOL PANELİ AÇIP KAPATAN BUTON
     local ToggleMainGuiBtn = Instance.new("TextButton", ScreenGui)
     ToggleMainGuiBtn.Name = "ToggleMainGuiBtn"
     ToggleMainGuiBtn.Size = UDim2.new(0, 150, 0, 40)
     ToggleMainGuiBtn.Position = UDim2.new(0, 20, 0, 250)
     ToggleMainGuiBtn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
     ToggleMainGuiBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleMainGuiBtn.Text = "⚡ Hacked By"
+    ToggleMainGuiBtn.Text = "⚡ Hacked By Hub"
     ToggleMainGuiBtn.TextSize = 12
     ToggleMainGuiBtn.Font = Enum.Font.GothamBold
     ToggleMainGuiBtn.Active = true
@@ -175,7 +181,7 @@ local function StartMainHub()
     TitleLabel.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
     TitleLabel.Size = UDim2.new(1, 0, 0, 50)
     TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.Text = "⚡ Hacked By"
+    TitleLabel.Text = "⚡ Hacked By - Murder Mystery 2"
     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLabel.TextSize = 15
     Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 14)
@@ -276,7 +282,6 @@ local function StartMainHub()
         Label.Position = UDim2.new(0, 10, 0, 5)
         Label.Size = UDim2.new(1, -20, 0, 20)
         Label.Font = Enum.Font.GothamBold
-        Label.Text = name .. ": " + default -- Güvenli metin birleşimi için
         Label.Text = name .. ": " .. default
         Label.TextColor3 = Color3.fromRGB(220, 220, 220)
         Label.TextSize = 13
@@ -356,7 +361,6 @@ local function StartMainHub()
         end)
     end)
 
-    -- BİLDİRİM EKRANI (NOTIF)
     local NotificationLabel = Instance.new("TextLabel", ScreenGui)
     NotificationLabel.Name = "NotificationLabel"
     NotificationLabel.Size = UDim2.new(0, 350, 0, 40)
@@ -382,33 +386,27 @@ local function StartMainHub()
         end)
     end
 
-    -- AUTO GRAB GUN (IŞINLANIP GERİ DÖNMEK + ŞERİF ÖLDÜ UYARISI)
-    CreateToggle(Page1, "Auto Grab Gun (Anında Işınlan & Dön)", function(state)
+    CreateToggle(Page1, "Auto Grab Gun", function(state)
         _G.AutoGrabGun = state
     end)
 
-    -- ANTI TRADE SCAM KORUMA SİSTEMİ
-    CreateToggle(Page1, "Anti Trade Scam (Trade Koruması)", function(state)
+    CreateToggle(Page1, "Anti Trade Scam", function(state)
         _G.AntiTradeScam = state
-        ShowNotification(_G.AntiTradeScam and "🛡️ Anti Trade Scam Aktif!" or "❌ Anti Trade Scam Kapandı")
+        ShowNotification(_G.AntiTradeScam and "🛡️ Anti Trade Scam Enabled!" or "❌ Anti Trade Scam Disabled")
         
-        -- Karşı taraf trade esnasında ani değişim yaparsa yakalayan koruma döngüsü
         task.spawn(function()
             while _G.AntiTradeScam do
                 task.wait(0.5)
                 pcall(function()
-                    -- MM2 Trade arayüzü kontrolü
                     local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
                     if tradeGui and tradeGui.Enabled then
-                        -- Ekstra trade güvenlik denetimi: Karşı taraf eşya çekerse bildirim at
-                        ShowNotification("⚠️ Dikkat: Karşı taraf işlem yapıyor! Scam'e karşı uyanık ol!")
+                        ShowNotification("⚠️ Warning: Trade is active! Watch out for sudden item swaps!")
                     end
                 end)
             end
         end)
     end)
 
-    -- ARKA PLAN ŞERİF ÖLÜM VE GÜN TESPİT SİSTEMİ
     task.spawn(function()
         local lastGunFound = false
         while true do
@@ -425,7 +423,7 @@ local function StartMainHub()
                 if gunDrop then
                     if not lastGunFound then
                         lastGunFound = true
-                        ShowNotification("⚠️ Şerif Öldü! Tabanca Yere Düştü!")
+                        ShowNotification("⚠️ Sheriff is Dead! Gun Dropped!")
 
                         if _G.AutoGrabGun then
                             local char = LocalPlayer.Character
@@ -451,7 +449,7 @@ local function StartMainHub()
         end
     end)
 
-    CreateToggle(Page1, "Kusursuz Auto Farm (Güvenli Topla)", function(state)
+    CreateToggle(Page1, "Auto Farm Coins", function(state)
         _G.AutoFarm = state
         _G.AutoNoclip = state
 
@@ -515,22 +513,58 @@ local function StartMainHub()
     end)
 
     -- ================= PAGE 2: COMBAT & MOVEMENT =================
-    CreateSlider(Page2, "Flight Speed (15-90 Safe)", 15, 90, 60, function(val)
+    CreateSlider(Page2, "Flight Speed", 15, 90, 60, function(val)
         _G.FlightSpeed = val
     end)
 
-    CreateSlider(Page2, "WalkSpeed (1-100)", 16, 100, 16, function(val)
+    CreateSlider(Page2, "WalkSpeed", 16, 100, 16, function(val)
         pcall(function() LocalPlayer.Character.Humanoid.WalkSpeed = val end)
     end)
 
-    CreateSlider(Page2, "JumpPower (1-100)", 50, 100, 50, function(val)
+    CreateSlider(Page2, "JumpPower", 50, 100, 50, function(val)
         pcall(function() LocalPlayer.Character.Humanoid.JumpPower = val end)
     end)
 
+    CreateToggle(Page2, "Kill All (As Murderer)", function(state)
+        _G.KillAllActive = state
+        task.spawn(function()
+            while _G.KillAllActive do
+                task.wait(0.4)
+                pcall(function()
+                    local char = LocalPlayer.Character
+                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                    if not hrp then return end
+
+                    local knife = char:FindFirstChild("Knife") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Knife"))
+                    if knife then knife.Parent = char end
+
+                    for _, p in ipairs(Players:GetPlayers()) do
+                        if not _G.KillAllActive then break end
+                        if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                            local targetHrp = p.Character.HumanoidRootPart
+                            local targetHumanoid = p.Character:FindFirstChildOfClass("Humanoid")
+                            if targetHumanoid and targetHumanoid.Health > 0 then
+                                hrp.CFrame = targetHrp.CFrame * CFrame.new(0, 0, 2)
+                                task.wait(0.1)
+                                if knife and knife:FindFirstChild("Stab") then
+                                    knife.Stab:FireServer()
+                                end
+                                if knife and knife:FindFirstChild("Activate") then
+                                    pcall(function() knife:Activate() end)
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+    end)
+
     -- ==========================================
-    -- 3. EKRANDA YÜZEN ÖZELLİK BUTONLARI
+    -- 3. FLOATING ACTION BUTTONS
     -- ==========================================
 
+    -- SHOOT MURDER BUTTON
     local FloatShootBtn = Instance.new("TextButton", ScreenGui)
     FloatShootBtn.Name = "FloatShootBtn"
     FloatShootBtn.Size = UDim2.new(0, 160, 0, 40)
@@ -602,7 +636,7 @@ local function StartMainHub()
         end)
     end)
 
-    -- GELİŞTİRİLMİŞ VE DÜZELTİLMİŞ HARİTA IŞINLANMASI (TELEPORT TO MAP)
+    -- TELEPORT TO MAP BUTTON
     local FloatTpMapBtn = Instance.new("TextButton", ScreenGui)
     FloatTpMapBtn.Name = "FloatTpMapBtn"
     FloatTpMapBtn.Size = UDim2.new(0, 160, 0, 40)
@@ -624,14 +658,9 @@ local function StartMainHub()
             if not hrp then return end
             
             local targetCFrame = nil
-            
-            -- MM2 Harita modellerini tespit etmek için detaylı arama
             for _, obj in ipairs(Workspace:GetChildren()) do
                 local nameLower = obj.Name:lower()
-                -- Lobby, Kamera ve harici öğeleri hariç tutarak gerçek haritayı bul
                 if obj:IsA("Model") and nameLower ~= "lounge" and nameLower ~= "lobby" and nameLower ~= "camera" and nameLower ~= "terrain" and nameLower ~= "currentcamera" then
-                    
-                    -- Önce haritadaki aktif spawn noktalarını ara
                     local spawns = obj:FindFirstChild("SpawnLocations") or obj:FindFirstChild("Spawns") or obj:FindFirstChild("MapSpawns")
                     if spawns and #spawns:GetChildren() > 0 then
                         for _, sp in ipairs(spawns:GetChildren()) do
@@ -642,7 +671,6 @@ local function StartMainHub()
                         end
                     end
                     
-                    -- Eğer spawn bulunamazsa modelin ortasındaki büyük bir parçayı bul
                     if not targetCFrame then
                         for _, part in ipairs(obj:GetDescendants()) do
                             if part:IsA("BasePart") and part.Size.Magnitude > 12 and part.Position.Y > -5 and part.Position.Y < 500 then
@@ -655,13 +683,12 @@ local function StartMainHub()
                 if targetCFrame then break end
             end
 
-            -- Eğer harita yüklenmediyse veya bulunamadıysa varsayılan güvenli oyun alanına ışınla
             if targetCFrame then
                 hrp.CFrame = targetCFrame
-                ShowNotification("🗺️ Haritaya Işınlanıldı!")
+                ShowNotification("🗺️ Teleported to Map!")
             else
                 hrp.CFrame = CFrame.new(0, 30, 0)
-                ShowNotification("⚠️ Harita bulunamadı, güvenli konuma ışınlandı.")
+                ShowNotification("⚠️ Map not found, teleported to safe spot.")
             end
 
             task.wait(0.05)
@@ -678,7 +705,7 @@ local function StartMainHub()
         end)
     end)
 
-    -- LOBBY'E IŞINLANMA
+    -- TELEPORT TO LOBBY BUTTON
     local FloatTpLobbyBtn = Instance.new("TextButton", ScreenGui)
     FloatTpLobbyBtn.Name = "FloatTpLobbyBtn"
     FloatTpLobbyBtn.Size = UDim2.new(0, 160, 0, 40)
@@ -705,6 +732,8 @@ local function StartMainHub()
             else
                 hrp.CFrame = CFrame.new(0, 10, 0)
             end
+
+            ShowNotification("🏠 Teleported to Lobby!")
 
             task.wait(0.05)
             if humanoid then
