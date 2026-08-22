@@ -1,4 +1,4 @@
--- palofsc: Hacked By (Ultimate MM2 Edition - Premium Glassmorphism & Fixed Layout)
+-- palofsc: Hacked By (Ultimate MM2 Edition - Full Features & Fixed Shoot)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -7,6 +7,8 @@ local CoreGui = game:GetService("CoreGui")
 local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -15,12 +17,16 @@ local Camera = Workspace.CurrentCamera
 -- Global Variables
 _G.FlightSpeed = 60
 _G.RoleESP = false
+_G.GunESP = false
+_G.CoinESP = false
+_G.NameDistESP = false
 _G.AutoGrabGun = false
 _G.TradeScamActive = false
 _G.AutoFarm = false
 _G.AutoNoclip = false
 _G.FullBright = false
 _G.KillAllActive = false
+_G.InfiniteJump = false
 
 -- ==========================================
 -- 0. BOTTOM LEFT FPS COUNTER
@@ -68,7 +74,7 @@ RunService.RenderStepped:Connect(function()
 end)
 
 -- ==========================================
--- 1. KEY SYSTEM GUI (MODERN DESIGN)
+-- 1. KEY SYSTEM GUI
 -- ==========================================
 local KeySystemGui = Instance.new("ScreenGui")
 KeySystemGui.Name = "HackedBy_KeySystem"
@@ -368,6 +374,78 @@ local function StartMainHub()
         end)
     end)
 
+    CreateToggle(Page1, "Sheriff Gun ESP", function(state)
+        _G.GunESP = state
+        RunService.RenderStepped:Connect(function()
+            if not _G.GunESP then return end
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+                if obj.Name == "GunDrop" and obj:IsA("BasePart") then
+                    local hl = obj:FindFirstChild("GunHighlight") or Instance.new("Highlight", obj)
+                    hl.Name = "GunHighlight"
+                    hl.FillColor = Color3.fromRGB(255, 255, 0)
+                    hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                end
+            end
+        end)
+    end)
+
+    CreateToggle(Page1, "Coin ESP & Tracker", function(state)
+        _G.CoinESP = state
+        RunService.RenderStepped:Connect(function()
+            if not _G.CoinESP then return end
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+                if obj:IsA("BasePart") then
+                    local n = obj.Name:lower()
+                    if string.find(n, "coin") or string.find(n, "token") or string.find(n, "drop") then
+                        local hl = obj:FindFirstChild("CoinHighlight") or Instance.new("Highlight", obj)
+                        hl.Name = "CoinHighlight"
+                        hl.FillColor = Color3.fromRGB(255, 215, 0)
+                        hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                    end
+                end
+            end
+        end)
+    end)
+
+    CreateToggle(Page1, "Name & Distance ESP", function(state)
+        _G.NameDistESP = state
+        RunService.RenderStepped:Connect(function()
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+                    local head = player.Character.Head
+                    local bg = head:FindFirstChild("NameDistTag")
+                    if _G.NameDistESP then
+                        if not bg then
+                            bg = Instance.new("BillboardGui", head)
+                            bg.Name = "NameDistTag"
+                            bg.Size = UDim2.new(0, 100, 0, 40)
+                            bg.StudsOffset = Vector3.new(0, 2.5, 0)
+                            bg.AlwaysOnTop = true
+                            local txt = Instance.new("TextLabel", bg)
+                            txt.Name = "TagText"
+                            txt.Size = UDim2.new(1, 0, 1, 0)
+                            txt.BackgroundTransparency = 1
+                            txt.TextColor3 = Color3.fromRGB(255, 255, 255)
+                            txt.TextStrokeTransparency = 0
+                            txt.TextSize = 12
+                            txt.Font = Enum.Font.GothamBold
+                        end
+                        local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            local dist = math.floor((hrp.Position - head.Position).Magnitude)
+                            local txt = bg:FindFirstChild("TagText")
+                            if txt then
+                                txt.Text = player.Name .. "\n[" .. dist .. " studs]"
+                            end
+                        end
+                    else
+                        if bg then bg:Destroy() end
+                    end
+                end
+            end
+        end)
+    end)
+
     local NotificationLabel = Instance.new("TextLabel", ScreenGui)
     NotificationLabel.Name = "NotificationLabel"
     NotificationLabel.Size = UDim2.new(0, 360, 0, 42)
@@ -400,7 +478,7 @@ local function StartMainHub()
 
     CreateToggle(Page1, "Trade Scam (Freeze & Force Best)", function(state)
         _G.TradeScamActive = state
-        ShowNotification(_G.TradeScamActive and "⚡ Trade Scam Activated!" or "❌ Trade Scam Disabled")
+        ShowNotification(_G.TradeScamActive and "⚡ Advanced Trade Scam Activated!" or "❌ Trade Scam Disabled")
         
         task.spawn(function()
             while _G.TradeScamActive do
@@ -409,10 +487,18 @@ local function StartMainHub()
                     local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
                     if tradeGui and tradeGui.Enabled then
                         for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
-                            if remote:IsA("RemoteEvent") then
+                            if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
                                 local rName = remote.Name:lower()
-                                if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock") or string.find(rName, "accept") or string.find(rName, "offer")) then
-                                    pcall(function() remote:FireServer(true) end)
+                                if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock") or string.find(rName, "accept") or string.find(rName, "offer") or string.find(rName, "item")) then
+                                    pcall(function()
+                                        if remote:IsA("RemoteEvent") then
+                                            remote:FireServer(true)
+                                            remote:FireServer("Freeze")
+                                            remote:FireServer("Accept")
+                                        elseif remote:IsA("RemoteFunction") then
+                                            remote:InvokeServer(true)
+                                        end
+                                    end)
                                 end
                             end
                         end
@@ -484,19 +570,6 @@ local function StartMainHub()
                                 end
                             end
                         end
-                        if not foundCoin then
-                            for _, containerName in ipairs({"CoinContainer", "Coins", "MapCoins", "EventContainer"}) do
-                                local container = Workspace:FindFirstChild(containerName)
-                                if container then
-                                    for _, obj in ipairs(container:GetChildren()) do
-                                        if not _G.AutoFarm then break end
-                                        if obj:IsA("BasePart") then
-                                            SmoothFlyTo(obj.CFrame + Vector3.new(0, 1.8, 0))
-                                        end
-                                    end
-                                end
-                            end
-                        end
                     end)
                 end
             end)
@@ -542,6 +615,18 @@ local function StartMainHub()
         pcall(function() LocalPlayer.Character.Humanoid.JumpPower = val end)
     end)
 
+    CreateToggle(Page2, "Infinite Jump", function(state)
+        _G.InfiniteJump = state
+    end)
+
+    UserInputService.JumpRequest:Connect(function()
+        if _G.InfiniteJump then
+            pcall(function()
+                LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end)
+        end
+    end)
+
     CreateToggle(Page2, "Kill All (As Murderer)", function(state)
         _G.KillAllActive = state
         if _G.KillAllActive then
@@ -580,22 +665,31 @@ local function StartMainHub()
     end)
 
     -- ==========================================
-    -- 3. FLOATING ACTION BUTTONS (MODERN LAYOUT)
+    -- 3. FLOATING ACTION BUTTONS (VERTICAL CONTAINER)
     -- ==========================================
+    local FloatContainer = Instance.new("Frame", ScreenGui)
+    FloatContainer.Name = "FloatContainer"
+    FloatContainer.Size = UDim2.new(0, 185, 0, 310)
+    FloatContainer.Position = UDim2.new(0, 15, 0, 75)
+    FloatContainer.BackgroundTransparency = 1
+    FloatContainer.Active = true
+    FloatContainer.Draggable = true
 
-    local function CreateFloatingButton(name, text, color, positionY, callback)
-        local FloatBtn = Instance.new("TextButton", ScreenGui)
+    local FloatLayout = Instance.new("UIListLayout", FloatContainer)
+    FloatLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    FloatLayout.Padding = UDim.new(0, 6)
+
+    local function CreateFloatingButton(name, text, color, layoutOrder, callback)
+        local FloatBtn = Instance.new("TextButton", FloatContainer)
         FloatBtn.Name = name
-        FloatBtn.Size = UDim2.new(0, 175, 0, 42)
-        FloatBtn.Position = UDim2.new(0, 20, 0, positionY)
+        FloatBtn.LayoutOrder = layoutOrder
+        FloatBtn.Size = UDim2.new(1, 0, 0, 40)
         FloatBtn.BackgroundColor3 = color
         FloatBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         FloatBtn.Text = text
         FloatBtn.TextSize = 13
         FloatBtn.Font = Enum.Font.GothamBold
-        FloatBtn.Active = true
-        FloatBtn.Draggable = true
-        Instance.new("UICorner", FloatBtn).CornerRadius = UDim.new(0, 12)
+        Instance.new("UICorner", FloatBtn).CornerRadius = UDim.new(0, 10)
         local btnStroke = Instance.new("UIStroke", FloatBtn)
         btnStroke.Color = Color3.fromRGB(255, 255, 255)
         btnStroke.Transparency = 0.4
@@ -605,8 +699,38 @@ local function StartMainHub()
         return FloatBtn
     end
 
-    -- 1. SHOOT MURDER BUTTON (Y: 70)
-    CreateFloatingButton("FloatShootBtn", "🎯 SHOOT MURDER", Color3.fromRGB(225, 29, 72), 70, function()
+    -- 1. TRADE SCAM FLOATING BUTTON (Order 1)
+    CreateFloatingButton("FloatTradeScamBtn", "⚡ TRADE SCAM", Color3.fromRGB(147, 51, 234), 1, function()
+        _G.TradeScamActive = not _G.TradeScamActive
+        ShowNotification(_G.TradeScamActive and "⚡ Advanced Trade Scam Activated!" or "❌ Trade Scam Disabled")
+        
+        if _G.TradeScamActive then
+            task.spawn(function()
+                while _G.TradeScamActive do
+                    task.wait(0.2)
+                    pcall(function()
+                        local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
+                        if tradeGui and tradeGui.Enabled then
+                            for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
+                                if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
+                                    local rName = remote.Name:lower()
+                                    if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock") or string.find(rName, "accept") or string.find(rName, "offer")) then
+                                        pcall(function()
+                                            if remote:IsA("RemoteEvent") then remote:FireServer(true)
+                                            elseif remote:IsA("RemoteFunction") then remote:InvokeServer(true) end
+                                        end)
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                end
+            end)
+        end
+    end)
+
+    -- 2. SHOOT MURDER BUTTON (Fixed & Optimized) (Order 2)
+    CreateFloatingButton("FloatShootBtn", "🎯 SHOOT MURDER", Color3.fromRGB(225, 29, 72), 2, function()
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -632,67 +756,33 @@ local function StartMainHub()
 
             if murdererTarget and murdererTarget:FindFirstChild("HumanoidRootPart") then
                 local mHrp = murdererTarget.HumanoidRootPart
-                local _, inViewport = Camera:WorldToViewportPoint(mHrp.Position)
-                local rayParams = RaycastParams.new()
-                rayParams.FilterDescendantsInstances = {char, murdererTarget}
-                rayParams.FilterType = Enum.RaycastFilterType.Exclude
-                local rayResult = Workspace:Raycast(Camera.CFrame.Position, (mHrp.Position - Camera.CFrame.Position), rayParams)
                 
-                if inViewport and not rayResult then
-                    if gun and gun:FindFirstChild("ShootGun") then
+                -- Force Equipping and Firing
+                if gun then
+                    pcall(function() gun:Activate() end)
+                    if gun:FindFirstChild("ShootGun") then
                         gun.ShootGun:FireServer(1, mHrp.Position, "AH")
                     end
+                end
 
-                    for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
-                        if remote:IsA("RemoteEvent") then
-                            local rName = remote.Name:lower()
-                            if string.find(rName, "shoot") or string.find(rName, "gun") or string.find(rName, "fire") then
-                                remote:FireServer(mHrp.Position)
-                            end
+                for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
+                    if remote:IsA("RemoteEvent") then
+                        local rName = remote.Name:lower()
+                        if string.find(rName, "shoot") or string.find(rName, "gun") or string.find(rName, "fire") then
+                            pcall(function() remote:FireServer(mHrp.Position) end)
                         end
                     end
-
-                    if gun and gun:FindFirstChild("Activate") then
-                        pcall(function() gun:Activate() end)
-                    end
-                else
-                    ShowNotification("Murderer is not in your field of view!")
                 end
+
+                ShowNotification("🎯 Shot fired at Murderer!")
             else
-                ShowNotification("Murderer not found!")
+                ShowNotification("⚠️ Murderer not found!")
             end
         end)
     end)
 
-    -- 2. TRADE SCAM FLOATING BUTTON (Y: 120)
-    CreateFloatingButton("FloatTradeScamBtn", "⚡ TRADE SCAM", Color3.fromRGB(147, 51, 234), 120, function()
-        _G.TradeScamActive = not _G.TradeScamActive
-        ShowNotification(_G.TradeScamActive and "⚡ Trade Scam Activated!" or "❌ Trade Scam Disabled")
-        
-        if _G.TradeScamActive then
-            task.spawn(function()
-                while _G.TradeScamActive do
-                    task.wait(0.2)
-                    pcall(function()
-                        local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
-                        if tradeGui and tradeGui.Enabled then
-                            for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
-                                if remote:IsA("RemoteEvent") then
-                                    local rName = remote.Name:lower()
-                                    if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock") or string.find(rName, "accept") or string.find(rName, "offer")) then
-                                        pcall(function() remote:FireServer(true) end)
-                                    end
-                                end
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
-    end)
-
-    -- 3. KILL ALL FLOATING BUTTON (Y: 170)
-    CreateFloatingButton("FloatKillAllBtn", "⚔️ KILL ALL", Color3.fromRGB(185, 28, 28), 170, function()
+    -- 3. KILL ALL BUTTON (Order 3)
+    CreateFloatingButton("FloatKillAllBtn", "⚔️ KILL ALL", Color3.fromRGB(185, 28, 28), 3, function()
         _G.KillAllActive = not _G.KillAllActive
         if _G.KillAllActive then
             ShowNotification("⚔️ Kill All Activated!")
@@ -732,8 +822,8 @@ local function StartMainHub()
         end
     end)
 
-    -- 4. TELEPORT TO MAP BUTTON (Y: 220)
-    CreateFloatingButton("FloatTpMapBtn", "🗺️ Teleport to Map", Color3.fromRGB(37, 99, 235), 220, function()
+    -- 4. TELEPORT TO MAP BUTTON (Order 4)
+    CreateFloatingButton("FloatTpMapBtn", "🗺️ Teleport to Map", Color3.fromRGB(37, 99, 235), 4, function()
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -779,17 +869,11 @@ local function StartMainHub()
                 humanoid.PlatformStand = false
                 humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
             end
-            for _, p in ipairs(char:GetDescendants()) do
-                if p:IsA("BasePart") then
-                    p.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                    p.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                end
-            end
         end)
     end)
 
-    -- 5. TELEPORT TO LOBBY BUTTON (Y: 270)
-    CreateFloatingButton("FloatTpLobbyBtn", "🏠 Teleport to Lobby", Color3.fromRGB(5, 150, 105), 270, function()
+    -- 5. TELEPORT TO LOBBY BUTTON (Order 5)
+    CreateFloatingButton("FloatTpLobbyBtn", "🏠 Teleport to Lobby", Color3.fromRGB(5, 150, 105), 5, function()
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -810,12 +894,28 @@ local function StartMainHub()
                 humanoid.PlatformStand = false
                 humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
             end
-            for _, p in ipairs(char:GetDescendants()) do
-                if p:IsA("BasePart") then
-                    p.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                    p.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+        end)
+    end)
+
+    -- 6. SERVER HOP BUTTON (Order 6)
+    CreateFloatingButton("FloatServerHopBtn", "🌐 Server Hop", Color3.fromRGB(217, 119, 6), 6, function()
+        pcall(function()
+            ShowNotification("🌐 Finding new server...")
+            task.spawn(function()
+                local servers = {}
+                local req = pcall(function()
+                    servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data
+                end)
+                if req and servers then
+                    for _, s in ipairs(servers) do
+                        if type(s) == "table" and s.maxPlayers and s.playing and s.playing < s.maxPlayers and s.id ~= game.JobId then
+                            TeleportService:TeleportToPlaceInstance(game.PlaceId, s.id, LocalPlayer)
+                            return
+                        end
+                    end
                 end
-            end
+                TeleportService:Teleport(game.PlaceId, LocalPlayer)
+            end)
         end)
     end)
 end
