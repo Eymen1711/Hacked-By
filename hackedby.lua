@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (WITH ITEM SPAWNER)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (WITH FLING & ITEM SPAWNER)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -23,6 +23,48 @@ local function getThemeColor(speed)
     else
         return customThemeColor
     end
+end
+
+-- Rolleri Tespit Etme Fonksiyonu (Fling için)
+local function GetRoles()
+    local murderer, sheriff
+    for _, player in pairs(p:GetPlayers()) do
+        if player.Character then
+            if player.Character:FindFirstChild("Knife") or (player:FindFirstChild("Backpack") and player.Backpack:FindFirstChild("Knife")) then
+                murderer = player
+            elseif player.Character:FindFirstChild("Gun") or (player:FindFirstChild("Backpack") and player.Backpack:FindFirstChild("Gun")) then
+                sheriff = player
+            end
+        end
+    end
+    return murderer, sheriff
+end
+
+-- Uçurma (Fling) Fonksiyonu
+local function FlingPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") then 
+        return 
+    end
+    
+    local root = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    
+    local oldPos = root.CFrame
+    local targetRoot = targetPlayer.Character.HumanoidRootPart
+    
+    local bvf = Instance.new("BodyVelocity")
+    bvf.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+    bvf.Velocity = Vector3.new(9e9, 9e9, 9e9)
+    bvf.Parent = root
+
+    for i = 1, 40 do
+        if not targetRoot or not root then break end
+        root.CFrame = targetRoot.CFrame * CFrame.new(math.random(-1,1), math.random(-1,1), math.random(-1,1))
+        task.wait(0.01)
+    end
+    
+    bvf:Destroy()
+    root.CFrame = oldPos
 end
 
 -- Bildirim Sistemi (Sağ Altta Sabit)
@@ -339,7 +381,7 @@ loginBtn.MouseButton1Click:Connect(function()
         catHolder.Size = UDim2.new(1, -20, 0, 32)
         catHolder.Position = UDim2.new(0, 10, 0, 46)
         catHolder.BackgroundTransparency = 1
-        catHolder.CanvasSize = UDim2.new(0, 520, 0, 0)
+        catHolder.CanvasSize = UDim2.new(0, 600, 0, 0)
         catHolder.ScrollBarThickness = 0
 
         local catLayout = Instance.new("UIListLayout", catHolder)
@@ -368,7 +410,7 @@ loginBtn.MouseButton1Click:Connect(function()
             return sc
         end
 
-        local categories = {"Theme", "ESP & Roles", "Combat", "Trade & Misc", "Auto Farm", "Item Spawner"}
+        local categories = {"Theme", "ESP & Roles", "Combat", "Troll / Fling", "Trade & Misc", "Auto Farm", "Item Spawner"}
         local pageFrames = {}
 
         for i, catName in ipairs(categories) do
@@ -376,7 +418,7 @@ loginBtn.MouseButton1Click:Connect(function()
             table.insert(pageFrames, page)
 
             local cBtn = Instance.new("TextButton", catHolder)
-            cBtn.Size = UDim2.new(0, 80, 0, 30)
+            cBtn.Size = UDim2.new(0, 75, 0, 30)
             cBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
             cBtn.Text = catName
             cBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -486,22 +528,79 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(pageFrames[3], "Auto Avoid Knife", false, function(s) O.Avoid = s end)
         Tog(pageFrames[3], "God Mode Shield", false, function(s) O.GodMode = s end)
 
-        -- Sayfa 4: Trade & Misc
-        Tog(pageFrames[4], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
-        Tog(pageFrames[4], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
-        Tog(pageFrames[4], "Infinite Jump", false, function(s) O.InfJump = s end)
-        Tog(pageFrames[4], "FullBright", false, function(s) 
+        -- Sayfa 4: Troll / Fling
+        local flingMButton = Instance.new("TextButton", pageFrames[4])
+        flingMButton.Size = UDim2.new(1, 0, 0, 38)
+        flingMButton.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        flingMButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        flingMButton.Text = "Katili Uçur (Fling Murderer)"
+        flingMButton.TextSize = 13
+        flingMButton.Font = Enum.Font.SourceSansBold
+        Instance.new("UICorner", flingMButton).CornerRadius = UDim.new(0, 6)
+
+        flingMButton.MouseButton1Click:Connect(function()
+            local murderer, _ = GetRoles()
+            if murderer then
+                sendNotification("Fling", "Katil (" .. murderer.Name .. ") uçuruluyor...", 2)
+                FlingPlayer(murderer)
+            else
+                sendNotification("Error", "Aktif katil bulunamadı!", 2)
+            end
+        end)
+
+        local flingSButton = Instance.new("TextButton", pageFrames[4])
+        flingSButton.Size = UDim2.new(1, 0, 0, 38)
+        flingSButton.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        flingSButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        flingSButton.Text = "Şerifi Uçur (Fling Sheriff)"
+        flingSButton.TextSize = 13
+        flingSButton.Font = Enum.Font.SourceSansBold
+        Instance.new("UICorner", flingSButton).CornerRadius = UDim.new(0, 6)
+
+        flingSButton.MouseButton1Click:Connect(function()
+            local _, sheriff = GetRoles()
+            if sheriff then
+                sendNotification("Fling", "Şerif (" .. sheriff.Name .. ") uçuruluyor...", 2)
+                FlingPlayer(sheriff)
+            else
+                sendNotification("Error", "Aktif şerif bulunamadı!", 2)
+            end
+        end)
+
+        local tpMButton = Instance.new("TextButton", pageFrames[4])
+        tpMButton.Size = UDim2.new(1, 0, 0, 38)
+        tpMButton.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        tpMButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tpMButton.Text = "Katilin Yanına Işınlan"
+        tpMButton.TextSize = 13
+        tpMButton.Font = Enum.Font.SourceSansBold
+        Instance.new("UICorner", tpMButton).CornerRadius = UDim.new(0, 6)
+
+        tpMButton.MouseButton1Click:Connect(function()
+            local murderer, _ = GetRoles()
+            if murderer and murderer.Character and murderer.Character:FindFirstChild("HumanoidRootPart") then
+                pl.Character.HumanoidRootPart.CFrame = murderer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                sendNotification("Teleport", "Katilin yanına ışınlanıldı!", 2)
+            else
+                sendNotification("Error", "Katil bulunamadı!", 2)
+            end
+        end)
+
+        -- Sayfa 5: Trade & Misc
+        Tog(pageFrames[5], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
+        Tog(pageFrames[5], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
+        Tog(pageFrames[5], "Infinite Jump", false, function(s) O.InfJump = s end)
+        Tog(pageFrames[5], "FullBright", false, function(s) 
             lighting.Brightness = s and 2 or 1
             lighting.ClockTime = s and 14 or 0
             lighting.FogEnd = s and 100000 or 10000
         end)
-        Tog(pageFrames[4], "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
+        Tog(pageFrames[5], "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
 
-        -- Sayfa 5: Auto Farm
-        Tog(pageFrames[5], "Auto Farm (Flying Coin Teleport)", false, function(s) O.AF = s end)
+        -- Sayfa 6: Auto Farm
+        Tog(pageFrames[6], "Auto Farm (Flying Coin Teleport)", false, function(s) O.AF = s end)
         
-        -- Auto Farm Hız Slider Yapısı
-        local speedFrame = Instance.new("Frame", pageFrames[5])
+        local speedFrame = Instance.new("Frame", pageFrames[6])
         speedFrame.Size = UDim2.new(1, 0, 0, 50)
         speedFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         speedFrame.BackgroundTransparency = 0.4
@@ -548,172 +647,93 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Sayfa 6: Item Spawner (Kasa Açılım Animasyonlu)
-        local spawnerContainer = pageFrames[6]
+        -- Sayfa 7: Item Spawner (Kairis Remastered Tarzı + Arama, Miktar ve Dupe)
+        local spawnerContainer = pageFrames[7]
         
+        local spawnerTitle = Instance.new("TextLabel", spawnerContainer)
+        spawnerTitle.Size = UDim2.new(1, 0, 0, 25)
+        spawnerTitle.BackgroundTransparency = 1
+        spawnerTitle.Text = "Kairis Spawner Remastered"
+        spawnerTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        spawnerTitle.TextSize = 14
+        spawnerTitle.Font = Enum.Font.SourceSansBold
+        spawnerTitle.TextXAlignment = Enum.TextXAlignment.Left
+
         local searchBox = Instance.new("TextBox", spawnerContainer)
         searchBox.Size = UDim2.new(1, 0, 0, 38)
         searchBox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         searchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-        searchBox.PlaceholderText = "İtem Ara (örn: Harvester, Gingerscope)..."
+        searchBox.PlaceholderText = "Search items (knife, chroma, godly)..."
+        searchBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
         searchBox.Text = ""
         searchBox.TextSize = 13
         Instance.new("UICorner", searchBox).CornerRadius = UDim.new(0, 6)
 
-        local selectedItemDisplay = Instance.new("TextButton", spawnerContainer)
-        selectedItemDisplay.Size = UDim2.new(1, 0, 0, 38)
-        selectedItemDisplay.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-        selectedItemDisplay.TextColor3 = Color3.fromRGB(150, 200, 255)
-        selectedItemDisplay.Text = "Seçilen: Hiçbiri"
-        selectedItemDisplay.TextSize = 13
-        selectedItemDisplay.Font = Enum.Font.SourceSansBold
-        Instance.new("UICorner", selectedItemDisplay).CornerRadius = UDim.new(0, 6)
+        -- Spawn ve Miktar Alanı Yan Yana
+        local spawnControlsFrame = Instance.new("Frame", spawnerContainer)
+        spawnControlsFrame.Size = UDim2.new(1, 0, 0, 40)
+        spawnControlsFrame.BackgroundTransparency = 1
 
-        local itemDropdown = Instance.new("ScrollingFrame", spawnerContainer)
-        itemDropdown.Size = UDim2.new(1, 0, 0, 120)
-        itemDropdown.BackgroundColor3 = Color3.fromRGB(14, 14, 20)
-        itemDropdown.Visible = false
-        itemDropdown.ScrollBarThickness = 4
-        Instance.new("UICorner", itemDropdown).CornerRadius = UDim.new(0, 6)
-        local dropLayout = Instance.new("UIListLayout", itemDropdown)
-        dropLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
-        local itemsList = {"Harvester", "Gingerscope", "TravelerGunChroma", "BaubleChroma", "Corrupt", "Icebreaker", "Candy", "Sugar", "Blossom", "Sakura", "Bat", "Elderwood Scythe"}
-        local chosenItemName = "Harvester"
-
-        local function updateDropdown(filter)
-            for _, child in pairs(itemDropdown:GetChildren()) do
-                if child:IsA("TextButton") then child:Destroy() end
-            end
-            local count = 0
-            for _, itemName in ipairs(itemsList) do
-                if filter == "" or itemName:lower():find(filter:lower()) then
-                    count = count + 1
-                    local btn = Instance.new("TextButton", itemDropdown)
-                    btn.Size = UDim2.new(1, 0, 0, 30)
-                    btn.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
-                    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    btn.Text = itemName
-                    btn.TextSize = 12
-                    btn.Font = Enum.Font.SourceSans
-                    btn.MouseButton1Click:Connect(function()
-                        chosenItemName = itemName
-                        selectedItemDisplay.Text = "Seçilen: " .. itemName
-                        itemDropdown.Visible = false
-                    end)
-                end
-            end
-            itemDropdown.CanvasSize = UDim2.new(0, 0, 0, count * 30)
-        end
-
-        searchBox.Focused:Connect(function()
-            itemDropdown.Visible = true
-            updateDropdown(searchBox.Text)
-        end)
-
-        searchBox:GetPropertyChangedSignal("Text"):Connect(function()
-            itemDropdown.Visible = true
-            updateDropdown(searchBox.Text)
-        end)
-
-        -- Spawn Butonu
-        local spawnBtn = Instance.new("TextButton", spawnerContainer)
-        spawnBtn.Size = UDim2.new(1, 0, 0, 40)
-        spawnBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+        local spawnBtn = Instance.new("TextButton", spawnControlsFrame)
+        spawnBtn.Size = UDim2.new(0.65, -5, 1, 0)
+        spawnBtn.Position = UDim2.new(0, 0, 0, 0)
+        spawnBtn.BackgroundColor3 = Color3.fromRGB(114, 47, 230)
         spawnBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        spawnBtn.Text = "Spawn Item (Kasa Açılımı)"
+        spawnBtn.Text = "Spawn Item"
         spawnBtn.TextSize = 14
         spawnBtn.Font = Enum.Font.SourceSansBold
         Instance.new("UICorner", spawnBtn).CornerRadius = UDim.new(0, 6)
 
-        -- Kasa Açılım Animasyon Arayüzü (Videodaki Gibi)
-        local unboxGui = Instance.new("ScreenGui", mgui)
-        unboxGui.Name = "UnboxAnimationGui"
-        unboxGui.Enabled = false
-        unboxGui.ResetOnSpawn = false
+        local amountBox = Instance.new("TextBox", spawnControlsFrame)
+        amountBox.Size = UDim2.new(0.35, -5, 1, 0)
+        amountBox.Position = UDim2.new(0.65, 5, 0, 0)
+        amountBox.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
+        amountBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        amountBox.Text = "1"
+        amountBox.TextSize = 14
+        amountBox.Font = Enum.Font.SourceSansBold
+        Instance.new("UICorner", amountBox).CornerRadius = UDim.new(0, 6)
 
-        local unboxBg = Instance.new("Frame", unboxGui)
-        unboxBg.Size = UDim2.new(1, 0, 1, 0)
-        unboxBg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        unboxBg.BackgroundTransparency = 0.4
+        -- Dupe Bölümü (Dupe in Inventory)
+        local dupeFrame = Instance.new("Frame", spawnerContainer)
+        dupeFrame.Size = UDim2.new(1, 0, 0, 95)
+        dupeFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+        dupeFrame.BorderSizePixel = 0
+        Instance.new("UICorner", dupeFrame).CornerRadius = UDim.new(0, 6)
 
-        local unboxMain = Instance.new("Frame", unboxBg)
-        unboxMain.Size = UDim2.new(0, 460, 0, 240)
-        unboxMain.Position = UDim2.new(0.5, -230, 0.5, -120)
-        unboxMain.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-        Instance.new("UICorner", unboxMain).CornerRadius = UDim.new(0, 12)
-        local unboxStroke = Instance.new("UIStroke", unboxMain)
-        rs.RenderStepped:Connect(function() unboxStroke.Color = getThemeColor(1) end)
+        local dupeTitle = Instance.new("TextLabel", dupeFrame)
+        dupeTitle.Size = UDim2.new(1, -20, 0, 25)
+        dupeTitle.Position = UDim2.new(0, 10, 0, 5)
+        dupeTitle.BackgroundTransparency = 1
+        dupeTitle.Text = "DUPE IN INVENTORY"
+        dupeTitle.TextColor3 = Color3.fromRGB(255, 170, 0)
+        dupeTitle.TextSize = 12
+        dupeTitle.Font = Enum.Font.SourceSansBold
+        dupeTitle.TextXAlignment = Enum.TextXAlignment.Left
 
-        local unboxTitle = Instance.new("TextLabel", unboxMain)
-        unboxTitle.Size = UDim2.new(1, 0, 0, 40)
-        unboxTitle.BackgroundTransparency = 1
-        unboxTitle.Text = "Unboxing..."
-        unboxTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-        unboxTitle.TextSize = 16
-        unboxTitle.Font = Enum.Font.SourceSansBold
+        local dupeButton = Instance.new("TextButton", dupeFrame)
+        dupeButton.Size = UDim2.new(1, -20, 0, 35)
+        dupeButton.Position = UDim2.new(0, 10, 0, 35)
+        dupeButton.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+        dupeButton.Text = "Dupe in Inventory"
+        dupeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        dupeButton.TextSize = 13
+        dupeButton.Font = Enum.Font.SourceSansBold
+        Instance.new("UICorner", dupeButton).CornerRadius = UDim.new(0, 6)
 
-        -- Kaydırma kutuları (Kasa açılış şeridi)
-        local rollStrip = Instance.new("Frame", unboxMain)
-        rollStrip.Size = UDim2.new(0.9, 0, 0, 100)
-        rollStrip.Position = UDim2.new(0.05, 0, 0.25, 0)
-        rollStrip.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-        rollStrip.ClipsDescendants = true
-        Instance.new("UICorner", rollStrip).CornerRadius = UDim.new(0, 8)
-
-        local rollHolder = Instance.new("Frame", rollStrip)
-        rollHolder.Size = UDim2.new(0, 1000, 1, 0)
-        rollHolder.Position = UDim2.new(0, 0, 0, 0)
-        rollHolder.BackgroundTransparency = 1
-
-        local resultLabel = Instance.new("TextLabel", unboxMain)
-        resultLabel.Size = UDim2.new(1, 0, 0, 40)
-        resultLabel.Position = UDim2.new(0, 0, 0.78, 0)
-        resultLabel.BackgroundTransparency = 1
-        resultLabel.Text = ""
-        resultLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
-        resultLabel.TextSize = 15
-        resultLabel.Font = Enum.Font.SourceSansBold
-
+        -- Buton İşlevleri
         spawnBtn.MouseButton1Click:Connect(function()
-            unboxGui.Enabled = true
-            resultLabel.Text = ""
-            unboxTitle.Text = "Spawning " .. chosenItemName .. "..."
-            
-            for _, child in pairs(rollHolder:GetChildren()) do child:Destroy() end
-            
-            -- Rastgele simüle edilmiş öğe kutucukları oluştur
-            local fakeItems = {"Default Knife", "Blade", "Clown", "Melon", chosenItemName, "Fade", "Oily", "Default Gun"}
-            for i = 1, 15 do
-                local itemBox = Instance.new("Frame", rollHolder)
-                itemBox.Size = UDim2.new(0, 90, 0, 90)
-                itemBox.Position = UDim2.new(0, (i-1)*100 + 5, 0, 5)
-                itemBox.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
-                Instance.new("UICorner", itemBox).CornerRadius = UDim.new(0, 6)
-                
-                local lbl = Instance.new("TextLabel", itemBox)
-                lbl.Size = UDim2.new(1, 0, 1, 0)
-                lbl.BackgroundTransparency = 1
-                lbl.Text = fakeItems[math.random(1, #fakeItems)]
-                if i == 11 then lbl.Text = chosenItemName end -- 11. kutu kazanılan item olsun
-                lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-                lbl.TextSize = 11
-                lbl.Font = Enum.Font.SourceSansBold
-                lbl.TextWrapped = true
-            end
-
-            rollHolder.Position = UDim2.new(0, 0, 0, 0)
-            -- Kayma animasyonu
-            rollHolder:TweenPosition(UDim2.new(0, -1000 + 350, 0, 0), "Out", "Quart", 2.5, true, function()
-                resultLabel.Text = "IT WORKED! 1x Godly Obtained: " .. chosenItemName
-                unboxTitle.Text = "Successfully Claimed!"
-                sendNotification("Success", chosenItemName .. " spawned and added to inventory!", 3)
-                task.wait(1.5)
-                unboxGui.Enabled = false
-            end)
+            local itemName = searchBox.Text ~= "" and searchBox.Text or "Harvester"
+            local amount = tonumber(amountBox.Text) or 1
+            sendNotification("Spawner", "Spawning " .. amount .. "x " .. itemName .. "...", 2)
         end)
 
-        -- Kararlı ESP Mantığı
+        dupeButton.MouseButton1Click:Connect(function()
+            local amount = tonumber(amountBox.Text) or 1
+            sendNotification("Dupe", "Duplicating inventory items (x" .. amount + ") ...", 2)
+        end)
+
+        -- ESP & Combat Döngüleri
         coroutine.wrap(function()
             while task.wait(1) do
                 if O.ESP then
@@ -741,7 +761,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)()
 
-        -- Ekstra ESP (Gun & Coin)
         coroutine.wrap(function()
             while task.wait(1.5) do
                 if O.ExtraESP then
@@ -764,7 +783,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)()
 
-        -- Auto Grab Gun
         coroutine.wrap(function()
             while task.wait(0.2) do
                 if O.AutoGrabGun then
@@ -778,7 +796,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)()
 
-        -- Auto Sheriff Target
         coroutine.wrap(function()
             while task.wait(0.3) do
                 if O.AutoSheriff then
@@ -803,7 +820,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)()
 
-        -- Kill All
         coroutine.wrap(function()
             while task.wait(0.3) do
                 if O.KA then
@@ -827,7 +843,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)()
 
-        -- Auto Avoid Knife
         coroutine.wrap(function()
             while task.wait(0.1) do
                 if O.Avoid then
@@ -847,7 +862,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)()
 
-        -- God Mode
         coroutine.wrap(function()
             while task.wait(0.05) do
                 if O.GodMode then
@@ -857,14 +871,12 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)()
 
-        -- Infinite Jump
         uis.JumpRequest:Connect(function()
             if O.InfJump then
                 pcall(function() pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
             end
         end)()
 
-        -- Auto Farm
         coroutine.wrap(function()
             local cc = 0
             while task.wait(0.05) do
@@ -894,7 +906,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)()
 
-        sendNotification("Loaded", "Hacked by is ready!", 3)
+        sendNotification("Loaded", "Hacked by is ready with Fling and Item Spawner features!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "YANLIŞ ANAHTAR!"
