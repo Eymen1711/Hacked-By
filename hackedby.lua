@@ -1,5 +1,5 @@
 -- ==========================================
--- ULTIMATE MM2 SCRIPT (PANEL FIX v23)
+-- ULTIMATE MM2 SCRIPT (CLEAN & FIX v24)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -9,15 +9,23 @@ local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
 local camera = workspace.CurrentCamera
 
+local MENU_TITLE = "Hacked By" -- Burayı dilediğin isimle değiştirebilirsin!
 local LOOTLABS_LINK = "https://loot-link.com/s/9K7cNpua"
 local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
 
 local customThemeColor = Color3.fromRGB(0, 255, 200)
 local rainbowModeActive = true
-local currentWalkSpeed = 16
-local currentJumpPower = 50
-local currentFOV = 70
 local CUSTOM_FONT = Enum.Font.FredokaOne
+
+-- Eskiden kalan tüm panelleri ve GUI'leri temizle (Çakışmayı önler)
+pcall(function()
+    for _, guiName in ipairs({"HackedBy_KeySystem", "HackedBy_MasterMenu", "HackedBy_Notifications", "HackedBy_KeySystem_v22", "HackedBy_MasterMenu_v22", "HackedBy_Notifications_v22", "HackedBy_KeySystem_v23", "HackedBy_MasterMenu_v23", "HackedBy_Notifications_v23", "HackedBy_KeySystem_v24", "HackedBy_MasterMenu_v24", "HackedBy_Notifications_v24"}) do
+        local old = game:GetService("CoreGui"):FindFirstChild(guiName)
+        if old then old:Destroy() end
+        local oldPlayerGui = pl.PlayerGui:FindFirstChild(guiName)
+        if oldPlayerGui then oldPlayerGui:Destroy() end
+    end
+end)
 
 -- Anti-AFK
 local vu = game:GetService("VirtualUser")
@@ -38,7 +46,7 @@ end
 
 -- Bildirim Sistemi
 local notifGui = Instance.new("ScreenGui")
-notifGui.Name = "HackedBy_Notifications_v23"
+notifGui.Name = "HackedBy_Notifications_v24"
 notifGui.ResetOnSpawn = false
 pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
 if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -95,7 +103,7 @@ end
 
 -- Key System
 local gui = Instance.new("ScreenGui")
-gui.Name = "HackedBy_KeySystem_v23"
+gui.Name = "HackedBy_KeySystem_v24"
 gui.ResetOnSpawn = false
 pcall(function() gui.Parent = game:GetService("CoreGui") end)
 if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -115,7 +123,7 @@ rs.RenderStepped:Connect(function() if stroke and stroke.Parent then stroke.Colo
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 50)
 title.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-title.Text = "Hacked By (v23 Key System)"
+title.Text = MENU_TITLE .. " (Key System)"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 18
 title.Font = CUSTOM_FONT
@@ -147,9 +155,9 @@ loginBtn.MouseButton1Click:Connect(function()
         gui:Destroy()
         sendNotification("Success", "Key verified successfully!", 3)
         
-        -- MASTER MENU v23 (DOLU PANEL)
+        -- MASTER MENU v24
         local mgui = Instance.new("ScreenGui")
-        mgui.Name = "HackedBy_MasterMenu_v23"
+        mgui.Name = "HackedBy_MasterMenu_v24"
         mgui.ResetOnSpawn = false
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -188,7 +196,7 @@ loginBtn.MouseButton1Click:Connect(function()
         local fStroke = Instance.new("UIStroke", f)
         rs.RenderStepped:Connect(function() if fStroke and fStroke.Parent then fStroke.Color = getThemeColor(1) end end)
 
-        -- Sol Kategori Butonları Paneli
+        -- Sol Kategori Butonları
         local sidebar = Instance.new("Frame", f)
         sidebar.Size = UDim2.new(0, 140, 1, -52)
         sidebar.Position = UDim2.new(0, 0, 0, 52)
@@ -198,12 +206,6 @@ loginBtn.MouseButton1Click:Connect(function()
         local sideLayout = Instance.new("UIListLayout", sidebar)
         sideLayout.SortOrder = Enum.SortOrder.LayoutOrder
         sideLayout.Padding = UDim.new(0, 5)
-
-        -- Sağ İçerik Alanı
-        local contentArea = Instance.new("Frame", f)
-        contentArea.Size = UDim2.new(1, -145, 1, -60)
-        contentArea.Position = UDim2.new(0, 145, 0, 58)
-        contentArea.BackgroundTransparency = 1
 
         local function createTabButton(name)
             local btn = Instance.new("TextButton", sidebar)
@@ -224,13 +226,13 @@ loginBtn.MouseButton1Click:Connect(function()
         local t = Instance.new("TextLabel", f)
         t.Size = UDim2.new(1, 0, 0, 52)
         t.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-        t.Text = "Hacked By - Panel v23 (Fixed)"
+        t.Text = MENU_TITLE .. " - Panel v24"
         t.TextColor3 = Color3.fromRGB(255, 255, 255)
         t.TextSize = 18
         t.Font = CUSTOM_FONT
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
-        sendNotification("Loaded", "Panel successfully populated!", 3)
+        sendNotification("Loaded", "Panel successfully updated and cleaned!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
