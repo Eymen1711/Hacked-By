@@ -1,5 +1,5 @@
 -- ==========================================
--- ULTIMATE MM2 SCRIPT (EXACTLY LIKE VIDEO v31 - FIXED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -7,41 +7,23 @@ local pl = p.LocalPlayer
 local workspace = game:GetService("Workspace")
 local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
+local lighting = game:GetService("Lighting")
 local camera = workspace.CurrentCamera
 
-local MENU_TITLE = "Hacked By"
+local LOOTLABS_LINK = "https://loot-link.com/s?9K7cNpua"
 local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
 
-local customThemeColor = Color3.fromRGB(0, 255, 200)
+local customThemeColor = Color3.fromRGB(0, 162, 255)
 local rainbowModeActive = true
-local CUSTOM_FONT = Enum.Font.FredokaOne
 
+-- Global Settings
 local currentWalkSpeed = 16
 local currentJumpPower = 50
-local silentAimEnabled = false
-local espEnabled = false
-local autoFarmEnabled = false
-local infJumpActive = false
+local autoFarmSpeed = 25
+local currentFOV = 70
 
--- Eski pencereleri temizle
-pcall(function()
-    for i = 22, 31 do
-        local old = game:GetService("CoreGui"):FindFirstChild("HackedBy_MasterMenu_v" .. i)
-        if old then old:Destroy() end
-        local oldKey = game:GetService("CoreGui"):FindFirstChild("HackedBy_KeySystem_v" .. i)
-        if oldKey then oldKey:Destroy() end
-        local oldNotif = game:GetService("CoreGui"):FindFirstChild("HackedBy_Notifications_v" .. i)
-        if oldNotif then oldNotif:Destroy() end
-    end
-end)
-
--- Anti-AFK
-local vu = game:GetService("VirtualUser")
-pl.Idled:Connect(function()
-    vu:Button2Down(Vector2.new(0,0), camera.CFrame)
-    task.wait(1)
-    vu:Button2Up(Vector2.new(0,0), camera.CFrame)
-end)
+-- Taste Bread Tarzı Tatlı/Oyun Fontu
+local CUSTOM_FONT = Enum.Font.FredokaOne
 
 local function getThemeColor(speed)
     if rainbowModeActive then
@@ -52,9 +34,24 @@ local function getThemeColor(speed)
     end
 end
 
--- Bildirim Sistemi
+-- Anti-Ban Security Layer
+pcall(function()
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    local oldNameCall = mt.__namecall
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        if tostring(method):lower() == "kick" or tostring(self):lower() == "anticheat" then
+            return nil
+        end
+        return oldNameCall(self, ...)
+    end)
+    setreadonly(mt, true)
+end)
+
+-- Notification System
 local notifGui = Instance.new("ScreenGui")
-notifGui.Name = "HackedBy_Notifications_v31"
+notifGui.Name = "MM2_Notifications"
 notifGui.ResetOnSpawn = false
 pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
 if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -72,14 +69,22 @@ local function sendNotification(titleText, msgText, duration)
     task.spawn(function()
         local box = Instance.new("Frame", notifHolder)
         box.Size = UDim2.new(1, 0, 0, 65)
-        box.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
+        box.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
         box.BackgroundTransparency = 0.1
         box.Position = UDim2.new(1, 50, 0, 0)
         Instance.new("UICorner", box).CornerRadius = UDim.new(0, 8)
         
         local stroke = Instance.new("UIStroke", box)
         stroke.Thickness = 1.5
-        rs.RenderStepped:Connect(function() if stroke and stroke.Parent then stroke.Color = getThemeColor(0.8) end end)
+        
+        local conn
+        conn = rs.RenderStepped:Connect(function()
+            if stroke and stroke.Parent then
+                stroke.Color = getThemeColor(0.8)
+            else
+                if conn then conn:Disconnect() end
+            end
+        end)
 
         local tLbl = Instance.new("TextLabel", box)
         tLbl.Size = UDim2.new(1, -15, 0, 24)
@@ -105,13 +110,14 @@ local function sendNotification(titleText, msgText, duration)
         task.wait(duration or 2.5)
         pcall(function() box:TweenPosition(UDim2.new(1, 50, 0, 0), "In", "Quad", 0.3, true) end)
         task.wait(0.3)
+        if conn then conn:Disconnect() end
         if box then box:Destroy() end
     end)
 end
 
--- Key System
+-- Key System UI
 local gui = Instance.new("ScreenGui")
-gui.Name = "HackedBy_KeySystem_v31"
+gui.Name = "MM2_KeySystem"
 gui.ResetOnSpawn = false
 pcall(function() gui.Parent = game:GetService("CoreGui") end)
 if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -119,7 +125,7 @@ if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui"
 local frame = Instance.new("Frame", gui)
 frame.Size = UDim2.new(0, 400, 0, 240)
 frame.Position = UDim2.new(0.5, -200, 0.5, -120)
-frame.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+frame.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
 frame.Active = true
 frame.Draggable = true
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
@@ -130,8 +136,8 @@ rs.RenderStepped:Connect(function() if stroke and stroke.Parent then stroke.Colo
 
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 50)
-title.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-title.Text = MENU_TITLE .. " (Key System)"
+title.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+title.Text = "Hacked by (Key System)"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 18
 title.Font = CUSTOM_FONT
@@ -140,7 +146,7 @@ Instance.new("UICorner", title).CornerRadius = UDim.new(0, 12)
 local textBox = Instance.new("TextBox", frame)
 textBox.Size = UDim2.new(0.85, 0, 0, 48)
 textBox.Position = UDim2.new(0.075, 0, 0.3, 0)
-textBox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+textBox.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
 textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 textBox.PlaceholderText = "Enter key..."
 textBox.Text = ""
@@ -148,10 +154,29 @@ textBox.TextSize = 16
 textBox.Font = CUSTOM_FONT
 Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 8)
 
+local getKeyBtn = Instance.new("TextButton", frame)
+getKeyBtn.Size = UDim2.new(0.4, 0, 0, 45)
+getKeyBtn.Position = UDim2.new(0.075, 0, 0.62, 0)
+getKeyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+getKeyBtn.Text = "Get Key"
+getKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+getKeyBtn.TextSize = 16
+getKeyBtn.Font = CUSTOM_FONT
+Instance.new("UICorner", getKeyBtn).CornerRadius = UDim.new(0, 8)
+
+getKeyBtn.MouseButton1Click:Connect(function()
+    if setclipboard then
+        setclipboard(LOOTLABS_LINK)
+        getKeyBtn.Text = "Link Copied!"
+        task.wait(2)
+        getKeyBtn.Text = "Get Key"
+    end
+end)
+
 local loginBtn = Instance.new("TextButton", frame)
-loginBtn.Size = UDim2.new(0.85, 0, 0, 45)
-loginBtn.Position = UDim2.new(0.075, 0, 0.62, 0)
-loginBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+loginBtn.Size = UDim2.new(0.4, 0, 0, 45)
+loginBtn.Position = UDim2.new(0.525, 0, 0.62, 0)
+loginBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 loginBtn.Text = "Login"
 loginBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 loginBtn.TextSize = 16
@@ -163,14 +188,14 @@ loginBtn.MouseButton1Click:Connect(function()
         gui:Destroy()
         sendNotification("Success", "Key verified successfully!", 3)
         
-        -- MASTER MENU v31
+        -- MASTER MENU
         local mgui = Instance.new("ScreenGui")
-        mgui.Name = "HackedBy_MasterMenu_v31"
+        mgui.Name = "MM2_MasterMenu"
         mgui.ResetOnSpawn = false
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
 
-        -- Karakter hız ve zıplama döngüsü
+        -- Constant Character Loop to enforce WalkSpeed, JumpPower & FOV
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -184,20 +209,51 @@ loginBtn.MouseButton1Click:Connect(function()
                             if hum.JumpPower ~= currentJumpPower then hum.JumpPower = currentJumpPower end
                         end
                     end
+                    if camera and camera.FieldOfView ~= currentFOV then
+                        camera.FieldOfView = currentFOV
+                    end
                 end)
             end
         end)
 
-        -- ==========================================
-        -- SOL TARAFTAKI SABİT BUTONLAR
-        -- ==========================================
+        local fpsLabel = Instance.new("TextLabel", mgui)
+        fpsLabel.Size = UDim2.new(0, 140, 0, 40)
+        fpsLabel.Position = UDim2.new(0, 15, 1, -55)
+        fpsLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+        fpsLabel.BackgroundTransparency = 0.3
+        fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        fpsLabel.TextSize = 16
+        fpsLabel.Font = CUSTOM_FONT
+        fpsLabel.Text = "FPS: 0"
+        fpsLabel.Visible = false
+        Instance.new("UICorner", fpsLabel).CornerRadius = UDim.new(0, 8)
+        local fpsStroke = Instance.new("UIStroke", fpsLabel)
+        rs.RenderStepped:Connect(function() if fpsStroke and fpsStroke.Parent then fpsStroke.Color = getThemeColor(1) end end)
+
+        task.spawn(function()
+            local frames = 0
+            local lastUpdate = tick()
+            rs.RenderStepped:Connect(function()
+                frames = frames + 1
+                local now = tick()
+                if now - lastUpdate >= 0.5 then
+                    local fps = math.floor((frames / (now - lastUpdate)) + 0.5)
+                    if fpsLabel and fpsLabel.Visible then
+                        fpsLabel.Text = "FPS: " .. tostring(fps)
+                    end
+                    frames = 0
+                    lastUpdate = now
+                end
+            end)
+        end)
+
         local toggleButton = Instance.new("TextButton", mgui)
-        toggleButton.Size = UDim2.new(0, 150, 0, 40)
-        toggleButton.Position = UDim2.new(0, 20, 0, 20)
-        toggleButton.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+        toggleButton.Size = UDim2.new(0, 190, 0, 48)
+        toggleButton.Position = UDim2.new(0, 40, 0, 40)
+        toggleButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         toggleButton.Text = "Toggle Menu"
         toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        toggleButton.TextSize = 15
+        toggleButton.TextSize = 17
         toggleButton.Font = CUSTOM_FONT
         toggleButton.Active = true
         toggleButton.Draggable = true
@@ -205,398 +261,669 @@ loginBtn.MouseButton1Click:Connect(function()
         local tbStroke = Instance.new("UIStroke", toggleButton)
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
-        local leftSilentBtn = Instance.new("TextButton", mgui)
-        leftSilentBtn.Size = UDim2.new(0, 150, 0, 40)
-        leftSilentBtn.Position = UDim2.new(0, 20, 0, 70)
-        leftSilentBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-        leftSilentBtn.Text = "Silent Aim OFF"
-        leftSilentBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        leftSilentBtn.TextSize = 15
-        leftSilentBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", leftSilentBtn).CornerRadius = UDim.new(0, 8)
-        local lsStroke = Instance.new("UIStroke", leftSilentBtn)
-        rs.RenderStepped:Connect(function() if lsStroke and lsStroke.Parent then lsStroke.Color = getThemeColor(1) end end)
+        -- Silent Aim Toggle Button (On/Off)
+        local silentAimActive = false
+        local silentAimButton = Instance.new("TextButton", mgui)
+        silentAimButton.Size = UDim2.new(0, 190, 0, 48)
+        silentAimButton.Position = UDim2.new(0, 40, 0, 105)
+        silentAimButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        silentAimButton.Text = "Silent Aim: OFF"
+        silentAimButton.TextColor3 = Color3.fromRGB(255, 50, 50)
+        silentAimButton.TextSize = 16
+        silentAimButton.Font = CUSTOM_FONT
+        silentAimButton.Active = true
+        silentAimButton.Draggable = true
+        Instance.new("UICorner", silentAimButton).CornerRadius = UDim.new(0, 8)
+        local sabStroke = Instance.new("UIStroke", silentAimButton)
+        rs.RenderStepped:Connect(function() if sabStroke and sabStroke.Parent then sabStroke.Color = getThemeColor(1) end end)
 
-        leftSilentBtn.MouseButton1Click:Connect(function()
-            silentAimEnabled = not silentAimEnabled
-            if silentAimEnabled then
-                leftSilentBtn.Text = "Silent Aim ON"
-                leftSilentBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-                sendNotification("Silent Aim", "Silent Aim Activated!", 2)
+        silentAimButton.MouseButton1Click:Connect(function()
+            silentAimActive = not silentAimActive
+            if silentAimActive then
+                silentAimButton.Text = "Silent Aim: ON"
+                silentAimButton.TextColor3 = Color3.fromRGB(50, 255, 50)
+                sendNotification("Silent Aim", "Enabled successfully!", 1.5)
             else
-                leftSilentBtn.Text = "Silent Aim OFF"
-                leftSilentBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                sendNotification("Silent Aim", "Silent Aim Deactivated!", 2)
+                silentAimButton.Text = "Silent Aim: OFF"
+                silentAimButton.TextColor3 = Color3.fromRGB(255, 50, 50)
+                sendNotification("Silent Aim", "Disabled!", 1.5)
             end
         end)
 
-        local leftMapBtn = Instance.new("TextButton", mgui)
-        leftMapBtn.Size = UDim2.new(0, 150, 0, 40)
-        leftMapBtn.Position = UDim2.new(0, 20, 0, 120)
-        leftMapBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-        leftMapBtn.Text = "TP to Map"
-        leftMapBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        leftMapBtn.TextSize = 15
-        leftMapBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", leftMapBtn).CornerRadius = UDim.new(0, 8)
-        local lmStroke = Instance.new("UIStroke", leftMapBtn)
-        rs.RenderStepped:Connect(function() if lmStroke and lmStroke.Parent then lmStroke.Color = getThemeColor(1) end end)
+        local shootButton = Instance.new("TextButton", mgui)
+        shootButton.Size = UDim2.new(0, 190, 0, 48)
+        shootButton.Position = UDim2.new(0, 40, 0, 170)
+        shootButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        shootButton.Text = "Shoot Murderer"
+        shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        shootButton.TextSize = 16
+        shootButton.Font = CUSTOM_FONT
+        shootButton.Active = true
+        shootButton.Draggable = true
+        Instance.new("UICorner", shootButton).CornerRadius = UDim.new(0, 8)
+        local sbStroke = Instance.new("UIStroke", shootButton)
+        rs.RenderStepped:Connect(function() if sbStroke and sbStroke.Parent then sbStroke.Color = getThemeColor(1) end end)
 
-        leftMapBtn.MouseButton1Click:Connect(function()
+        shootButton.MouseButton1Click:Connect(function()
             pcall(function()
-                local foundMap = workspace:FindFirstChild("Map") or workspace:FindFirstChild("CurrentMap")
-                if foundMap and pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
-                    for _, obj in ipairs(foundMap:GetDescendants()) do
-                        if obj:IsA("BasePart") then
-                            pl.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
-                            sendNotification("Teleport", "Teleported to Map!", 2)
+                local c2 = pl.Character
+                local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
+                if not gun and c2 and c2:FindFirstChild("Humanoid") then
+                    local bpGun = pl.Backpack:FindFirstChild("Gun")
+                    if bpGun then bpGun.Parent = c2; gun = bpGun end
+                end
+
+                if not gun then
+                    sendNotification("Error", "You don't have a gun!", 1.5)
+                    return
+                end
+
+                local murderer = nil
+                for _, v in pairs(p:GetPlayers()) do
+                    if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                        local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                        if hasKnife then
+                            murderer = v
                             break
                         end
                     end
-                else
-                    sendNotification("Error", "Map not found or round not started!", 2)
                 end
+
+                if not murderer then
+                    sendNotification("Info", "No Murderer found with knife!", 1.5)
+                    return
+                end
+
+                local murdererHRP = murderer.Character:FindFirstChild("HumanoidRootPart")
+                if not murdererHRP then return end
+                local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
+                if ev then ev:FireServer(murdererHRP.Position) end
+                sendNotification("Success", "Shot Murderer accurately!", 2)
             end)
         end)
 
-        local leftLobbyBtn = Instance.new("TextButton", mgui)
-        leftLobbyBtn.Size = UDim2.new(0, 150, 0, 40)
-        leftLobbyBtn.Position = UDim2.new(0, 20, 0, 170)
-        leftLobbyBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-        leftLobbyBtn.Text = "TP to Lobby"
-        leftLobbyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        leftLobbyBtn.TextSize = 15
-        leftLobbyBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", leftLobbyBtn).CornerRadius = UDim.new(0, 8)
-        local llStroke = Instance.new("UIStroke", leftLobbyBtn)
-        rs.RenderStepped:Connect(function() if llStroke and llStroke.Parent then llStroke.Color = getThemeColor(1) end end)
+        local mapButton = Instance.new("TextButton", mgui)
+        mapButton.Size = UDim2.new(0, 190, 0, 48)
+        mapButton.Position = UDim2.new(0, 40, 0, 235)
+        mapButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        mapButton.Text = "TP to Map"
+        mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        mapButton.TextSize = 17
+        mapButton.Font = CUSTOM_FONT
+        Instance.new("UICorner", mapButton).CornerRadius = UDim.new(0, 8)
+        local mbStroke = Instance.new("UIStroke", mapButton)
+        rs.RenderStepped:Connect(function() if mbStroke and mbStroke.Parent then mbStroke.Color = getThemeColor(1) end end)
 
-        leftLobbyBtn.MouseButton1Click:Connect(function()
+        mapButton.MouseButton1Click:Connect(function()
             pcall(function()
-                if pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
-                    pl.Character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
-                    sendNotification("Teleport", "Teleported to Lobby!", 2)
+                local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local targetPos = nil
+                    for _, obj in pairs(workspace:GetDescendants()) do
+                        if (obj.Name == "Map" or obj.Name == "CoinContainer") and obj:IsA("Model") then
+                            for _, part in pairs(obj:GetDescendants()) do
+                                if part:IsA("BasePart") then targetPos = part.Position + Vector3.new(0, 5, 0); break end
+                            end
+                            if targetPos then break end
+                        end
+                    end
+                    hrp.CFrame = CFrame.new(targetPos or Vector3.new(0, 50, 0))
+                    sendNotification("Teleport", "Teleported to map!", 2)
                 end
             end)
         end)
 
-        -- ==========================================
-        -- ANA MENÜ PENCERESİ (SEKMELİ SİSTEM)
-        -- ==========================================
+        local lobbyButton = Instance.new("TextButton", mgui)
+        lobbyButton.Size = UDim2.new(0, 190, 0, 48)
+        lobbyButton.Position = UDim2.new(0, 40, 0, 300)
+        lobbyButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        lobbyButton.Text = "TP to Lobby"
+        lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        lobbyButton.TextSize = 17
+        lobbyButton.Font = CUSTOM_FONT
+        Instance.new("UICorner", lobbyButton).CornerRadius = UDim.new(0, 8)
+        local lbStroke = Instance.new("UIStroke", lobbyButton)
+        rs.RenderStepped:Connect(function() if lbStroke and lbStroke.Parent then lbStroke.Color = getThemeColor(1) end end)
+
+        lobbyButton.MouseButton1Click:Connect(function()
+            pcall(function()
+                local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then 
+                    hrp.CFrame = CFrame.new(0, 10, 0) 
+                    sendNotification("Teleport", "Returned to Lobby!", 2)
+                end
+            end)
+        end)
+
+        -- Main Panel Frame
         local f = Instance.new("Frame", mgui)
-        f.Size = UDim2.new(0, 520, 0, 380)
-        f.Position = UDim2.new(0.5, -260, 0.5, -190)
-        f.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
+        f.Size = UDim2.new(0, 560, 0, 600)
+        f.Position = UDim2.new(0.5, -280, 0.5, -300)
+        f.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
         f.Active = true
         f.Draggable = true
         f.ClipsDescendants = true
-        f.Visible = true
+        f.Visible = false
 
         toggleButton.MouseButton1Click:Connect(function() f.Visible = not f.Visible end)
-        uis.InputBegan:Connect(function(input, gpe)
-            if not gpe and input.KeyCode == Enum.KeyCode.K then
-                f.Visible = not f.Visible
-            end
-        end)
-
         Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
         local fStroke = Instance.new("UIStroke", f)
+        fStroke.Transparency = 0.2
         rs.RenderStepped:Connect(function() if fStroke and fStroke.Parent then fStroke.Color = getThemeColor(1) end end)
 
-        local menuTitleLbl = Instance.new("TextLabel", f)
-        menuTitleLbl.Size = UDim2.new(1, 0, 0, 40)
-        menuTitleLbl.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-        menuTitleLbl.Text = MENU_TITLE .. " - Panel"
-        menuTitleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-        menuTitleLbl.TextSize = 16
-        menuTitleLbl.Font = CUSTOM_FONT
-        Instance.new("UICorner", menuTitleLbl).CornerRadius = UDim.new(0, 12)
+        local t = Instance.new("TextLabel", f)
+        t.Size = UDim2.new(1, 0, 0, 52)
+        t.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        t.Text = "Hacked by - Panel"
+        t.TextColor3 = Color3.fromRGB(255, 255, 255)
+        t.TextSize = 18
+        t.Font = CUSTOM_FONT
+        Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
-        -- Sekme Butonları Alanı
-        local tabsHolder = Instance.new("Frame", f)
-        tabsHolder.Size = UDim2.new(1, -16, 0, 35)
-        tabsHolder.Position = UDim2.new(0, 8, 0, 48)
-        tabsHolder.BackgroundTransparency = 1
+        local catHolder = Instance.new("ScrollingFrame", f)
+        catHolder.Size = UDim2.new(1, -24, 0, 42)
+        catHolder.Position = UDim2.new(0, 12, 0, 60)
+        catHolder.BackgroundTransparency = 1
+        catHolder.CanvasSize = UDim2.new(0, 550, 0, 0)
+        catHolder.ScrollBarThickness = 0
 
-        local tabsLayout = Instance.new("UIListLayout", tabsHolder)
-        tabsLayout.FillDirection = Enum.FillDirection.Horizontal
-        tabsLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        tabsLayout.Padding = UDim.new(0, 4)
+        local catLayout = Instance.new("UIListLayout", catHolder)
+        catLayout.FillDirection = Enum.FillDirection.Horizontal
+        catLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        catLayout.Padding = UDim.new(0, 8)
 
-        -- İçerik Sayfaları Alanı
-        local pagesHolder = Instance.new("Frame", f)
-        pagesHolder.Size = UDim2.new(1, -16, 1, -95)
-        pagesHolder.Position = UDim2.new(0, 8, 0, 90)
-        pagesHolder.BackgroundTransparency = 1
-
-        local function createTabPage()
-            local page = Instance.new("ScrollingFrame", pagesHolder)
-            page.Size = UDim2.new(1, 0, 1, 0)
-            page.BackgroundTransparency = 1
-            page.CanvasSize = UDim2.new(0, 0, 1.8, 0)
-            page.ScrollBarThickness = 4
-            page.Visible = false
-            local l = Instance.new("UIListLayout", page)
-            l.SortOrder = Enum.SortOrder.LayoutOrder
-            l.Padding = UDim.new(0, 8)
-            return page
+        local function createPage()
+            local sc = Instance.new("ScrollingFrame", f)
+            sc.Size = UDim2.new(1, -24, 1, -120)
+            sc.Position = UDim2.new(0, 12, 0, 110)
+            sc.BackgroundTransparency = 1
+            sc.BorderSizePixel = 0
+            sc.ScrollBarThickness = 6
+            sc.Visible = false
+            rs.RenderStepped:Connect(function() if sc and sc.Parent then sc.ScrollBarImageColor3 = getThemeColor(1) end end)
+            local ll = Instance.new("UIListLayout", sc)
+            ll.Padding = UDim.new(0, 10)
+            ll.SortOrder = Enum.SortOrder.LayoutOrder
+            ll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                sc.CanvasSize = UDim2.new(0, 0, 0, ll.AbsoluteContentSize.Y + 30)
+            end)
+            return sc
         end
 
-        local pageTheme = createTabPage()
-        local pageEsp = createTabPage()
-        local pageCombat = createTabPage()
-        local pageTrade = createTabPage()
-        local pageAutoFarm = createTabPage()
+        local categories = {"Theme", "ESP & X-Ray", "Combat & Aim", "Trade & Misc", "Auto Farm"}
+        local pageFrames = {}
 
-        -- Varsayılan açık sayfa
-        pageTheme.Visible = true
+        for i, catName in ipairs(categories) do
+            local page = createPage()
+            table.insert(pageFrames, page)
 
-        local function addTabButton(name, targetPage)
-            local tBtn = Instance.new("TextButton", tabsHolder)
-            tBtn.Size = UDim2.new(0.19, 0, 1, 0)
-            tBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-            tBtn.Text = name
-            tBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-            tBtn.TextSize = 12
-            tBtn.Font = CUSTOM_FONT
-            Instance.new("UICorner", tBtn).CornerRadius = UDim.new(0, 6)
+            local cBtn = Instance.new("TextButton", catHolder)
+            cBtn.Size = UDim2.new(0, 100, 0, 40)
+            cBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+            cBtn.Text = catName
+            cBtn.TextColor3 = Color3.fromRGB(230, 230, 230)
+            cBtn.TextSize = 13
+            cBtn.Font = CUSTOM_FONT
+            Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 8)
 
-            tBtn.MouseButton1Click:Connect(function()
-                pageTheme.Visible = false
-                pageEsp.Visible = false
-                pageCombat.Visible = false
-                pageTrade.Visible = false
-                pageAutoFarm.Visible = false
-                
-                targetPage.Visible = true
+            cBtn.MouseButton1Click:Connect(function()
+                for _, pFrame in ipairs(pageFrames) do pFrame.Visible = false end
+                page.Visible = true
+            end)
+            if i == 1 then page.Visible = true end
+        end
+
+        local function Tog(parentContainer, titleText, defaultState, callbackFunc)
+            local f2 = Instance.new("Frame", parentContainer)
+            f2.Size = UDim2.new(1, 0, 0, 50)
+            f2.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+            f2.BackgroundTransparency = 0.4
+            Instance.new("UICorner", f2).CornerRadius = UDim.new(0, 8)
+
+            local lb = Instance.new("TextLabel", f2)
+            lb.Size = UDim2.new(1, -70, 1, 0)
+            lb.Position = UDim2.new(0, 16, 0, 0)
+            lb.BackgroundTransparency = 1
+            lb.Text = titleText
+            lb.TextColor3 = Color3.fromRGB(240, 240, 240)
+            lb.TextSize = 15
+            lb.Font = CUSTOM_FONT
+            lb.TextXAlignment = Enum.TextXAlignment.Left
+
+            local bg2 = Instance.new("Frame", f2)
+            bg2.Size = UDim2.new(0, 48, 0, 26)
+            bg2.Position = UDim2.new(1, -58, 0.5, -13)
+            bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            bg2.BorderSizePixel = 0
+            Instance.new("UICorner", bg2).CornerRadius = UDim.new(0, 13)
+
+            local circ = Instance.new("Frame", bg2)
+            circ.Size = UDim2.new(0, 22, 0, 22)
+            circ.Position = UDim2.new(0, 2, 0.5, -11)
+            circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+            circ.BorderSizePixel = 0
+            Instance.new("UICorner", circ).CornerRadius = UDim.new(0, 11)
+
+            local st = defaultState or false
+            local function upd()
+                if st then
+                    bg2.BackgroundColor3 = getThemeColor(1)
+                    circ.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    pcall(function() circ:TweenPosition(UDim2.new(0, 24, 0.5, -11), "Out", "Quad", 0.2, true) end)
+                else
+                    bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                    circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+                    pcall(function() circ:TweenPosition(UDim2.new(0, 2, 0.5, -11), "Out", "Quad", 0.2, true) end)
+                end
+            end
+            upd()
+
+            local btn = Instance.new("TextButton", f2)
+            btn.Size = UDim2.new(1, 0, 1, 0)
+            btn.BackgroundTransparency = 1
+            btn.Text = ""
+            btn.MouseButton1Click:Connect(function()
+                st = not st
+                upd()
+                if callbackFunc then pcall(callbackFunc, st) end
             end)
         end
 
-        addTabButton("Theme", pageTheme)
-        addTabButton("ESP & Key", pageEsp)
-        addTabButton("Combat", pageCombat)
-        addTabButton("Trade & Misc", pageTrade)
-        addTabButton("Auto Farm", pageAutoFarm)
+        local function createStepControl(parentContainer, labelName, defaultVal, minVal, maxVal, step, callback)
+            local frameBox = Instance.new("Frame", parentContainer)
+            frameBox.Size = UDim2.new(1, 0, 0, 60)
+            frameBox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+            frameBox.BackgroundTransparency = 0.4
+            Instance.new("UICorner", frameBox).CornerRadius = UDim.new(0, 8)
 
-        -- ==========================================
-        -- TÜM ÖZELLİK BUTONLARI (EKSİKSİZ)
-        -- ==========================================
+            local lbl = Instance.new("TextLabel", frameBox)
+            lbl.Size = UDim2.new(1, -140, 1, 0)
+            lbl.Position = UDim2.new(0, 16, 0, 0)
+            lbl.BackgroundTransparency = 1
+            lbl.Text = labelName .. ": " .. defaultVal
+            lbl.TextColor3 = Color3.fromRGB(240, 240, 240)
+            lbl.TextSize = 15
+            lbl.Font = CUSTOM_FONT
+            lbl.TextXAlignment = Enum.TextXAlignment.Left
 
-        -- 1. THEME SEKMESİ
-        local themeToggleBtn = Instance.new("TextButton", pageTheme)
-        themeToggleBtn.Size = UDim2.new(1, 0, 0, 42)
-        themeToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-        themeToggleBtn.Text = "Rainbow Theme: ON"
-        themeToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-        themeToggleBtn.TextSize = 14
-        themeToggleBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", themeToggleBtn).CornerRadius = UDim.new(0, 6)
+            local val = defaultVal
 
-        themeToggleBtn.MouseButton1Click:Connect(function()
-            rainbowModeActive = not rainbowModeActive
-            if rainbowModeActive then
-                themeToggleBtn.Text = "Rainbow Theme: ON"
-                themeToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-            else
-                themeToggleBtn.Text = "Rainbow Theme: OFF"
-                themeToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            local minusBtn = Instance.new("TextButton", frameBox)
+            minusBtn.Size = UDim2.new(0, 42, 0, 36)
+            minusBtn.Position = UDim2.new(1, -110, 0.5, -18)
+            minusBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+            minusBtn.Text = "-"
+            minusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            minusBtn.TextSize = 20
+            minusBtn.Font = CUSTOM_FONT
+            Instance.new("UICorner", minusBtn).CornerRadius = UDim.new(0, 6)
+
+            local plusBtn = Instance.new("TextButton", frameBox)
+            plusBtn.Size = UDim2.new(0, 42, 0, 36)
+            plusBtn.Position = UDim2.new(1, -58, 0.5, -18)
+            plusBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+            plusBtn.Text = "+"
+            plusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            plusBtn.TextSize = 20
+            plusBtn.Font = CUSTOM_FONT
+            Instance.new("UICorner", plusBtn).CornerRadius = UDim.new(0, 6)
+
+            minusBtn.MouseButton1Click:Connect(function()
+                val = math.clamp(val - step, minVal, maxVal)
+                lbl.Text = labelName .. ": " .. val
+                if callback then pcall(callback, val) end
+            end)
+
+            plusBtn.MouseButton1Click:Connect(function()
+                val = math.clamp(val + step, minVal, maxVal)
+                lbl.Text = labelName .. ": " .. val
+                if callback then pcall(callback, val) end
+            end)
+
+            return frameBox
+        end
+
+        local O = {}
+        
+        -- Tab 1: Theme
+        Tog(pageFrames[1], "Rainbow Mode", true, function(s) rainbowModeActive = s end)
+        local colorContainer = Instance.new("Frame", pageFrames[1])
+        colorContainer.Size = UDim2.new(1, 0, 0, 48)
+        colorContainer.BackgroundTransparency = 1
+        local colors = {
+            {Name = "Red", Color = Color3.fromRGB(255, 50, 50)},
+            {Name = "Green", Color = Color3.fromRGB(50, 255, 50)},
+            {Name = "Blue", Color = Color3.fromRGB(50, 150, 255)},
+            {Name = "Purple", Color = Color3.fromRGB(180, 50, 255)},
+            {Name = "Orange", Color = Color3.fromRGB(255, 140, 0)}
+        }
+        for i, colData in ipairs(colors) do
+            local cBtn = Instance.new("TextButton", colorContainer)
+            cBtn.Size = UDim2.new(0.18, 0, 1, 0)
+            cBtn.Position = UDim2.new((i-1)*0.205, 0, 0, 0)
+            cBtn.BackgroundColor3 = colData.Color
+            cBtn.Text = ""
+            Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 8)
+            cBtn.MouseButton1Click:Connect(function()
+                rainbowModeActive = false
+                customThemeColor = colData.Color
+                sendNotification("Theme", colData.Name .." theme selected!", 1.5)
+            end)
+        end
+
+        -- Tab 2: ESP & X-Ray
+        Tog(pageFrames[2], "Perfect Role ESP", false, function(s) O.ESP = s end)
+        Tog(pageFrames[2], "Wallhack X-Ray (See Through Walls)", false, function(s) 
+            O.XRay = s
+            for _, part in pairs(workspace:GetDescendants()) do
+                if part:IsA("BasePart") and not part:IsDescendantOf(pl.Character) then
+                    if s then
+                        if part.Transparency < 0.5 then part.LocalTransparencyModifier = 0.5 end
+                    else
+                        part.LocalTransparencyModifier = 0
+                    end
+                end
             end
         end)
+        Tog(pageFrames[2], "Sheriff Gun & Coin ESP", false, function(s) O.ExtraESP = s end)
 
-        -- 2. ESP SEKMESİ
-        local espToggleBtn = Instance.new("TextButton", pageEsp)
-        espToggleBtn.Size = UDim2.new(1, 0, 0, 42)
-        espToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-        espToggleBtn.Text = "Perfect Role ESP: OFF"
-        espToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        espToggleBtn.TextSize = 14
-        espToggleBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", espToggleBtn).CornerRadius = UDim.new(0, 6)
+        -- Tab 3: Combat & Aim
+        Tog(pageFrames[3], "Auto Grab Gun", false, function(s) O.AutoGrabGun = s end)
+        Tog(pageFrames[3], "Auto Sheriff Target", false, function(s) O.AutoSheriff = s end)
+        Tog(pageFrames[3], "Kill All (Murderer)", false, function(s) O.KA = s end)
+        Tog(pageFrames[3], "God Mode Shield", false, function(s) O.GodMode = s end)
+        Tog(pageFrames[3], "God Fling Murderer", false, function(s) O.FlingMurderer = s end)
 
-        espToggleBtn.MouseButton1Click:Connect(function()
-            espEnabled = not espEnabled
-            if espEnabled then
-                espToggleBtn.Text = "Perfect Role ESP: ON"
-                espToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-                sendNotification("ESP", "Perfect Role ESP Activated!", 2)
-            else
-                espToggleBtn.Text = "Perfect Role ESP: OFF"
-                espToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                sendNotification("ESP", "Perfect Role ESP Deactivated!", 2)
-            end
+        -- Tab 4: Trade & Misc
+        Tog(pageFrames[4], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
+        Tog(pageFrames[4], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
+        Tog(pageFrames[4], "Infinite Jump", false, function(s) O.InfJump = s end)
+        Tog(pageFrames[4], "FullBright", false, function(s) 
+            lighting.Brightness = s and 2 or 1
+            lighting.ClockTime = s and 14 or 0
+            lighting.FogEnd = s and 100000 or 10000
+        end)
+        Tog(pageFrames[4], "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
+
+        createStepControl(pageFrames[4], "Character FOV", 70, 50, 120, 5, function(v) currentFOV = v end)
+        createStepControl(pageFrames[4], "WalkSpeed", 16, 16, 200, 4, function(v)
+            currentWalkSpeed = v
+            pcall(function() pl.Character.Humanoid.WalkSpeed = v end)
+        end)
+        createStepControl(pageFrames[4], "JumpPower", 50, 50, 300, 10, function(v)
+            currentJumpPower = v
+            pcall(function()
+                local hum = pl.Character.Humanoid
+                hum.UseJumpPower = true
+                hum.JumpPower = v
+            end)
         end)
 
-        -- 3. COMBAT SEKMESİ (Infinite Jump, Fullbright, Hız, Zıplama)
-        local infJumpBtn = Instance.new("TextButton", pageCombat)
-        infJumpBtn.Size = UDim2.new(1, 0, 0, 42)
-        infJumpBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-        infJumpBtn.Text = "Infinite Jump: OFF"
-        infJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        infJumpBtn.TextSize = 14
-        infJumpBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", infJumpBtn).CornerRadius = UDim.new(0, 6)
+        -- Tab 5: Auto Farm
+        Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
+        createStepControl(pageFrames[5], "Autofarm Speed", 25, 10, 100, 5, function(v) autoFarmSpeed = v end)
 
-        infJumpBtn.MouseButton1Click:Connect(function()
-            infJumpActive = not infJumpActive
-            if infJumpActive then
-                infJumpBtn.Text = "Infinite Jump: ON"
-                infJumpBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-            else
-                infJumpBtn.Text = "Infinite Jump: OFF"
-                infJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-            end
-        end)
-
-        uis.JumpRequest:Connect(function()
-            if infJumpActive then
+        -- Background Loops & Core Functionality
+        task.spawn(function()
+            while true do
+                task.wait(0.3)
                 pcall(function()
-                    pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    if O.ESP then
+                        for _, v in pairs(p:GetPlayers()) do
+                            if v ~= pl and v.Character then
+                                local hl = v.Character:FindFirstChild("PerfectESP")
+                                if not hl then
+                                    hl = Instance.new("Highlight", v.Character)
+                                    hl.Name = "PerfectESP"
+                                    hl.FillTransparency = 0.4
+                                    hl.OutlineTransparency = 0.1
+                                    hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                                    hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                                end
+                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                                local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
+                                if hasKnife then hl.FillColor = Color3.fromRGB(255, 0, 0)
+                                elseif hasGun then hl.FillColor = Color3.fromRGB(0, 150, 255)
+                                else hl.FillColor = Color3.fromRGB(0, 255, 0) end
+                            end
+                        end
+                    else
+                        for _, v in pairs(p:GetPlayers()) do
+                            if v.Character and v.Character:FindFirstChild("PerfectESP") then v.Character.PerfectESP:Destroy() end
+                        end
+                    end
                 end)
             end
         end)
 
-        local fullBrightBtn = Instance.new("TextButton", pageCombat)
-        fullBrightBtn.Size = UDim2.new(1, 0, 0, 42)
-        fullBrightBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-        fullBrightBtn.Text = "Fullbright (Night Vision)"
-        fullBrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        fullBrightBtn.TextSize = 14
-        fullBrightBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", fullBrightBtn).CornerRadius = UDim.new(0, 6)
-
-        fullBrightBtn.MouseButton1Click:Connect(function()
-            pcall(function()
-                game:GetService("Lighting").Brightness = 2
-                game:GetService("Lighting").ClockTime = 14
-                game:GetService("Lighting").GlobalShadows = false
-                sendNotification("Fullbright", "Night Vision Enabled!", 2)
-            end)
-        end)
-
-        -- WalkSpeed Ayar Çubuğu
-        local speedFrame = Instance.new("Frame", pageCombat)
-        speedFrame.Size = UDim2.new(1, 0, 0, 45)
-        speedFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-        Instance.new("UICorner", speedFrame).CornerRadius = UDim.new(0, 6)
-
-        local speedLabel = Instance.new("TextLabel", speedFrame)
-        speedLabel.Size = UDim2.new(0.5, 0, 1, 0)
-        speedLabel.Position = UDim2.new(0, 10, 0, 0)
-        speedLabel.BackgroundTransparency = 1
-        speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        speedLabel.TextSize = 14
-        speedLabel.Font = CUSTOM_FONT
-        speedLabel.TextXAlignment = Enum.TextXAlignment.Left
-        speedLabel.Text = "WalkSpeed: " .. currentWalkSpeed
-
-        local speedMinus = Instance.new("TextButton", speedFrame)
-        speedMinus.Size = UDim2.new(0, 35, 0, 32)
-        speedMinus.Position = UDim2.new(0.65, 0, 0.15, 0)
-        speedMinus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
-        speedMinus.Text = "-"
-        speedMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
-        speedMinus.Font = CUSTOM_FONT
-        Instance.new("UICorner", speedMinus).CornerRadius = UDim.new(0, 4)
-
-        local speedPlus = Instance.new("TextButton", speedFrame)
-        speedPlus.Size = UDim2.new(0, 35, 0, 32)
-        speedPlus.Position = UDim2.new(0.82, 0, 0.15, 0)
-        speedPlus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
-        speedPlus.Text = "+"
-        speedPlus.TextColor3 = Color3.fromRGB(255, 255, 255)
-        speedPlus.Font = CUSTOM_FONT
-        Instance.new("UICorner", speedPlus).CornerRadius = UDim.new(0, 4)
-
-        speedMinus.MouseButton1Click:Connect(function()
-            currentWalkSpeed = math.max(16, currentWalkSpeed - 10)
-            speedLabel.Text = "WalkSpeed: " .. currentWalkSpeed
-        end)
-        speedPlus.MouseButton1Click:Connect(function()
-            currentWalkSpeed = math.min(250, currentWalkSpeed + 10)
-            speedLabel.Text = "WalkSpeed: " .. currentWalkSpeed
-        end)
-
-        -- JumpPower Ayar Çubuğu
-        local jumpFrame = Instance.new("Frame", pageCombat)
-        jumpFrame.Size = UDim2.new(1, 0, 0, 45)
-        jumpFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-        Instance.new("UICorner", jumpFrame).CornerRadius = UDim.new(0, 6)
-
-        local jumpLabel = Instance.new("TextLabel", jumpFrame)
-        jumpLabel.Size = UDim2.new(0.5, 0, 1, 0)
-        jumpLabel.Position = UDim2.new(0, 10, 0, 0)
-        jumpLabel.BackgroundTransparency = 1
-        jumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        jumpLabel.TextSize = 14
-        jumpLabel.Font = CUSTOM_FONT
-        jumpLabel.TextXAlignment = Enum.TextXAlignment.Left
-        jumpLabel.Text = "JumpPower: " .. currentJumpPower
-
-        local jumpMinus = Instance.new("TextButton", jumpFrame)
-        jumpMinus.Size = UDim2.new(0, 35, 0, 32)
-        jumpMinus.Position = UDim2.new(0.65, 0, 0.15, 0)
-        jumpMinus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
-        jumpMinus.Text = "-"
-        jumpMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
-        jumpMinus.Font = CUSTOM_FONT
-        Instance.new("UICorner", jumpMinus).CornerRadius = UDim.new(0, 4)
-
-        local jumpPlus = Instance.new("TextButton", jumpFrame)
-        jumpPlus.Size = UDim2.new(0, 35, 0, 32)
-        jumpPlus.Position = UDim2.new(0.82, 0, 0.15, 0)
-        jumpPlus.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
-        jumpPlus.Text = "+"
-        jumpPlus.TextColor3 = Color3.fromRGB(255, 255, 255)
-        jumpPlus.Font = CUSTOM_FONT
-        Instance.new("UICorner", jumpPlus).CornerRadius = UDim.new(0, 4)
-
-        jumpMinus.MouseButton1Click:Connect(function()
-            currentJumpPower = math.max(50, currentJumpPower - 20)
-            jumpLabel.Text = "JumpPower: " .. currentJumpPower
-        end)
-        jumpPlus.MouseButton1Click:Connect(function()
-            currentJumpPower = math.min(300, currentJumpPower + 20)
-            jumpLabel.Text = "JumpPower: " .. currentJumpPower
-        end)
-
-        -- 4. TRADE & MISC SEKMESİ
-        local rejoiningBtn = Instance.new("TextButton", pageTrade)
-        rejoiningBtn.Size = UDim2.new(1, 0, 0, 42)
-        rejoiningBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-        rejoiningBtn.Text = "Rejoin Server"
-        rejoiningBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        rejoiningBtn.TextSize = 14
-        rejoiningBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", rejoiningBtn).CornerRadius = UDim.new(0, 6)
-
-        rejoiningBtn.MouseButton1Click:Connect(function()
-            game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, pl)
-        end)
-
-        -- 5. AUTO FARM SEKMESİ
-        local autoFarmBtn = Instance.new("TextButton", pageAutoFarm)
-        autoFarmBtn.Size = UDim2.new(1, 0, 0, 42)
-        autoFarmBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-        autoFarmBtn.Text = "Auto Farm Coins: OFF"
-        autoFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        autoFarmBtn.TextSize = 14
-        autoFarmBtn.Font = CUSTOM_FONT
-        Instance.new("UICorner", autoFarmBtn).CornerRadius = UDim.new(0, 6)
-
-        autoFarmBtn.MouseButton1Click:Connect(function()
-            autoFarmEnabled = not autoFarmEnabled
-            if autoFarmEnabled then
-                autoFarmBtn.Text = "Auto Farm Coins: ON"
-                autoFarmBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-                sendNotification("Farm", "Auto Farm Enabled!", 2)
-            else
-                autoFarmBtn.Text = "Auto Farm Coins: OFF"
-                autoFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                sendNotification("Farm", "Auto Farm Disabled!", 2)
+        -- Silent Aim Loop
+        task.spawn(function()
+            while true do
+                task.wait(0.05)
+                pcall(function()
+                    if silentAimActive then
+                        local c2 = pl.Character
+                        local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
+                        if gun then
+                            for _, v in pairs(p:GetPlayers()) do
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                                    if hasKnife then
+                                        local targetHrp = v.Character.HumanoidRootPart
+                                        camera.CFrame = CFrame.new(camera.CFrame.Position, targetHrp.Position)
+                                        break
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
             end
         end)
 
-        sendNotification("Loaded", "Panel v31 fully loaded and fixed!", 3)
+        task.spawn(function()
+            while true do
+                task.wait(1)
+                pcall(function()
+                    if O.ExtraESP then
+                        for _, obj in pairs(workspace:GetDescendants()) do
+                            if obj.Name == "GunDrop" and obj:IsA("BasePart") and not obj:FindFirstChild("GunESP") then
+                                local hl = Instance.new("Highlight", obj)
+                                hl.Name = "GunESP"
+                                hl.FillColor = Color3.fromRGB(255, 255, 0)
+                            elseif obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold")) and not obj:FindFirstChild("CoinESP") then
+                                local hl = Instance.new("Highlight", obj)
+                                hl.Name = "CoinESP"
+                                hl.FillColor = Color3.fromRGB(255, 215, 0)
+                            end
+                        end
+                    else
+                        for _, obj in pairs(workspace:GetDescendants()) do
+                            if obj:IsA("Highlight") and (obj.Name == "GunESP" or obj.Name == "CoinESP") then obj:Destroy() end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- GÜNCELLENEN AUTO GRAB GUN (Konumu kaydedip geri dönme özellikli)
+        task.spawn(function()
+            while true do
+                task.wait(0.2)
+                pcall(function()
+                    if O.AutoGrabGun then
+                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            for _, obj in pairs(workspace:GetDescendants()) do
+                                if obj.Name == "GunDrop" and obj:IsA("BasePart") then
+                                    -- 1. Silahı almadan HEMEN ÖNCE mevcut konumu kaydet
+                                    local savedCFrame = hrp.CFrame
+                                    
+                                    -- 2. Silahın konumuna ışınlan
+                                    hrp.CFrame = obj.CFrame
+                                    task.wait(0.15)
+                                    
+                                    -- 3. Kaydedilen eski yere geri dön
+                                    hrp.CFrame = savedCFrame
+                                    sendNotification("Auto Grab", "Gun grabbed & returned!", 2)
+                                    break 
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        task.spawn(function()
+            while true do
+                task.wait(0.3)
+                pcall(function()
+                    if O.AutoSheriff then
+                        local c2 = pl.Character
+                        local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
+                        if not gun and c2 and c2:FindFirstChild("Humanoid") then
+                            local bpGun = pl.Backpack:FindFirstChild("Gun")
+                            if bpGun then bpGun.Parent = c2; gun = bpGun end
+                        end
+                        if gun then
+                            for _, v in pairs(p:GetPlayers()) do
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                    if v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) then
+                                        local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
+                                        if ev then ev:FireServer(v.Character.HumanoidRootPart.Position) end
+                                        break
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        task.spawn(function()
+            while true do
+                task.wait(0.3)
+                pcall(function()
+                    if O.KA then
+                        local c2 = pl.Character
+                        local knife = c2 and (c2:FindFirstChild("Knife") or pl.Backpack:FindFirstChild("Knife"))
+                        if knife then
+                            if knife.Parent == pl.Backpack then knife.Parent = c2 end
+                            for _, v in pairs(p:GetPlayers()) do
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then
+                                    local rp = c2:FindFirstChild("HumanoidRootPart")
+                                    if rp then
+                                        rp.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2)
+                                        task.wait(0.05)
+                                        local ev = knife:FindFirstChildWhichIsA("RemoteEvent")
+                                        if ev then ev:FireServer(v.Character.HumanoidRootPart) end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        task.spawn(function()
+            while true do
+                task.wait(0.05)
+                pcall(function()
+                    if O.GodMode then
+                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                        if hum and hum.Health < hum.MaxHealth then hum.Health = hum.MaxHealth end
+                    end
+                end)
+            end
+        end)
+
+        task.spawn(function()
+            while true do
+                task.wait(0.1)
+                pcall(function()
+                    if O.FlingMurderer then
+                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                        if hrp and hum and hum.Health > 0 then
+                            local origPos = hrp.CFrame
+                            local targeted = false
+                            
+                            for _, v in pairs(p:GetPlayers()) do
+                                if not O.FlingMurderer then break end
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
+                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                                    if hasKnife then
+                                        targeted = true
+                                        local targetHrp = v.Character.HumanoidRootPart
+                                        local targetHum = v.Character.Humanoid
+                                        
+                                        while targetHrp and targetHrp.Parent and targetHum.Health > 0 and O.FlingMurderer do
+                                            hum.Health = hum.MaxHealth
+                                            hrp.CFrame = targetHrp.CFrame
+                                            hrp.Velocity = Vector3.new(40000, 40000, 40000)
+                                            hrp.RotVelocity = Vector3.new(40000, 40000, 40000)
+                                            task.wait(0.02)
+                                        end
+                                    end
+                                end
+                            end
+                            
+                            if targeted then
+                                hrp.Velocity = Vector3.new(0, 0, 0)
+                                hrp.RotVelocity = Vector3.new(0, 0, 0)
+                                hrp.CFrame = origPos
+                                sendNotification("Success", "Murderer neutralized & Returned!", 2)
+                                task.wait(0.5)
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        uis.JumpRequest:Connect(function()
+            if O.InfJump then
+                pcall(function() pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
+            end
+        end)
+
+        task.spawn(function()
+            while true do
+                task.wait(0.05)
+                pcall(function()
+                    if O.AF then
+                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                        if hrp and hum and hum.Health > 0 then
+                            for _, v in pairs((workspace:FindFirstChild("CoinContainer") or workspace):GetDescendants()) do
+                                if not O.AF then break end
+                                if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) and v.Transparency < 1 then
+                                    local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
+                                    local distance = (hrp.Position - targetCF.Position).Magnitude
+                                    local travelTime = math.clamp(distance / (autoFarmSpeed * 15), 0.01, 0.3)
+                                    
+                                    local startTime = tick()
+                                    local startCF = hrp.CFrame
+                                    while tick() - startTime < travelTime do
+                                        if not O.AF then break end
+                                        local alpha = (tick() - startTime) / travelTime
+                                        hrp.CFrame = startCF:Lerp(targetCF, alpha)
+                                        rs.RenderStepped:Wait()
+                                    end
+                                    hrp.CFrame = targetCF
+                                    task.wait(0.02 + math.random(1, 3)/100)
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        sendNotification("Loaded", "Taste Bread font applied successfully!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
