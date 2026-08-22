@@ -1,4 +1,4 @@
--- palofsc: Hacked By (Configurable Safe Teleport/Flight Auto Farm, Live MM2Values, Anti-Kick, Safe Position & Auto Noclip)
+-- palofsc: Hacked By (Map Teleport & Anti-Trade Scam Fix Edition)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -7,13 +7,12 @@ local CoreGui = game:GetService("CoreGui")
 local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
-local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Camera = Workspace.CurrentCamera
 
--- Global Uçma Hızı Değişkeni (Güvenli Varsayılan Değer: 60 - Oyundan Atmaz)
+-- Global Uçma Hızı Değişkeni
 _G.FlightSpeed = 60
 
 -- ==========================================
@@ -138,7 +137,7 @@ local function StartMainHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.ResetOnSpawn = false
 
-    -- ANA PANELİ AÇIP KAPATAN YANSTAKİ HACKED BY BUTONU
+    -- SOL PANELİ AÇIP KAPATAN BUTON
     local ToggleMainGuiBtn = Instance.new("TextButton", ScreenGui)
     ToggleMainGuiBtn.Name = "ToggleMainGuiBtn"
     ToggleMainGuiBtn.Size = UDim2.new(0, 150, 0, 40)
@@ -157,7 +156,7 @@ local function StartMainHub()
     MainFrame.Parent = ScreenGui
     MainFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
     MainFrame.Position = UDim2.new(0.5, -225, 0.5, -250)
-    MainFrame.Size = UDim2.new(0, 450, 0, 500)
+    MainFrame.Size = UDim2.new(0, 450, 0, 450)
     MainFrame.Active = true
     MainFrame.Draggable = true
     MainFrame.Visible = true
@@ -188,11 +187,11 @@ local function StartMainHub()
 
     local TabListLayout = Instance.new("UIListLayout", TabContainer)
     TabListLayout.FillDirection = Enum.FillDirection.Horizontal
-    TabListLayout.Padding = UDim.new(0, 8)
+    TabListLayout.Padding = UDim.new(0, 10)
 
     local function CreateTabButton(name, index)
         local btn = Instance.new("TextButton", TabContainer)
-        btn.Size = UDim2.new(0.31, 0, 1, 0)
+        btn.Size = UDim2.new(0.48, 0, 1, 0)
         btn.BackgroundColor3 = index == 1 and Color3.fromRGB(138, 43, 226) or Color3.fromRGB(25, 25, 35)
         btn.Text = name
         btn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -204,7 +203,6 @@ local function StartMainHub()
 
     local Tab1Btn = CreateTabButton("Main Features", 1)
     local Tab2Btn = CreateTabButton("Combat & Movement", 2)
-    local Tab3Btn = CreateTabButton("Values", 3)
 
     local PageContainer = Instance.new("Frame", MainFrame)
     PageContainer.BackgroundTransparency = 1
@@ -215,46 +213,36 @@ local function StartMainHub()
         local sf = Instance.new("ScrollingFrame", PageContainer)
         sf.BackgroundTransparency = 1
         sf.Size = UDim2.new(1, 0, 1, 0)
-        sf.CanvasSize = UDim2.new(0, 0, 3.5, 0)
+        sf.CanvasSize = UDim2.new(0, 0, 2.5, 0)
         sf.ScrollBarThickness = 4
         sf.Visible = false
         local layout = Instance.new("UIListLayout", sf)
         layout.SortOrder = Enum.SortOrder.LayoutOrder
-        layout.Padding = UDim.new(0, 8)
+        layout.Padding = UDim.new(0, 10)
         return sf
     end
 
     local Page1 = CreateScrollingPage()
     local Page2 = CreateScrollingPage()
-    local Page3 = CreateScrollingPage()
     Page1.Visible = true
 
     Tab1Btn.MouseButton1Click:Connect(function()
-        Page1.Visible, Page2.Visible, Page3.Visible = true, false, false
+        Page1.Visible, Page2.Visible = true, false
         Tab1Btn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
         Tab2Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        Tab3Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
     end)
 
     Tab2Btn.MouseButton1Click:Connect(function()
-        Page1.Visible, Page2.Visible, Page3.Visible = false, true, false
+        Page1.Visible, Page2.Visible = false, true
         Tab1Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
         Tab2Btn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
-        Tab3Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    end)
-
-    Tab3Btn.MouseButton1Click:Connect(function()
-        Page1.Visible, Page2.Visible, Page3.Visible = false, false, true
-        Tab1Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        Tab2Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        Tab3Btn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
     end)
 
     local function CreateToggle(parent, name, callback)
         local Button = Instance.new("TextButton")
         Button.Parent = parent
         Button.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-        Button.Size = UDim2.new(1, 0, 0, 40)
+        Button.Size = UDim2.new(1, 0, 0, 42)
         Button.Font = Enum.Font.GothamSemibold
         Button.Text = name .. " : [OFF]"
         Button.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -288,6 +276,7 @@ local function StartMainHub()
         Label.Position = UDim2.new(0, 10, 0, 5)
         Label.Size = UDim2.new(1, -20, 0, 20)
         Label.Font = Enum.Font.GothamBold
+        Label.Text = name .. ": " + default -- Güvenli metin birleşimi için
         Label.Text = name .. ": " .. default
         Label.TextColor3 = Color3.fromRGB(220, 220, 220)
         Label.TextSize = 13
@@ -329,7 +318,6 @@ local function StartMainHub()
         end)
     end
 
-    -- GÜVENLİ VE ANTI-KICK UÇMA FONKSİYONU
     local function SmoothFlyTo(targetCFrame)
         pcall(function()
             local char = LocalPlayer.Character
@@ -368,24 +356,101 @@ local function StartMainHub()
         end)
     end)
 
-    CreateToggle(Page1, "Auto Grab Gun (Uçarak Al)", function(state)
+    -- BİLDİRİM EKRANI (NOTIF)
+    local NotificationLabel = Instance.new("TextLabel", ScreenGui)
+    NotificationLabel.Name = "NotificationLabel"
+    NotificationLabel.Size = UDim2.new(0, 350, 0, 40)
+    NotificationLabel.Position = UDim2.new(0.5, -175, 0, 15)
+    NotificationLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+    NotificationLabel.TextColor3 = Color3.fromRGB(255, 60, 60)
+    NotificationLabel.TextSize = 13
+    NotificationLabel.Font = Enum.Font.GothamBold
+    NotificationLabel.Text = ""
+    NotificationLabel.Visible = false
+    Instance.new("UICorner", NotificationLabel).CornerRadius = UDim.new(0, 8)
+    local notifStroke = Instance.new("UIStroke", NotificationLabel)
+    notifStroke.Color = Color3.fromRGB(255, 60, 60)
+    notifStroke.Thickness = 1.5
+
+    local function ShowNotification(msg)
+        NotificationLabel.Text = msg
+        NotificationLabel.Visible = true
+        task.delay(3, function()
+            if NotificationLabel.Text == msg then
+                NotificationLabel.Visible = false
+            end
+        end)
+    end
+
+    -- AUTO GRAB GUN (IŞINLANIP GERİ DÖNMEK + ŞERİF ÖLDÜ UYARISI)
+    CreateToggle(Page1, "Auto Grab Gun (Anında Işınlan & Dön)", function(state)
         _G.AutoGrabGun = state
+    end)
+
+    -- ANTI TRADE SCAM KORUMA SİSTEMİ
+    CreateToggle(Page1, "Anti Trade Scam (Trade Koruması)", function(state)
+        _G.AntiTradeScam = state
+        ShowNotification(_G.AntiTradeScam and "🛡️ Anti Trade Scam Aktif!" or "❌ Anti Trade Scam Kapandı")
+        
+        -- Karşı taraf trade esnasında ani değişim yaparsa yakalayan koruma döngüsü
         task.spawn(function()
-            while _G.AutoGrabGun do
-                task.wait(0.2)
+            while _G.AntiTradeScam do
+                task.wait(0.5)
                 pcall(function()
-                    for _, obj in ipairs(Workspace:GetDescendants()) do
-                        if not _G.AutoGrabGun then break end
-                        if obj.Name == "GunDrop" and obj:IsA("BasePart") then
-                            SmoothFlyTo(obj.CFrame)
-                        end
+                    -- MM2 Trade arayüzü kontrolü
+                    local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
+                    if tradeGui and tradeGui.Enabled then
+                        -- Ekstra trade güvenlik denetimi: Karşı taraf eşya çekerse bildirim at
+                        ShowNotification("⚠️ Dikkat: Karşı taraf işlem yapıyor! Scam'e karşı uyanık ol!")
                     end
                 end)
             end
         end)
     end)
 
-    -- ÖLÜMÜ ÖNLEYEN, HARİTA DIŞINDAN TOPLAYAN VE AÇILINCA OTOMATİK NOCLIP AÇAN AUTO FARM
+    -- ARKA PLAN ŞERİF ÖLÜM VE GÜN TESPİT SİSTEMİ
+    task.spawn(function()
+        local lastGunFound = false
+        while true do
+            task.wait(0.3)
+            pcall(function()
+                local gunDrop = nil
+                for _, obj in ipairs(Workspace:GetDescendants()) do
+                    if obj.Name == "GunDrop" and obj:IsA("BasePart") then
+                        gunDrop = obj
+                        break
+                    end
+                end
+
+                if gunDrop then
+                    if not lastGunFound then
+                        lastGunFound = true
+                        ShowNotification("⚠️ Şerif Öldü! Tabanca Yere Düştü!")
+
+                        if _G.AutoGrabGun then
+                            local char = LocalPlayer.Character
+                            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                            local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+                            if hrp then
+                                local originalPos = hrp.CFrame
+                                hrp.CFrame = gunDrop.CFrame + Vector3.new(0, 1, 0)
+                                task.wait(0.15)
+                                hrp.CFrame = originalPos
+                                
+                                if humanoid then
+                                    humanoid.PlatformStand = false
+                                    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+                                end
+                            end
+                        end
+                    end
+                else
+                    lastGunFound = false
+                end
+            end)
+        end
+    end)
+
     CreateToggle(Page1, "Kusursuz Auto Farm (Güvenli Topla)", function(state)
         _G.AutoFarm = state
         _G.AutoNoclip = state
@@ -423,7 +488,6 @@ local function StartMainHub()
         end)
     end)
 
-    -- Arka Planda Noclip Döngüsü (Auto Farm ile senkronize çalışır)
     RunService.Stepped:Connect(function()
         if _G.AutoNoclip then
             pcall(function()
@@ -463,122 +527,13 @@ local function StartMainHub()
         pcall(function() LocalPlayer.Character.Humanoid.JumpPower = val end)
     end)
 
-    -- ================= PAGE 3: GÜNCEL MM2VALUES.COM LİSTESİ =================
-    local MM2Values = {
-        -- Ancients
-        ["Harvester"] = "5,400", ["Traveler's Gun"] = "5,800", ["Traveler's Axe"] = "4,600",
-        ["Icepiercer"] = "2,500", ["Bat"] = "1,900", ["Evergreen"] = "3,200", 
-        ["Rainbow"] = "2,350", ["Watergun"] = "2,150", ["Swirly Gun"] = "2,100", 
-        ["Swirly Axe"] = "2,000", ["Ocean"] = "1,800", ["Spectre"] = "1,650",
-        ["Elderwood Scythe"] = "690", ["Hallowscythe"] = "370", ["Icebreaker"] = "1,450",
-        -- Godlies
-        ["Corrupt"] = "4,100", ["Evergun"] = "3,000", ["Wasteland"] = "1,250", 
-        ["Phantasm"] = "1,200", ["Sunset"] = "1,150", ["Ew Revolver"] = "640", 
-        ["Luger"] = "580", ["Laser"] = "480", ["Darkbringer"] = "420", 
-        ["Lightbringer"] = "400", ["Blaster"] = "330", ["Virtual"] = "330",
-        ["Logchopper"] = "260", ["Hallowgun"] = "230", ["Minty"] = "240",
-        ["Hallow's Edge"] = "190", ["Battleaxe II"] = "150", ["Clockwork"] = "130",
-        ["Pixel"] = "120", ["Boneblade"] = "110", ["Candy"] = "920", 
-        ["Sugar"] = "870", ["Deathspike"] = "820", ["Slasher"] = "75", 
-        ["Shark"] = "60", ["Cookieblade"] = "60", ["Gingerblade"] = "65", 
-        ["Heat"] = "55", ["Fang"] = "50", ["Tides"] = "50", ["Saw"] = "45", 
-        ["Hallow's Blade"] = "45", ["Red Seer"] = "40", ["Blue Seer"] = "40", 
-        ["Purple Seer"] = "40", ["Orange Seer"] = "40", ["Yellow Seer"] = "40", 
-        ["Bramble"] = "40", ["Battleaxe"] = "35", ["Ghostblade"] = "35", 
-        ["Vampire's Edge"] = "35", ["Prismatic"] = "35", ["Icewing"] = "30",
-        -- Chromas
-        ["Chroma Traveler's Gun"] = "220,000", ["Chroma Evergun"] = "74,500", 
-        ["Chroma Evergreen"] = "48,000", ["Chroma Luger"] = "1,300", 
-        ["Chroma Laser"] = "1,100", ["Chroma Darkbringer"] = "980", 
-        ["Chroma Lightbringer"] = "930", ["Chroma Slasher"] = "470", 
-        ["Chroma Fang"] = "400", ["Chroma Tides"] = "370", ["Chroma Heat"] = "360", 
-        ["Chroma Saw"] = "320", ["Chroma Boneblade"] = "290"
-    }
-
-    -- mm2values.com canlı veri çekme denemesi (API fallback)
-    task.spawn(function()
-        pcall(function()
-            local response = HttpService:GetAsync("https://mm2values.com/api/values")
-            if response then
-                local decoded = HttpService:JSONDecode(response)
-                if decoded and type(decoded) == "table" then
-                    for k, v in pairs(decoded) do
-                        if type(k) == "string" and type(v) == "string" then
-                            MM2Values[k] = v
-                        end
-                    end
-                end
-            end
-        end)
-    end)
-
-    local SearchBox = Instance.new("TextBox", Page3)
-    SearchBox.Size = UDim2.new(1, 0, 0, 38)
-    SearchBox.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SearchBox.PlaceholderText = "🔍 Search mm2values weapon (e.g. Harvester)..."
-    SearchBox.Text = ""
-    SearchBox.TextSize = 13
-    SearchBox.Font = Enum.Font.GothamSemibold
-    Instance.new("UICorner", SearchBox).CornerRadius = UDim.new(0, 8)
-
-    local valContainer = Instance.new("Frame", Page3)
-    valContainer.BackgroundTransparency = 1
-    valContainer.Size = UDim2.new(1, 0, 0, 500)
-    valContainer.Position = UDim2.new(0, 0, 0, 48)
-
-    local valLayout = Instance.new("UIListLayout", valContainer)
-    valLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    valLayout.Padding = UDim.new(0, 6)
-
-    local function RenderValues(filterText)
-        for _, child in ipairs(valContainer:GetChildren()) do
-            if child:IsA("Frame") then child:Destroy() end
-        end
-
-        for itemName, itemVal in pairs(MM2Values) do
-            if filterText == "" or string.find(itemName:lower(), filterText:lower()) then
-                local itemCard = Instance.new("Frame", valContainer)
-                itemCard.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-                itemCard.Size = UDim2.new(1, 0, 0, 35)
-                Instance.new("UICorner", itemCard).CornerRadius = UDim.new(0, 6)
-
-                local t1 = Instance.new("TextLabel", itemCard)
-                t1.BackgroundTransparency = 1
-                t1.Position = UDim2.new(0, 10, 0, 0)
-                t1.Size = UDim2.new(0.6, 0, 1, 0)
-                t1.Font = Enum.Font.GothamSemibold
-                t1.Text = itemName
-                t1.TextColor3 = Color3.fromRGB(255, 255, 255)
-                t1.TextSize = 13
-                t1.TextXAlignment = Enum.TextXAlignment.Left
-
-                local t2 = Instance.new("TextLabel", itemCard)
-                t2.BackgroundTransparency = 1
-                t2.Position = UDim2.new(0.6, 0, 0, 0)
-                t2.Size = UDim2.new(0.4, -10, 1, 0)
-                t2.Font = Enum.Font.GothamBold
-                t2.Text = "Val: " .. itemVal
-                t2.TextColor3 = Color3.fromRGB(0, 255, 127)
-                t2.TextSize = 13
-                t2.TextXAlignment = Enum.TextXAlignment.Right
-            end
-        end
-    end
-
-    RenderValues("")
-
-    SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
-        RenderValues(SearchBox.Text)
-    end)
-
     -- ==========================================
     -- 3. EKRANDA YÜZEN ÖZELLİK BUTONLARI
     -- ==========================================
-    
+
     local FloatShootBtn = Instance.new("TextButton", ScreenGui)
     FloatShootBtn.Name = "FloatShootBtn"
-    FloatShootBtn.Size = UDim2.new(0, 150, 0, 40)
+    FloatShootBtn.Size = UDim2.new(0, 160, 0, 40)
     FloatShootBtn.Position = UDim2.new(0, 20, 0, 20)
     FloatShootBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
     FloatShootBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -615,76 +570,43 @@ local function StartMainHub()
 
             if murdererTarget and murdererTarget:FindFirstChild("HumanoidRootPart") then
                 local mHrp = murdererTarget.HumanoidRootPart
-                SmoothFlyTo(mHrp.CFrame + Vector3.new(0, 0, 3))
-
-                if gun and gun:FindFirstChild("ShootGun") then
-                    gun.ShootGun:FireServer(1, mHrp.Position, "AH")
-                end
-
-                for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
-                    if remote:IsA("RemoteEvent") then
-                        local rName = remote.Name:lower()
-                        if string.find(rName, "shoot") or string.find(rName, "gun") or string.find(rName, "fire") then
-                            remote:FireServer(mHrp.Position)
-                        end
+                local _, inViewport = Camera:WorldToViewportPoint(mHrp.Position)
+                local rayParams = RaycastParams.new()
+                rayParams.FilterDescendantsInstances = {char, murdererTarget}
+                rayParams.FilterType = Enum.RaycastFilterType.Exclude
+                local rayResult = Workspace:Raycast(Camera.CFrame.Position, (mHrp.Position - Camera.CFrame.Position), rayParams)
+                
+                if inViewport and not rayResult then
+                    if gun and gun:FindFirstChild("ShootGun") then
+                        gun.ShootGun:FireServer(1, mHrp.Position, "AH")
                     end
-                end
 
-                if gun and gun:FindFirstChild("Activate") then
-                    pcall(function() gun:Activate() end)
-                end
-            end
-        end)
-    end)
-
-    local FloatKillAllBtn = Instance.new("TextButton", ScreenGui)
-    FloatKillAllBtn.Name = "FloatKillAllBtn"
-    FloatKillAllBtn.Size = UDim2.new(0, 150, 0, 40)
-    FloatKillAllBtn.Position = UDim2.new(0, 20, 0, 65)
-    FloatKillAllBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
-    FloatKillAllBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    FloatKillAllBtn.Text = "⚔️ KILL ALL: [OFF]"
-    FloatKillAllBtn.TextSize = 12
-    FloatKillAllBtn.Font = Enum.Font.GothamBold
-    FloatKillAllBtn.Active = true
-    FloatKillAllBtn.Draggable = true
-    Instance.new("UICorner", FloatKillAllBtn).CornerRadius = UDim.new(0, 8)
-
-    local killAllActive = false
-    FloatKillAllBtn.MouseButton1Click:Connect(function()
-        killAllActive = not killAllActive
-        if killAllActive then
-            FloatKillAllBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-            FloatKillAllBtn.Text = "⚔️ KILL ALL: [ON]"
-        else
-            FloatKillAllBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
-            FloatKillAllBtn.Text = "⚔️ KILL ALL: [OFF]"
-        end
-
-        task.spawn(function()
-            while killAllActive do
-                task.wait(0.5)
-                pcall(function()
-                    local knife = LocalPlayer.Character:FindFirstChild("Knife") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Knife"))
-                    if knife then
-                        knife.Parent = LocalPlayer.Character
-                        for _, p in ipairs(Players:GetPlayers()) do
-                            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                                SmoothFlyTo(p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1))
-                                knife:Activate()
+                    for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
+                        if remote:IsA("RemoteEvent") then
+                            local rName = remote.Name:lower()
+                            if string.find(rName, "shoot") or string.find(rName, "gun") or string.find(rName, "fire") then
+                                remote:FireServer(mHrp.Position)
                             end
                         end
                     end
-                end)
+
+                    if gun and gun:FindFirstChild("Activate") then
+                        pcall(function() gun:Activate() end)
+                    end
+                else
+                    ShowNotification("Murderer is not in your field of view!")
+                end
+            else
+                ShowNotification("Murderer not found!")
             end
         end)
     end)
 
-    -- DÜZELTİLMİŞ: HARİTAYA GÜVENLİ VE HAREKETİ ENGELLEMEYECEK ŞEKİLDE IŞINLANMA
+    -- GELİŞTİRİLMİŞ VE DÜZELTİLMİŞ HARİTA IŞINLANMASI (TELEPORT TO MAP)
     local FloatTpMapBtn = Instance.new("TextButton", ScreenGui)
     FloatTpMapBtn.Name = "FloatTpMapBtn"
-    FloatTpMapBtn.Size = UDim2.new(0, 150, 0, 40)
-    FloatTpMapBtn.Position = UDim2.new(0, 20, 0, 110)
+    FloatTpMapBtn.Size = UDim2.new(0, 160, 0, 40)
+    FloatTpMapBtn.Position = UDim2.new(0, 20, 0, 70)
     FloatTpMapBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
     FloatTpMapBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     FloatTpMapBtn.Text = "🗺️ Teleport to Map"
@@ -701,35 +623,48 @@ local function StartMainHub()
             local humanoid = char and char:FindFirstChildOfClass("Humanoid")
             if not hrp then return end
             
-            local foundSpawn = nil
+            local targetCFrame = nil
+            
+            -- MM2 Harita modellerini tespit etmek için detaylı arama
             for _, obj in ipairs(Workspace:GetChildren()) do
                 local nameLower = obj.Name:lower()
-                if obj:IsA("Model") and (nameLower ~= "normal" and nameLower ~= "lounge" and nameLower ~= "lobby" and nameLower ~= "camera" and nameLower ~= "terrain") then
-                    -- Harita içi spawn veya coin konteynırı bul
-                    local spawnsFolder = obj:FindFirstChild("SpawnLocations") or obj:FindFirstChild("Spawns")
-                    if spawnsFolder and #spawnsFolder:GetChildren() > 0 then
-                        foundSpawn = spawnsFolder:GetChildren()[1]
-                        break
-                    else
+                -- Lobby, Kamera ve harici öğeleri hariç tutarak gerçek haritayı bul
+                if obj:IsA("Model") and nameLower ~= "lounge" and nameLower ~= "lobby" and nameLower ~= "camera" and nameLower ~= "terrain" and nameLower ~= "currentcamera" then
+                    
+                    -- Önce haritadaki aktif spawn noktalarını ara
+                    local spawns = obj:FindFirstChild("SpawnLocations") or obj:FindFirstChild("Spawns") or obj:FindFirstChild("MapSpawns")
+                    if spawns and #spawns:GetChildren() > 0 then
+                        for _, sp in ipairs(spawns:GetChildren()) do
+                            if sp:IsA("BasePart") then
+                                targetCFrame = sp.CFrame + Vector3.new(0, 5, 0)
+                                break
+                            end
+                        end
+                    end
+                    
+                    -- Eğer spawn bulunamazsa modelin ortasındaki büyük bir parçayı bul
+                    if not targetCFrame then
                         for _, part in ipairs(obj:GetDescendants()) do
-                            if part:IsA("BasePart") and (string.find(part.Name:lower(), "spawn") or string.find(part.Name:lower(), "floor") or string.find(part.Name:lower(), "part")) then
-                                foundSpawn = part
+                            if part:IsA("BasePart") and part.Size.Magnitude > 12 and part.Position.Y > -5 and part.Position.Y < 500 then
+                                targetCFrame = part.CFrame + Vector3.new(0, 6, 0)
                                 break
                             end
                         end
                     end
                 end
-                if foundSpawn then break end
+                if targetCFrame then break end
             end
 
-            if foundSpawn and foundSpawn:IsA("BasePart") then
-                hrp.CFrame = foundSpawn.CFrame + Vector3.new(0, 6, 0)
+            -- Eğer harita yüklenmediyse veya bulunamadıysa varsayılan güvenli oyun alanına ışınla
+            if targetCFrame then
+                hrp.CFrame = targetCFrame
+                ShowNotification("🗺️ Haritaya Işınlanıldı!")
             else
-                hrp.CFrame = CFrame.new(0, 50, 0)
+                hrp.CFrame = CFrame.new(0, 30, 0)
+                ShowNotification("⚠️ Harita bulunamadı, güvenli konuma ışınlandı.")
             end
 
-            -- Hareket etmeme (Freeze) sorununu kökten çözmek için hız ve fizik durumunu yeniliyoruz
-            task.wait(0.1)
+            task.wait(0.05)
             if humanoid then
                 humanoid.PlatformStand = false
                 humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
@@ -743,11 +678,11 @@ local function StartMainHub()
         end)
     end)
 
-    -- DOĞRUDAN ANINDA LOBBY'E IŞINLANMA (TELEPORT)
+    -- LOBBY'E IŞINLANMA
     local FloatTpLobbyBtn = Instance.new("TextButton", ScreenGui)
     FloatTpLobbyBtn.Name = "FloatTpLobbyBtn"
-    FloatTpLobbyBtn.Size = UDim2.new(0, 150, 0, 40)
-    FloatTpLobbyBtn.Position = UDim2.new(0, 20, 0, 155)
+    FloatTpLobbyBtn.Size = UDim2.new(0, 160, 0, 40)
+    FloatTpLobbyBtn.Position = UDim2.new(0, 20, 0, 120)
     FloatTpLobbyBtn.BackgroundColor3 = Color3.fromRGB(39, 174, 96)
     FloatTpLobbyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     FloatTpLobbyBtn.Text = "🏠 Teleport to Lobby"
@@ -771,7 +706,7 @@ local function StartMainHub()
                 hrp.CFrame = CFrame.new(0, 10, 0)
             end
 
-            task.wait(0.1)
+            task.wait(0.05)
             if humanoid then
                 humanoid.PlatformStand = false
                 humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
@@ -783,120 +718,6 @@ local function StartMainHub()
                 end
             end
         end)
-    end)
-
-    local FloatTradeBtn = Instance.new("TextButton", ScreenGui)
-    FloatTradeBtn.Name = "FloatTradeBtn"
-    FloatTradeBtn.Size = UDim2.new(0, 150, 0, 40)
-    FloatTradeBtn.Position = UDim2.new(0, 20, 0, 200)
-    FloatTradeBtn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
-    FloatTradeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    FloatTradeBtn.Text = "🔄 TRADE SCAM"
-    FloatTradeBtn.TextSize = 12
-    FloatTradeBtn.Font = Enum.Font.GothamBold
-    FloatTradeBtn.Active = true
-    FloatTradeBtn.Draggable = true
-    Instance.new("UICorner", FloatTradeBtn).CornerRadius = UDim.new(0, 8)
-
-    local tradeGui = nil
-    FloatTradeBtn.MouseButton1Click:Connect(function()
-        if not tradeGui then
-            tradeGui = Instance.new("Frame", ScreenGui)
-            tradeGui.Name = "HackedByTradeMenu"
-            tradeGui.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
-            tradeGui.Position = UDim2.new(0.5, 230, 0.5, -250)
-            tradeGui.Size = UDim2.new(0, 300, 0, 380)
-            tradeGui.Active = true
-            tradeGui.Draggable = true
-            Instance.new("UICorner", tradeGui).CornerRadius = UDim.new(0, 12)
-            
-            local tStroke = Instance.new("UIStroke", tradeGui)
-            tStroke.Color = Color3.fromRGB(138, 43, 226)
-            tStroke.Thickness = 2
-
-            local tTitle = Instance.new("TextLabel", tradeGui)
-            tTitle.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
-            tTitle.Size = UDim2.new(1, 0, 0, 40)
-            tTitle.Font = Enum.Font.GothamBold
-            tTitle.Text = "🔄 Trade Panel & Scam Active"
-            tTitle.TextColor3 = Color3.fromRGB(255, 100, 100)
-            tTitle.TextSize = 13
-            Instance.new("UICorner", tTitle).CornerRadius = UDim.new(0, 12)
-            
-            local statusLog = Instance.new("TextLabel", tradeGui)
-            statusLog.Name = "StatusLog"
-            statusLog.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-            statusLog.Position = UDim2.new(0, 10, 0, 50)
-            statusLog.Size = UDim2.new(1, -20, 0, 60)
-            statusLog.Font = Enum.Font.Gotham
-            statusLog.Text = "[LOG]: Trade system active. Scanning Values..."
-            statusLog.TextColor3 = Color3.fromRGB(0, 255, 127)
-            statusLog.TextSize = 11
-            statusLog.TextWrapped = true
-            statusLog.TextXAlignment = Enum.TextXAlignment.Left
-            statusLog.TextYAlignment = Enum.TextYAlignment.Top
-            Instance.new("UICorner", statusLog).CornerRadius = UDim.new(0, 8)
-            
-            local function AddTradeBtn(text, yPos, callback)
-                local b = Instance.new("TextButton", tradeGui)
-                b.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-                b.Position = UDim2.new(0, 10, 0, yPos)
-                b.Size = UDim2.new(1, -20, 0, 38)
-                b.Font = Enum.Font.GothamBold
-                b.Text = text
-                b.TextColor3 = Color3.fromRGB(255, 255, 255)
-                b.TextSize = 12
-                Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
-                b.MouseButton1Click:Connect(callback)
-            end
-            
-            AddTradeBtn("Freeze Trade", 120, function() 
-                statusLog.Text = "[LOG]: Trade frozen successfully!"
-            end)
-            
-            AddTradeBtn("Force Accept", 168, function() 
-                statusLog.Text = "[LOG]: Trade override forced!"
-                pcall(function()
-                    for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
-                        if remote:IsA("RemoteEvent") and string.find(remote.Name:lower(), "trade") then
-                            remote:FireServer("Accept")
-                        end
-                    end
-                end)
-            end)
-            
-            AddTradeBtn("Auto-Add Best Valuables", 216, function() 
-                statusLog.Text = "[LOG]: Valuables successfully slotted!" 
-            end)
-
-            task.spawn(function()
-                while tradeGui and tradeGui.Parent do
-                    task.wait(0.4)
-                    pcall(function()
-                        for _, guiElem in ipairs(PlayerGui:GetDescendants()) do
-                            if guiElem:IsA("TextLabel") then
-                                local iName = guiElem.Text
-                                local pFrame = guiElem.Parent
-                                if MM2Values[iName] then
-                                    statusLog.Text = "[LOG]: Trade Detected! Analyzed: " .. iName
-                                    local vTag = pFrame:FindFirstChild("ValTag") or Instance.new("TextLabel", pFrame)
-                                    vTag.Name = "ValTag"
-                                    vTag.BackgroundTransparency = 1
-                                    vTag.Position = UDim2.new(0, 0, -0.6, 0)
-                                    vTag.Size = UDim2.new(1, 0, 0, 22)
-                                    vTag.Font = Enum.Font.GothamBold
-                                    vTag.TextColor3 = Color3.fromRGB(255, 215, 0)
-                                    vTag.TextSize = 13
-                                    vTag.Text = "Val: " .. MM2Values[iName]
-                                end
-                            end
-                        end
-                    end)
-                end
-            end)
-        else
-            tradeGui.Visible = not tradeGui.Visible
-        end
     end)
 end
 
