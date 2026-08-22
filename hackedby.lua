@@ -8,19 +8,25 @@ local workspace = game:GetService("Workspace")
 local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
 local lighting = game:GetService("Lighting")
-local ts = game:GetService("TweenService")
 local camera = workspace.CurrentCamera
 
 local LOOTLABS_LINK = "https://loot-link.com/s?9K7cNpua"
 local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
 
--- Dinamik Rainbow Renk Fonksiyonu
-local function getRainbowColor(speed)
-    local hue = (tick() * (speed or 1)) % 1
-    return Color3.fromHSV(hue, 1, 1)
+-- Tema ve Renk Kontrolleri
+local customThemeColor = Color3.fromRGB(0, 162, 255)
+local rainbowModeActive = true
+
+local function getThemeColor(speed)
+    if rainbowModeActive then
+        local hue = (tick() * (speed or 1)) % 1
+        return Color3.fromHSV(hue, 1, 1)
+    else
+        return customThemeColor
+    end
 end
 
--- Bildirim Sistemi (Toast Notification)
+-- Bildirim Sistemi (Toast Notification - Sağ Alta Taşındı ve Tam Görünürlük Sağlandı)
 local notifGui = Instance.new("ScreenGui")
 notifGui.Name = "MM2_Notifications"
 notifGui.ResetOnSpawn = false
@@ -28,12 +34,12 @@ pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
 if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
 
 local notifHolder = Instance.new("Frame", notifGui)
-notifHolder.Size = UDim2.new(0, 260, 1, 0)
-notifHolder.Position = UDim2.new(1, -280, 0, 20)
+notifHolder.Size = UDim2.new(0, 260, 0, 400)
+notifHolder.Position = UDim2.new(1, -275, 1, -415) -- Ekranın sağ alt köşesi
 notifHolder.BackgroundTransparency = 1
 local notifLayout = Instance.new("UIListLayout", notifHolder)
 notifLayout.SortOrder = Enum.SortOrder.LayoutOrder
-notifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+notifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom -- Alttan üste doğru sıralama
 notifLayout.Padding = UDim.new(0, 8)
 
 local function sendNotification(titleText, msgText, duration)
@@ -48,10 +54,9 @@ local function sendNotification(titleText, msgText, duration)
         local stroke = Instance.new("UIStroke", box)
         stroke.Thickness = 1.5
         
-        -- Rainbow Stroke Sync for Notification
         local conn
         conn = rs.RenderStepped:Connect(function()
-            stroke.Color = getRainbowColor(0.8)
+            stroke.Color = getThemeColor(0.8)
         end)
 
         local tLbl = Instance.new("TextLabel", box)
@@ -100,7 +105,7 @@ Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
 local stroke = Instance.new("UIStroke", frame)
 stroke.Thickness = 2
-rs.RenderStepped:Connect(function() stroke.Color = getRainbowColor(1) end)
+rs.RenderStepped:Connect(function() stroke.Color = getThemeColor(1) end)
 
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 45)
@@ -157,7 +162,7 @@ loginBtn.MouseButton1Click:Connect(function()
         
         -- ASIL HİLE MENÜSÜ BAŞLANGICI
         local mgui = Instance.new("ScreenGui")
-        mgui.Name = "MM2_RainbowMaster"
+        mgui.Name = "MM2_MasterMenu"
         mgui.ResetOnSpawn = false
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
@@ -174,7 +179,7 @@ loginBtn.MouseButton1Click:Connect(function()
         fpsLabel.Visible = false
         Instance.new("UICorner", fpsLabel).CornerRadius = UDim.new(0, 6)
         local fpsStroke = Instance.new("UIStroke", fpsLabel)
-        rs.RenderStepped:Connect(function() fpsStroke.Color = getRainbowColor(1) end)
+        rs.RenderStepped:Connect(function() fpsStroke.Color = getThemeColor(1) end)
 
         -- Toggle Menu Butonu
         local toggleButton = Instance.new("TextButton", mgui)
@@ -189,14 +194,14 @@ loginBtn.MouseButton1Click:Connect(function()
         toggleButton.Draggable = true
         Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 8)
         local tbStroke = Instance.new("UIStroke", toggleButton)
-        rs.RenderStepped:Connect(function() tbStroke.Color = getRainbowColor(1) end)
+        rs.RenderStepped:Connect(function() tbStroke.Color = getThemeColor(1) end)
 
-        -- Shoot Murderer Butonu (Hold & FOV Check)
+        -- Shoot Murderer Butonu
         local shootButton = Instance.new("TextButton", mgui)
         shootButton.Size = UDim2.new(0, 160, 0, 40)
         shootButton.Position = UDim2.new(0, 40, 0, 95)
         shootButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-        shootButton.Text = "Shoot Murderer (Hold)"
+        shootButton.Text = "Shoot Murderer"
         shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         shootButton.TextSize = 14
         shootButton.Font = Enum.Font.SourceSansBold
@@ -204,50 +209,49 @@ loginBtn.MouseButton1Click:Connect(function()
         shootButton.Draggable = true
         Instance.new("UICorner", shootButton).CornerRadius = UDim.new(0, 8)
         local sbStroke = Instance.new("UIStroke", shootButton)
-        rs.RenderStepped:Connect(function() sbStroke.Color = getRainbowColor(1) end)
+        rs.RenderStepped:Connect(function() sbStroke.Color = getThemeColor(1) end)
 
-        local shootingActive = false
-        shootButton.MouseButton1Down:Connect(function() shootingActive = true end)
-        shootButton.MouseButton1Up:Connect(function() shootingActive = false end)
-        shootButton.MouseLeave:Connect(function() shootingActive = false end)
-
-        coroutine.wrap(function()
-            while task.wait(0.15) do
-                if shootingActive then
-                    pcall(function()
-                        local c2 = pl.Character
-                        local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
-                        if not gun and c2 and c2:FindFirstChild("Humanoid") then
-                            local bpGun = pl.Backpack:FindFirstChild("Gun")
-                            if bpGun then bpGun.Parent = c2; gun = bpGun end
-                        end
-                        if gun then
-                            local targetFound = false
-                            for _, v in pairs(p:GetPlayers()) do
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
-                                    if hasKnife then
-                                        targetFound = true
-                                        local hrp = v.Character.HumanoidRootPart
-                                        local _, onScreen = camera:WorldToViewportPoint(hrp.Position)
-                                        if onScreen then
-                                            local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
-                                            if ev then ev:FireServer(hrp.Position) end
-                                        else
-                                            sendNotification("Warning", "Murderer not in FOV!", 1.5)
-                                        end
-                                        break
-                                    end
-                                end
-                            end
-                            if not targetFound then
-                                sendNotification("Info", "No Murderer found with knife!", 1.5)
-                            end
-                        end
-                    end)
+        shootButton.MouseButton1Click:Connect(function()
+            pcall(function()
+                local c2 = pl.Character
+                local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
+                if not gun and c2 and c2:FindFirstChild("Humanoid") then
+                    local bpGun = pl.Backpack:FindFirstChild("Gun")
+                    if bpGun then bpGun.Parent = c2; gun = bpGun end
                 end
-            end
-        end)()
+                if gun then
+                    local targetFound = false
+                    for _, v in pairs(p:GetPlayers()) do
+                        if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                            local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
+                            if hasKnife then
+                                targetFound = true
+                                local hrp = v.Character.HumanoidRootPart
+                                local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
+                                if ev then 
+                                    ev:FireServer(hrp.Position) 
+                                else
+                                    pcall(function()
+                                        for _, remote in pairs(gun:GetDescendants()) do
+                                            if remote:IsA("RemoteEvent") then
+                                                remote:FireServer(hrp.Position)
+                                            end
+                                        end
+                                    end)
+                                end
+                                sendNotification("Success", "Shot Murderer accurately!", 2)
+                                break
+                            end
+                        end
+                    end
+                    if not targetFound then
+                        sendNotification("Info", "No Murderer found with knife!", 1.5)
+                    end
+                else
+                    sendNotification("Error", "You don't have a gun!", 1.5)
+                end
+            end)
+        end)
 
         -- TP to Map Butonu
         local mapButton = Instance.new("TextButton", mgui)
@@ -262,9 +266,9 @@ loginBtn.MouseButton1Click:Connect(function()
         mapButton.Draggable = true
         Instance.new("UICorner", mapButton).CornerRadius = UDim.new(0, 8)
         local mbStroke = Instance.new("UIStroke", mapButton)
-        rs.RenderStepped:Connect(function() mbStroke.Color = getRainbowColor(1) end)
+        rs.RenderStepped:Connect(function() mbStroke.Color = getThemeColor(1) end)
 
-        mapButton.MouseButton1Down:Connect(function()
+        mapButton.MouseButton1Click:Connect(function()
             pcall(function()
                 local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                 if hrp then
@@ -299,9 +303,9 @@ loginBtn.MouseButton1Click:Connect(function()
         lobbyButton.Draggable = true
         Instance.new("UICorner", lobbyButton).CornerRadius = UDim.new(0, 8)
         local lbStroke = Instance.new("UIStroke", lobbyButton)
-        rs.RenderStepped:Connect(function() lbStroke.Color = getRainbowColor(1) end)
+        rs.RenderStepped:Connect(function() lbStroke.Color = getThemeColor(1) end)
 
-        lobbyButton.MouseButton1Down:Connect(function()
+        lobbyButton.MouseButton1Click:Connect(function()
             pcall(function()
                 local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                 if hrp then 
@@ -328,7 +332,7 @@ loginBtn.MouseButton1Click:Connect(function()
         Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
         local fStroke = Instance.new("UIStroke", f)
         fStroke.Transparency = 0.2
-        rs.RenderStepped:Connect(function() fStroke.Color = getRainbowColor(1) end)
+        rs.RenderStepped:Connect(function() fStroke.Color = getThemeColor(1) end)
 
         local t = Instance.new("TextLabel", f)
         t.Size = UDim2.new(1, 0, 0, 40)
@@ -342,7 +346,7 @@ loginBtn.MouseButton1Click:Connect(function()
         local al2 = Instance.new("Frame", f)
         al2.Size = UDim2.new(1, 0, 0, 2)
         al2.Position = UDim2.new(0, 0, 0, 40)
-        rs.RenderStepped:Connect(function() al2.BackgroundColor3 = getRainbowColor(1) end)
+        rs.RenderStepped:Connect(function() al2.BackgroundColor3 = getThemeColor(1) end)
 
         local sc = Instance.new("ScrollingFrame", f)
         sc.Size = UDim2.new(1, -20, 1, -50)
@@ -350,7 +354,7 @@ loginBtn.MouseButton1Click:Connect(function()
         sc.BackgroundTransparency = 1
         sc.BorderSizePixel = 0
         sc.ScrollBarThickness = 4
-        rs.RenderStepped:Connect(function() sc.ScrollBarImageColor3 = getRainbowColor(1) end)
+        rs.RenderStepped:Connect(function() sc.ScrollBarImageColor3 = getThemeColor(1) end)
         sc.CanvasSize = UDim2.new(0, 0, 0, 0)
 
         local ll = Instance.new("UIListLayout", sc)
@@ -394,7 +398,7 @@ loginBtn.MouseButton1Click:Connect(function()
             local st = defaultState or false
             local function upd()
                 if st then
-                    bg2.BackgroundColor3 = getRainbowColor(1)
+                    bg2.BackgroundColor3 = getThemeColor(1)
                     circ.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                     circ:TweenPosition(UDim2.new(0, 18, 0.5, -8), "Out", "Quad", 0.2, true)
                 else
@@ -426,13 +430,44 @@ loginBtn.MouseButton1Click:Connect(function()
             l.Size = UDim2.new(1, 0, 0, 26)
             l.BackgroundTransparency = 1
             l.Text = text
-            rs.RenderStepped:Connect(function() l.TextColor3 = getRainbowColor(1) end)
+            rs.RenderStepped:Connect(function() l.TextColor3 = getThemeColor(1) end)
             l.TextSize = 12
             l.Font = Enum.Font.SourceSansBold
             l.TextXAlignment = Enum.TextXAlignment.Left
         end
 
         local O = {}
+        
+        Lbl(sc, "─ THEME & CUSTOMIZATION ─")
+        Tog(sc, "Rainbow Mode", true, function(s) rainbowModeActive = s end)
+
+        local colorContainer = Instance.new("Frame", sc)
+        colorContainer.Size = UDim2.new(1, 0, 0, 36)
+        colorContainer.BackgroundTransparency = 1
+        
+        local colors = {
+            {Name = "Red", Color = Color3.fromRGB(255, 50, 50)},
+            {Name = "Green", Color = Color3.fromRGB(50, 255, 50)},
+            {Name = "Blue", Color = Color3.fromRGB(50, 150, 255)},
+            {Name = "Purple", Color = Color3.fromRGB(180, 50, 255)},
+            {Name = "Orange", Color = Color3.fromRGB(255, 140, 0)}
+        }
+
+        for i, colData in ipairs(colors) do
+            local cBtn = Instance.new("TextButton", colorContainer)
+            cBtn.Size = UDim2.new(0.18, 0, 1, 0)
+            cBtn.Position = UDim2.new((i-1)*0.205, 0, 0, 0)
+            cBtn.BackgroundColor3 = colData.Color
+            cBtn.Text = ""
+            Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 6)
+            
+            cBtn.MouseButton1Click:Connect(function()
+                rainbowModeActive = false
+                customThemeColor = colData.Color
+                sendNotification("Theme", colData.Name .." theme selected!", 1.5)
+            end)
+        end
+
         Lbl(sc, "─ ESP & ROLES ─")
         Tog(sc, "Perfect Role ESP", false, function(s) O.ESP = s end)
         Tog(sc, "Sheriff Gun & Coin ESP", false, function(s) O.ExtraESP = s end)
@@ -451,7 +486,6 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(sc, "Force Accept Trade", false, function(s) O.ForceAccept = s end)
 
         Lbl(sc, "─ MOVEMENT & VISUALS ─")
-        Tog(sc, "Fly Mode", false, function(s) O.Fly = s end)
         Tog(sc, "Infinite Jump", false, function(s) O.InfJump = s end)
         Tog(sc, "FullBright", false, function(s) 
             lighting.Brightness = s and 2 or 1
@@ -461,7 +495,7 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(sc, "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
 
         Lbl(sc, "─ AUTO FARM ─")
-        Tog(sc, "Auto Farm (40 Coin Limit)", false, function(s) O.AF = s end)
+        Tog(sc, "Auto Farm (Flying Coin Teleport)", false, function(s) O.AF = s end)
 
         -- FPS Sayacı
         local lastTick, frameCount = tick(), 0
@@ -629,7 +663,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)()
 
-        -- Trade Scam Simulation (Freeze & Force Accept)
+        -- Trade Scam Simulation
         coroutine.wrap(function()
             while task.wait(0.5) do
                 pcall(function()
@@ -650,39 +684,6 @@ loginBtn.MouseButton1Click:Connect(function()
                 end)
             end
         end)()
-
-        -- Fly Mode
-        local flying, bg, bv = false, nil, nil
-        rs.RenderStepped:Connect(function()
-            local c2 = pl.Character
-            local hrp = c2 and c2:FindFirstChild("HumanoidRootPart")
-            local hum = c2 and c2:FindFirstChildOfClass("Humanoid")
-            if O.Fly and hrp and hum then
-                if not flying then
-                    flying = true
-                    bg = Instance.new("BodyGyro", hrp)
-                    bg.P, bg.maxTorque = 9e4, Vector3.new(9e4, 9e4, 9e4)
-                    bg.CFrame = hrp.CFrame
-                    bv = Instance.new("BodyVelocity", hrp)
-                    bv.velocity, bv.maxForce = Vector3.new(0, 0.1, 0), Vector3.new(9e4, 9e4, 9e4)
-                    hum.PlatformStand = true
-                end
-                local moveDir = Vector3.new()
-                if uis:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + camera.CFrame.LookVector end
-                if uis:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - camera.CFrame.LookVector end
-                if uis:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - camera.CFrame.RightVector end
-                if uis:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + camera.CFrame.RightVector end
-                bv.velocity = moveDir * 50
-                bg.CFrame = camera.CFrame
-            else
-                if flying then
-                    flying = false
-                    if bg then bg:Destroy() end
-                    if bv then bv:Destroy() end
-                    if hum then hum.PlatformStand = false end
-                end
-            end
-        end)
 
         -- Auto Farm
         coroutine.wrap(function()
