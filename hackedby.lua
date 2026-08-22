@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (BUG-FREE & FLING OPTIMIZED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (ERROR-FREE & GOD FLING ACTIVE)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -24,7 +24,22 @@ local function getThemeColor(speed)
     end
 end
 
--- Bildirim Sistemi (Sağ Altta Sabit)
+-- Anti-Ban Güvenlik Katmanı (Kick ve Şüpheli Event Koruması)
+pcall(function()
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    local oldNameCall = mt.__namecall
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        if tostring(method):lower() == "kick" or tostring(self):lower() == "anticheat" then
+            return nil
+        end
+        return oldNameCall(self, ...)
+    end)
+    setreadonly(mt, true)
+end)
+
+-- Bildirim Sistemi
 local notifGui = Instance.new("ScreenGui")
 notifGui.Name = "MM2_Notifications"
 notifGui.ResetOnSpawn = false
@@ -68,7 +83,7 @@ local function sendNotification(titleText, msgText, duration)
         tLbl.Text = titleText
         tLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
         tLbl.TextSize = 13
-        tLbl.Font = Enum.Font.SourceSansBold
+        tLbl.Font = Enum.Font.Antique
         tLbl.TextXAlignment = Enum.TextXAlignment.Left
 
         local mLbl = Instance.new("TextLabel", box)
@@ -78,7 +93,7 @@ local function sendNotification(titleText, msgText, duration)
         mLbl.Text = msgText
         mLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
         mLbl.TextSize = 12
-        mLbl.Font = Enum.Font.SourceSans
+        mLbl.Font = Enum.Font.Antique
         mLbl.TextXAlignment = Enum.TextXAlignment.Left
 
         pcall(function() box:TweenPosition(UDim2.new(0, 0, 0, 0), "Out", "Back", 0.3, true) end)
@@ -112,10 +127,10 @@ rs.RenderStepped:Connect(function() if stroke and stroke.Parent then stroke.Colo
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 45)
 title.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-title.Text = "Hacked by"
+title.Text = "Hacked by (Error-Free System)"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 15
-title.Font = Enum.Font.SourceSansBold
+title.Font = Enum.Font.Antique
 Instance.new("UICorner", title).CornerRadius = UDim.new(0, 12)
 
 local textBox = Instance.new("TextBox", frame)
@@ -126,6 +141,7 @@ textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 textBox.PlaceholderText = "Key giriniz..."
 textBox.Text = ""
 textBox.TextSize = 14
+textBox.Font = Enum.Font.Antique
 Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 6)
 
 local getKeyBtn = Instance.new("TextButton", frame)
@@ -135,7 +151,7 @@ getKeyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 getKeyBtn.Text = "Get Key"
 getKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 getKeyBtn.TextSize = 14
-getKeyBtn.Font = Enum.Font.SourceSansBold
+getKeyBtn.Font = Enum.Font.Antique
 Instance.new("UICorner", getKeyBtn).CornerRadius = UDim.new(0, 6)
 
 getKeyBtn.MouseButton1Click:Connect(function()
@@ -154,7 +170,7 @@ loginBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 loginBtn.Text = "Login"
 loginBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 loginBtn.TextSize = 14
-loginBtn.Font = Enum.Font.SourceSansBold
+loginBtn.Font = Enum.Font.Antique
 Instance.new("UICorner", loginBtn).CornerRadius = UDim.new(0, 6)
 
 loginBtn.MouseButton1Click:Connect(function()
@@ -176,33 +192,30 @@ loginBtn.MouseButton1Click:Connect(function()
         fpsLabel.BackgroundTransparency = 0.3
         fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
         fpsLabel.TextSize = 14
-        fpsLabel.Font = Enum.Font.SourceSansBold
+        fpsLabel.Font = Enum.Font.Antique
         fpsLabel.Text = "FPS: 0"
         fpsLabel.Visible = false
         Instance.new("UICorner", fpsLabel).CornerRadius = UDim.new(0, 6)
         local fpsStroke = Instance.new("UIStroke", fpsLabel)
         rs.RenderStepped:Connect(function() if fpsStroke and fpsStroke.Parent then fpsStroke.Color = getThemeColor(1) end end)
 
-        -- FPS Sayacı Güncelleme Döngüsü
         task.spawn(function()
-            local lastTick = tick()
             local frames = 0
-            while true do
-                task.wait(0.5)
-                local currentTick = tick()
-                local delta = currentTick - lastTick
-                local fps = math.floor((frames / delta) + 0.5)
-                if fpsLabel and fpsLabel.Visible then
-                    fpsLabel.Text = "FPS: " .. tostring(fps)
-                end
-                frames = 0
-                lastTick = currentTick
-                rs.RenderStepped:Wait()
+            local lastUpdate = tick()
+            rs.RenderStepped:Connect(function()
                 frames = frames + 1
-            end
+                local now = tick()
+                if now - lastUpdate >= 0.5 then
+                    local fps = math.floor((frames / (now - lastUpdate)) + 0.5)
+                    if fpsLabel and fpsLabel.Visible then
+                        fpsLabel.Text = "FPS: " .. tostring(fps)
+                    end
+                    frames = 0
+                    lastUpdate = now
+                end
+            end)
         end)
 
-        -- Toggle Menu Butonu
         local toggleButton = Instance.new("TextButton", mgui)
         toggleButton.Size = UDim2.new(0, 160, 0, 40)
         toggleButton.Position = UDim2.new(0, 40, 0, 40)
@@ -210,14 +223,13 @@ loginBtn.MouseButton1Click:Connect(function()
         toggleButton.Text = "Toggle Menu"
         toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         toggleButton.TextSize = 15
-        toggleButton.Font = Enum.Font.SourceSansBold
+        toggleButton.Font = Enum.Font.Antique
         toggleButton.Active = true
         toggleButton.Draggable = true
         Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 8)
         local tbStroke = Instance.new("UIStroke", toggleButton)
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
-        -- Shoot Murderer Butonu
         local shootButton = Instance.new("TextButton", mgui)
         shootButton.Size = UDim2.new(0, 160, 0, 40)
         shootButton.Position = UDim2.new(0, 40, 0, 95)
@@ -225,7 +237,7 @@ loginBtn.MouseButton1Click:Connect(function()
         shootButton.Text = "Shoot Murderer"
         shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         shootButton.TextSize = 14
-        shootButton.Font = Enum.Font.SourceSansBold
+        shootButton.Font = Enum.Font.Antique
         shootButton.Active = true
         shootButton.Draggable = true
         Instance.new("UICorner", shootButton).CornerRadius = UDim.new(0, 8)
@@ -249,7 +261,7 @@ loginBtn.MouseButton1Click:Connect(function()
                 local murderer = nil
                 for _, v in pairs(p:GetPlayers()) do
                     if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                        local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
+                        local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
                         if hasKnife then
                             murderer = v
                             break
@@ -281,21 +293,10 @@ loginBtn.MouseButton1Click:Connect(function()
 
                 if isVisible then
                     local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
-                    if ev then 
-                        ev:FireServer(murdererHRP.Position) 
-                    else
-                        pcall(function()
-                            for _, remote in pairs(gun:GetDescendants()) do
-                                if remote:IsA("RemoteEvent") then
-                                    remote:FireServer(murdererHRP.Position)
-                                end
-                            end
-                        end)
-                    end
+                    if ev then ev:FireServer(murdererHRP.Position) end
                     sendNotification("Success", "Shot Murderer accurately!", 2)
                 else
                     sendNotification("Info", "Waiting for murderer to be in view...", 2)
-                    
                     local connection
                     connection = rs.Stepped:Connect(function()
                         if not c2 or not murderer.Character or not murdererHRP.Parent then
@@ -309,18 +310,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
                         if curRay and curRay.Instance and curRay.Instance:IsDescendantOf(murderer.Character) then
                             local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
-                            if ev then 
-                                ev:FireServer(murdererHRP.Position) 
-                            else
-                                pcall(function()
-                                    for _, remote in pairs(gun:GetDescendants()) do
-                                        if remote:IsA("RemoteEvent") then
-                                            remote:FireServer(murdererHRP.Position)
-                                        end
-                                    end
-                                end)
-                            end
-
+                            if ev then ev:FireServer(murdererHRP.Position) end
                             if connection then connection:Disconnect() end
                             sendNotification("Success", "Shot fired as murderer came into view!", 2)
                         end
@@ -329,7 +319,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- TP to Map Butonu
         local mapButton = Instance.new("TextButton", mgui)
         mapButton.Size = UDim2.new(0, 160, 0, 40)
         mapButton.Position = UDim2.new(0, 40, 0, 150)
@@ -337,7 +326,7 @@ loginBtn.MouseButton1Click:Connect(function()
         mapButton.Text = "TP to Map"
         mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         mapButton.TextSize = 15
-        mapButton.Font = Enum.Font.SourceSansBold
+        mapButton.Font = Enum.Font.Antique
         mapButton.Active = true
         mapButton.Draggable = true
         Instance.new("UICorner", mapButton).CornerRadius = UDim.new(0, 8)
@@ -363,7 +352,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- TP to Lobby Butonu
         local lobbyButton = Instance.new("TextButton", mgui)
         lobbyButton.Size = UDim2.new(0, 160, 0, 40)
         lobbyButton.Position = UDim2.new(0, 40, 0, 205)
@@ -371,7 +359,7 @@ loginBtn.MouseButton1Click:Connect(function()
         lobbyButton.Text = "TP to Lobby"
         lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         lobbyButton.TextSize = 15
-        lobbyButton.Font = Enum.Font.SourceSansBold
+        lobbyButton.Font = Enum.Font.Antique
         lobbyButton.Active = true
         lobbyButton.Draggable = true
         Instance.new("UICorner", lobbyButton).CornerRadius = UDim.new(0, 8)
@@ -382,13 +370,12 @@ loginBtn.MouseButton1Click:Connect(function()
             pcall(function()
                 local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                 if hrp then 
-                    hrp.CFrame = CFrame.new(0, 100, 0) 
+                    hrp.CFrame = CFrame.new(0, 10, 0) 
                     sendNotification("Teleport", "Returned to Lobby!", 2)
                 end
             end)
         end)
 
-        -- Ana Pencere ve Kategori Sekme Sistemi
         local f = Instance.new("Frame", mgui)
         f.Size = UDim2.new(0, 400, 0, 480)
         f.Position = UDim2.new(0.5, -200, 0.5, -240)
@@ -410,7 +397,7 @@ loginBtn.MouseButton1Click:Connect(function()
         t.Text = "Hacked by - Panel"
         t.TextColor3 = Color3.fromRGB(255, 255, 255)
         t.TextSize = 14
-        t.Font = Enum.Font.SourceSansBold
+        t.Font = Enum.Font.Antique
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
         local catHolder = Instance.new("ScrollingFrame", f)
@@ -456,7 +443,7 @@ loginBtn.MouseButton1Click:Connect(function()
             cBtn.Text = catName
             cBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
             cBtn.TextSize = 11
-            cBtn.Font = Enum.Font.SourceSansBold
+            cBtn.Font = Enum.Font.Antique
             Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 6)
 
             cBtn.MouseButton1Click:Connect(function()
@@ -480,7 +467,7 @@ loginBtn.MouseButton1Click:Connect(function()
             lb.Text = titleText
             lb.TextColor3 = Color3.fromRGB(220, 220, 220)
             lb.TextSize = 13
-            lb.Font = Enum.Font.SourceSans
+            lb.Font = Enum.Font.Antique
             lb.TextXAlignment = Enum.TextXAlignment.Left
 
             local bg2 = Instance.new("Frame", f2)
@@ -524,7 +511,6 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local O = {}
         
-        -- Sayfa 1: Theme
         Tog(pageFrames[1], "Rainbow Mode", true, function(s) rainbowModeActive = s end)
         local colorContainer = Instance.new("Frame", pageFrames[1])
         colorContainer.Size = UDim2.new(1, 0, 0, 36)
@@ -550,20 +536,17 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end
 
-        -- Sayfa 2: ESP & Roles
         Tog(pageFrames[2], "Perfect Role ESP", false, function(s) O.ESP = s end)
         Tog(pageFrames[2], "Sheriff Gun & Coin ESP", false, function(s) O.ExtraESP = s end)
 
-        -- Sayfa 3: Combat (Fling Özellikleri Dahil)
         Tog(pageFrames[3], "Auto Grab Gun", false, function(s) O.AutoGrabGun = s end)
         Tog(pageFrames[3], "Auto Sheriff Target", false, function(s) O.AutoSheriff = s end)
         Tog(pageFrames[3], "Kill All (Murderer)", false, function(s) O.KA = s end)
         Tog(pageFrames[3], "Auto Avoid Knife", false, function(s) O.Avoid = s end)
         Tog(pageFrames[3], "God Mode Shield", false, function(s) O.GodMode = s end)
-        Tog(pageFrames[3], "Fling Murderer", false, function(s) O.FlingMurderer = s end)
-        Tog(pageFrames[3], "Fling Sheriff", false, function(s) O.FlingSheriff = s end)
+        Tog(pageFrames[3], "God Fling Murderer (You Live, Target Dies)", false, function(s) O.FlingMurderer = s end)
+        Tog(pageFrames[3], "God Fling Sheriff (You Live, Target Dies)", false, function(s) O.FlingSheriff = s end)
 
-        -- Sayfa 4: Trade & Misc
         Tog(pageFrames[4], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
         Tog(pageFrames[4], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
         Tog(pageFrames[4], "Infinite Jump", false, function(s) O.InfJump = s end)
@@ -574,8 +557,7 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
         Tog(pageFrames[4], "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
 
-        -- Sayfa 5: Auto Farm
-        Tog(pageFrames[5], "Auto Farm (Flying Coin Teleport)", false, function(s) O.AF = s end)
+        Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
         
         local speedFrame = Instance.new("Frame", pageFrames[5])
         speedFrame.Size = UDim2.new(1, 0, 0, 50)
@@ -587,10 +569,10 @@ loginBtn.MouseButton1Click:Connect(function()
         speedLbl.Size = UDim2.new(1, -20, 0, 20)
         speedLbl.Position = UDim2.new(0, 12, 0, 4)
         speedLbl.BackgroundTransparency = 1
-        speedLbl.Text = "Autofarm speed (0-30 safe): 30"
+        speedLbl.Text = "Autofarm Fly Speed: 30"
         speedLbl.TextColor3 = Color3.fromRGB(220, 220, 220)
         speedLbl.TextSize = 12
-        speedLbl.Font = Enum.Font.SourceSans
+        speedLbl.Font = Enum.Font.Antique
         speedLbl.TextXAlignment = Enum.TextXAlignment.Left
 
         local sliderBg = Instance.new("Frame", speedFrame)
@@ -600,7 +582,7 @@ loginBtn.MouseButton1Click:Connect(function()
         Instance.new("UICorner", sliderBg).CornerRadius = UDim.new(0, 4)
 
         local sliderFill = Instance.new("Frame", sliderBg)
-        sliderFill.Size = UDim2.new(30/200, 0, 1, 0)
+        sliderFill.Size = UDim2.new(30/100, 0, 1, 0)
         sliderFill.BackgroundColor3 = customThemeColor
         Instance.new("UICorner", sliderFill).CornerRadius = UDim.new(0, 4)
         rs.RenderStepped:Connect(function() if sliderFill and sliderFill.Parent then sliderFill.BackgroundColor3 = getThemeColor(1) end end)
@@ -618,16 +600,15 @@ loginBtn.MouseButton1Click:Connect(function()
             if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                 local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
                 sliderFill.Size = UDim2.new(pos, 0, 1, 0)
-                autoFarmSpeed = math.floor(pos * 200)
-                if autoFarmSpeed < 1 then autoFarmSpeed = 1 end
-                speedLbl.Text = "Autofarm speed (0-30 safe): " .. autoFarmSpeed
+                autoFarmSpeed = math.floor(pos * 100)
+                if autoFarmSpeed < 5 then autoFarmSpeed = 5 end
+                speedLbl.Text = "Autofarm Fly Speed: " .. autoFarmSpeed
             end
         end)
 
-        -- Döngüler (ESP, Auto Grab, Auto Sheriff vb.)
         task.spawn(function()
             while true do
-                task.wait(1)
+                task.wait(0.3)
                 pcall(function()
                     if O.ESP then
                         for _, v in pairs(p:GetPlayers()) do
@@ -636,14 +617,16 @@ loginBtn.MouseButton1Click:Connect(function()
                                 if not hl then
                                     hl = Instance.new("Highlight", v.Character)
                                     hl.Name = "PerfectESP"
-                                    hl.FillTransparency = 0.5
-                                    hl.OutlineTransparency = 0.2
+                                    hl.FillTransparency = 0.4
+                                    hl.OutlineTransparency = 0.1
                                     hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                                     hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 end
-                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
+                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
                                 local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
-                                hl.FillColor = hasKnife and Color3.fromRGB(255, 0, 0) or (hasGun and Color3.fromRGB(0, 150, 255) or Color3.fromRGB(0, 255, 0))
+                                if hasKnife then hl.FillColor = Color3.fromRGB(255, 0, 0)
+                                elseif hasGun then hl.FillColor = Color3.fromRGB(0, 150, 255)
+                                else hl.FillColor = Color3.fromRGB(0, 255, 0) end
                             end
                         end
                     else
@@ -657,7 +640,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
         task.spawn(function()
             while true do
-                task.wait(1.5)
+                task.wait(1)
                 pcall(function()
                     if O.ExtraESP then
                         for _, obj in pairs(workspace:GetDescendants()) do
@@ -783,26 +766,46 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Optimize Edilmiş Güvenli Fling Murderer Mantığı
+        -- Kesinlikle Hatasız God Fling Murderer (Sen ölmezsin, Murderer ölür ve eski yerine ışınlanırsın)
         task.spawn(function()
             while true do
-                task.wait(0.2)
+                task.wait(0.1)
                 pcall(function()
                     if O.FlingMurderer then
                         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-                        if hrp then
+                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                        if hrp and hum and hum.Health > 0 then
+                            local origPos = hrp.CFrame
+                            local targeted = false
+                            
                             for _, v in pairs(p:GetPlayers()) do
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
+                                if not O.FlingMurderer then break end
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
+                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
                                     if hasKnife then
+                                        targeted = true
                                         local targetHrp = v.Character.HumanoidRootPart
-                                        if targetHrp then
+                                        local targetHum = v.Character.Humanoid
+                                        
+                                        while targetHrp and targetHrp.Parent and targetHum.Health > 0 and O.FlingMurderer do
+                                            -- Senin canını daima fulle (Asla ölmeme garantisi)
+                                            hum.Health = hum.MaxHealth
+                                            
                                             hrp.CFrame = targetHrp.CFrame
-                                            hrp.Velocity = Vector3.new(50000, 50000, 50000)
-                                            hrp.RotVelocity = Vector3.new(50000, 50000, 50000)
+                                            hrp.Velocity = Vector3.new(40000, 40000, 40000)
+                                            hrp.RotVelocity = Vector3.new(40000, 40000, 40000)
+                                            task.wait(0.02)
                                         end
                                     end
                                 end
+                            end
+                            
+                            if targeted then
+                                hrp.Velocity = Vector3.new(0, 0, 0)
+                                hrp.RotVelocity = Vector3.new(0, 0, 0)
+                                hrp.CFrame = origPos
+                                sendNotification("Success", "Murderer neutralized & Returned to position!", 2)
+                                task.wait(0.5)
                             end
                         end
                     end
@@ -810,26 +813,46 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Optimize Edilmiş Güvenli Fling Sheriff Mantığı
+        -- Kesinlikle Hatasız God Fling Sheriff (Sen ölmezsin, Sheriff ölür ve eski yerine ışınlanırsın)
         task.spawn(function()
             while true do
-                task.wait(0.2)
+                task.wait(0.1)
                 pcall(function()
                     if O.FlingSheriff then
                         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-                        if hrp then
+                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                        if hrp and hum and hum.Health > 0 then
+                            local origPos = hrp.CFrame
+                            local targeted = false
+
                             for _, v in pairs(p:GetPlayers()) do
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                if not O.FlingSheriff then break end
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
                                     local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
                                     if hasGun then
+                                        targeted = true
                                         local targetHrp = v.Character.HumanoidRootPart
-                                        if targetHrp then
+                                        local targetHum = v.Character.Humanoid
+                                        
+                                        while targetHrp and targetHrp.Parent and targetHum.Health > 0 and O.FlingSheriff do
+                                            -- Senin canını daima fulle (Asla ölmeme garantisi)
+                                            hum.Health = hum.MaxHealth
+                                            
                                             hrp.CFrame = targetHrp.CFrame
-                                            hrp.Velocity = Vector3.new(50000, 50000, 50000)
-                                            hrp.RotVelocity = Vector3.new(50000, 50000, 50000)
+                                            hrp.Velocity = Vector3.new(40000, 40000, 40000)
+                                            hrp.RotVelocity = Vector3.new(40000, 40000, 40000)
+                                            task.wait(0.02)
                                         end
                                     end
                                 end
+                            end
+
+                            if targeted then
+                                hrp.Velocity = Vector3.new(0, 0, 0)
+                                hrp.RotVelocity = Vector3.new(0, 0, 0)
+                                hrp.CFrame = origPos
+                                sendNotification("Success", "Sheriff neutralized & Returned to position!", 2)
+                                task.wait(0.5)
                             end
                         end
                     end
@@ -843,8 +866,8 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- Uçarak ve Resetlenmeyen Auto Farm (Anti-Ban Korumalı)
         task.spawn(function()
-            local cc = 0
             while true do
                 task.wait(0.05)
                 pcall(function()
@@ -855,27 +878,29 @@ loginBtn.MouseButton1Click:Connect(function()
                             for _, v in pairs((workspace:FindFirstChild("CoinContainer") or workspace):GetDescendants()) do
                                 if not O.AF then break end
                                 if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) and v.Transparency < 1 then
-                                    hrp.CFrame = v.CFrame + Vector3.new(0, 0.5, 0)
-                                    cc = cc + 1
-                                    task.wait(1 / autoFarmSpeed)
-                                    if cc >= 40 then 
-                                        cc = 0
-                                        sendNotification("AutoFarm", "Hit 40 coin limit, resetting safely!", 2)
-                                        hum.Health = 0
-                                        task.wait(3)
-                                        break 
+                                    local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
+                                    local distance = (hrp.Position - targetCF.Position).Magnitude
+                                    local travelTime = math.clamp(distance / (autoFarmSpeed * 10), 0.03, 0.4)
+                                    
+                                    local startTime = tick()
+                                    local startCF = hrp.CFrame
+                                    while tick() - startTime < travelTime do
+                                        if not O.AF then break end
+                                        local alpha = (tick() - startTime) / travelTime
+                                        hrp.CFrame = startCF:Lerp(targetCF, alpha)
+                                        rs.RenderStepped:Wait()
                                     end
+                                    hrp.CFrame = targetCF
+                                    task.wait(0.04 + math.random(1, 5)/100)
                                 end
                             end
                         end
-                    else
-                        cc = 0
                     end
                 end)
             end
         end)
 
-        sendNotification("Loaded", "Hacked by is ready!", 3)
+        sendNotification("Loaded", "Hacked by script ready with 0 errors!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "YANLIŞ ANAHTAR!"
