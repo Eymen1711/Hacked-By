@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (FIXED SILENT AIM)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -21,7 +21,7 @@ local currentWalkSpeed = 16
 local currentJumpPower = 50
 local autoFarmSpeed = 25
 local currentFOV = 70
-local silentAimFOV = 150
+local silentAimFOV = 180
 
 -- Taste Bread Tarzı Tatlı/Oyun Fontu
 local CUSTOM_FONT = Enum.Font.FredokaOne
@@ -314,7 +314,7 @@ loginBtn.MouseButton1Click:Connect(function()
             if silentAimActive then
                 silentAimButton.Text = "Silent Aim: ON"
                 silentAimButton.TextColor3 = Color3.fromRGB(50, 255, 50)
-                sendNotification("Silent Aim", "Direct Bullet Hook Activated!", 1.5)
+                sendNotification("Silent Aim", "Fixed Aim Hook Activated!", 1.5)
             else
                 silentAimButton.Text = "Silent Aim: OFF"
                 silentAimButton.TextColor3 = Color3.fromRGB(255, 50, 50)
@@ -692,7 +692,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- KESİN ÇÖZÜLEN SİLENT AIM (Doğrudan RemoteEvent Üzerinden Akıllı Hedef Yönlendirmesi)
+        -- KESİN ÇÖZÜLEN SİLENT AIM (Gelişmiş Metnamecall / Remote Override)
         local function getClosestMurdererInFOV()
             local bestTarget = nil
             local shortestDist = silentAimFOV
@@ -700,7 +700,7 @@ loginBtn.MouseButton1Click:Connect(function()
                 if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
                     local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
                     if hasKnife and v.Character.Humanoid.Health > 0 then
-                        local targetPart = v.Character.HumanoidRootPart
+                        local targetPart = v.Character:FindFirstChild("Head") or v.Character.HumanoidRootPart
                         local screenPos, onScreen = camera:WorldToViewportPoint(targetPart.Position)
                         if onScreen then
                             local mousePos = uis:GetMouseLocation()
@@ -723,19 +723,20 @@ loginBtn.MouseButton1Click:Connect(function()
             mt.__namecall = newcclosure(function(self, ...)
                 local method = getnamecallmethod()
                 local args = {...}
-                if silentAimActive and tostring(method) == "FireServer" and (self.Name == "Shoot" or self.Name == "GunEvent" or self.Name:lower():find("gun")) then
-                    local target = getClosestMurdererInFOV()
-                    if target then
-                        local targetVel = target.Velocity
-                        local predictedPos = target.Position + Vector3.new(targetVel.X * 0.08, targetVel.Y * 0.05, targetVel.Z * 0.08)
-                        for i, v in ipairs(args) do
-                            if typeof(v) == "Vector3" then
-                                args[i] = predictedPos
-                            elseif typeof(v) == "Instance" and v:IsA("BasePart") then
-                                args[i] = target
+                if silentAimActive and tostring(method) == "FireServer" then
+                    local nameLower = self.Name:lower()
+                    if nameLower:find("shoot") or nameLower:find("gun") or nameLower:find("knife") or nameLower:find("hit") then
+                        local target = getClosestMurdererInFOV()
+                        if target then
+                            for i, v in ipairs(args) do
+                                if typeof(v) == "Vector3" then
+                                    args[i] = target.Position
+                                elseif typeof(v) == "Instance" and (v:IsA("BasePart") or v:IsA("Model")) then
+                                    args[i] = target.Parent
+                                end
                             end
+                            return oldNameCall(self, unpack(args))
                         end
-                        return oldNameCall(self, unpack(args))
                     end
                 end
                 return oldNameCall(self, ...)
@@ -768,7 +769,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- FLASH TELEPORT AUTO GRAB (Işık hızında alıp geri kaçma - Murdererken çalışmaz)
+        -- FLASH TELEPORT AUTO GRAB
         task.spawn(function()
             while true do
                 task.wait(0.15)
@@ -820,7 +821,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- GÜVENLİ KILL ALL (Sadece haritadaki aktif oyuncuları hedefler, lobideki masumları vurmaz)
+        -- GÜVENLİ KILL ALL
         task.spawn(function()
             while true do
                 task.wait(0.3)
