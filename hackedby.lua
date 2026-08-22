@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (REBUILT & FIXED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (FOV, X-RAY & SILENT AIM)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -8,6 +8,7 @@ local workspace = game:GetService("Workspace")
 local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
 local lighting = game:GetService("Lighting")
+local camera = workspace.CurrentCamera
 
 local LOOTLABS_LINK = "https://loot-link.com/s?9K7cNpua"
 local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
@@ -15,10 +16,11 @@ local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36a
 local customThemeColor = Color3.fromRGB(0, 162, 255)
 local rainbowModeActive = true
 
--- Global Speed & Jump Settings
+-- Global Settings
 local currentWalkSpeed = 16
 local currentJumpPower = 50
 local autoFarmSpeed = 25
+local currentFOV = 70
 
 local function getThemeColor(speed)
     if rainbowModeActive then
@@ -190,7 +192,7 @@ loginBtn.MouseButton1Click:Connect(function()
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
 
-        -- Constant Character Loop to enforce WalkSpeed & JumpPower
+        -- Constant Character Loop to enforce WalkSpeed, JumpPower & FOV
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -199,14 +201,13 @@ loginBtn.MouseButton1Click:Connect(function()
                     if char then
                         local hum = char:FindFirstChildOfClass("Humanoid")
                         if hum then
-                            if hum.WalkSpeed ~= currentWalkSpeed then
-                                hum.WalkSpeed = currentWalkSpeed
-                            end
+                            if hum.WalkSpeed ~= currentWalkSpeed then hum.WalkSpeed = currentWalkSpeed end
                             hum.UseJumpPower = true
-                            if hum.JumpPower ~= currentJumpPower then
-                                hum.JumpPower = currentJumpPower
-                            end
+                            if hum.JumpPower ~= currentJumpPower then hum.JumpPower = currentJumpPower end
                         end
+                    end
+                    if camera and camera.FieldOfView ~= currentFOV then
+                        camera.FieldOfView = currentFOV
                     end
                 end)
             end
@@ -303,42 +304,9 @@ loginBtn.MouseButton1Click:Connect(function()
 
                 local murdererHRP = murderer.Character:FindFirstChild("HumanoidRootPart")
                 if not murdererHRP then return end
-
-                local origin = c2.HumanoidRootPart.Position
-                local direction = (Vector3.new(murdererHRP.Position.X, origin.Y, murdererHRP.Position.Z) - origin).unit * 1000
-                
-                local params = RaycastParams.new()
-                params.FilterType = Enum.RaycastFilterType.Exclude
-                params.FilterDescendantsInstances = {c2}
-
-                local raycastResult = workspace:Raycast(origin, direction, params)
-                local isVisible = (raycastResult and raycastResult.Instance and raycastResult.Instance:IsDescendantOf(murderer.Character))
-
-                if isVisible then
-                    local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
-                    if ev then ev:FireServer(murdererHRP.Position) end
-                    sendNotification("Success", "Shot Murderer accurately!", 2)
-                else
-                    sendNotification("Info", "Waiting for murderer to be in view...", 2)
-                    local connection
-                    connection = rs.Stepped:Connect(function()
-                        if not c2 or not murderer.Character or not murdererHRP.Parent then
-                            if connection then connection:Disconnect() end
-                            return
-                        end
-
-                        local curOrigin = c2.HumanoidRootPart.Position
-                        local curDir = (Vector3.new(murdererHRP.Position.X, curOrigin.Y, murdererHRP.Position.Z) - curOrigin).unit * 1000
-                        local curRay = workspace:Raycast(curOrigin, curDir, params)
-
-                        if curRay and curRay.Instance and curRay.Instance:IsDescendantOf(murderer.Character) then
-                            local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
-                            if ev then ev:FireServer(murdererHRP.Position) end
-                            if connection then connection:Disconnect() end
-                            sendNotification("Success", "Shot fired as murderer came into view!", 2)
-                        end
-                    end)
-                end
+                local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
+                if ev then ev:FireServer(murdererHRP.Position) end
+                sendNotification("Success", "Shot Murderer accurately!", 2)
             end)
         end)
 
@@ -350,8 +318,6 @@ loginBtn.MouseButton1Click:Connect(function()
         mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         mapButton.TextSize = 17
         mapButton.Font = Enum.Font.Antique
-        mapButton.Active = true
-        mapButton.Draggable = true
         Instance.new("UICorner", mapButton).CornerRadius = UDim.new(0, 8)
         local mbStroke = Instance.new("UIStroke", mapButton)
         rs.RenderStepped:Connect(function() if mbStroke and mbStroke.Parent then mbStroke.Color = getThemeColor(1) end end)
@@ -383,8 +349,6 @@ loginBtn.MouseButton1Click:Connect(function()
         lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         lobbyButton.TextSize = 17
         lobbyButton.Font = Enum.Font.Antique
-        lobbyButton.Active = true
-        lobbyButton.Draggable = true
         Instance.new("UICorner", lobbyButton).CornerRadius = UDim.new(0, 8)
         local lbStroke = Instance.new("UIStroke", lobbyButton)
         rs.RenderStepped:Connect(function() if lbStroke and lbStroke.Parent then lbStroke.Color = getThemeColor(1) end end)
@@ -399,7 +363,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Main Panel Frame (Big & Clean)
+        -- Main Panel Frame
         local f = Instance.new("Frame", mgui)
         f.Size = UDim2.new(0, 560, 0, 600)
         f.Position = UDim2.new(0.5, -280, 0.5, -300)
@@ -454,7 +418,7 @@ loginBtn.MouseButton1Click:Connect(function()
             return sc
         end
 
-        local categories = {"Theme", "ESP & Roles", "Combat", "Trade & Misc", "Auto Farm"}
+        local categories = {"Theme", "ESP & X-Ray", "Combat & Aim", "Trade & Misc", "Auto Farm"}
         local pageFrames = {}
 
         for i, catName in ipairs(categories) do
@@ -466,7 +430,7 @@ loginBtn.MouseButton1Click:Connect(function()
             cBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
             cBtn.Text = catName
             cBtn.TextColor3 = Color3.fromRGB(230, 230, 230)
-            cBtn.TextSize = 14
+            cBtn.TextSize = 13
             cBtn.Font = Enum.Font.Antique
             Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 8)
 
@@ -533,7 +497,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end
 
-        -- Artır / Azalt butonlu Kusursuz Değer Kontrolü (Slider Sorununa Son)
         local function createStepControl(parentContainer, labelName, defaultVal, minVal, maxVal, step, callback)
             local frameBox = Instance.new("Frame", parentContainer)
             frameBox.Size = UDim2.new(1, 0, 0, 60)
@@ -590,6 +553,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local O = {}
         
+        -- Tab 1: Theme
         Tog(pageFrames[1], "Rainbow Mode", true, function(s) rainbowModeActive = s end)
         local colorContainer = Instance.new("Frame", pageFrames[1])
         colorContainer.Size = UDim2.new(1, 0, 0, 48)
@@ -615,17 +579,31 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end
 
+        -- Tab 2: ESP & X-Ray
         Tog(pageFrames[2], "Perfect Role ESP", false, function(s) O.ESP = s end)
+        Tog(pageFrames[2], "Wallhack X-Ray (See Through Walls)", false, function(s) 
+            O.XRay = s
+            for _, part in pairs(workspace:GetDescendants()) do
+                if part:IsA("BasePart") and not part:IsDescendantOf(pl.Character) then
+                    if s then
+                        if part.Transparency < 0.5 then part.LocalTransparencyModifier = 0.5 end
+                    else
+                        part.LocalTransparencyModifier = 0
+                    end
+                end
+            end
+        end)
         Tog(pageFrames[2], "Sheriff Gun & Coin ESP", false, function(s) O.ExtraESP = s end)
 
+        -- Tab 3: Combat & Aim
+        Tog(pageFrames[3], "Silent Aim (Auto Lock Murderer)", false, function(s) O.SilentAim = s end)
         Tog(pageFrames[3], "Auto Grab Gun", false, function(s) O.AutoGrabGun = s end)
         Tog(pageFrames[3], "Auto Sheriff Target", false, function(s) O.AutoSheriff = s end)
         Tog(pageFrames[3], "Kill All (Murderer)", false, function(s) O.KA = s end)
-        Tog(pageFrames[3], "Auto Avoid Knife", false, function(s) O.Avoid = s end)
         Tog(pageFrames[3], "God Mode Shield", false, function(s) O.GodMode = s end)
         Tog(pageFrames[3], "God Fling Murderer", false, function(s) O.FlingMurderer = s end)
-        Tog(pageFrames[3], "God Fling Sheriff", false, function(s) O.FlingSheriff = s end)
 
+        -- Tab 4: Trade & Misc
         Tog(pageFrames[4], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
         Tog(pageFrames[4], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
         Tog(pageFrames[4], "Infinite Jump", false, function(s) O.InfJump = s end)
@@ -636,9 +614,7 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
         Tog(pageFrames[4], "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
 
-        Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
-
-        createStepControl(pageFrames[5], "Autofarm Speed", 25, 10, 100, 5, function(v) autoFarmSpeed = v end)
+        createStepControl(pageFrames[4], "Character FOV", 70, 50, 120, 5, function(v) currentFOV = v end)
         createStepControl(pageFrames[4], "WalkSpeed", 16, 16, 200, 4, function(v)
             currentWalkSpeed = v
             pcall(function() pl.Character.Humanoid.WalkSpeed = v end)
@@ -652,7 +628,11 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Background Loops for Features
+        -- Tab 5: Auto Farm
+        Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
+        createStepControl(pageFrames[5], "Autofarm Speed", 25, 10, 100, 5, function(v) autoFarmSpeed = v end)
+
+        -- Background Loops & Core Functionality
         task.spawn(function()
             while true do
                 task.wait(0.3)
@@ -679,6 +659,31 @@ loginBtn.MouseButton1Click:Connect(function()
                     else
                         for _, v in pairs(p:GetPlayers()) do
                             if v.Character and v.Character:FindFirstChild("PerfectESP") then v.Character.PerfectESP:Destroy() end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- Silent Aim Loop (Kusursuz Hedef Kilitleme)
+        task.spawn(function()
+            while true do
+                task.wait(0.05)
+                pcall(function()
+                    if O.SilentAim then
+                        local c2 = pl.Character
+                        local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
+                        if gun then
+                            for _, v in pairs(p:GetPlayers()) do
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                                    if hasKnife then
+                                        local targetHrp = v.Character.HumanoidRootPart
+                                        camera.CFrame = CFrame.new(camera.CFrame.Position, targetHrp.Position)
+                                        break
+                                    end
+                                end
+                            end
                         end
                     end
                 end)
@@ -781,28 +786,6 @@ loginBtn.MouseButton1Click:Connect(function()
 
         task.spawn(function()
             while true do
-                task.wait(0.1)
-                pcall(function()
-                    if O.Avoid then
-                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-                        if hrp then
-                            for _, v in pairs(p:GetPlayers()) do
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                                    if v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) then
-                                        if (hrp.Position - v.Character.HumanoidRootPart.Position).Magnitude < 14 then
-                                            hrp.CFrame = hrp.CFrame + (hrp.CFrame.LookVector * -10) + Vector3.new(0, 5, 0)
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-
-        task.spawn(function()
-            while true do
                 task.wait(0.05)
                 pcall(function()
                     if O.GodMode then
@@ -848,51 +831,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                 hrp.Velocity = Vector3.new(0, 0, 0)
                                 hrp.RotVelocity = Vector3.new(0, 0, 0)
                                 hrp.CFrame = origPos
-                                sendNotification("Success", "Murderer neutralized & Returned to position!", 2)
-                                task.wait(0.5)
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-
-        task.spawn(function()
-            while true do
-                task.wait(0.1)
-                pcall(function()
-                    if O.FlingSheriff then
-                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
-                        if hrp and hum and hum.Health > 0 then
-                            local origPos = hrp.CFrame
-                            local targeted = false
-
-                            for _, v in pairs(p:GetPlayers()) do
-                                if not O.FlingSheriff then break end
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
-                                    local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
-                                    if hasGun then
-                                        targeted = true
-                                        local targetHrp = v.Character.HumanoidRootPart
-                                        local targetHum = v.Character.Humanoid
-                                        
-                                        while targetHrp and targetHrp.Parent and targetHum.Health > 0 and O.FlingSheriff do
-                                            hum.Health = hum.MaxHealth
-                                            hrp.CFrame = targetHrp.CFrame
-                                            hrp.Velocity = Vector3.new(40000, 40000, 40000)
-                                            hrp.RotVelocity = Vector3.new(40000, 40000, 40000)
-                                            task.wait(0.02)
-                                        end
-                                    end
-                                end
-                            end
-
-                            if targeted then
-                                hrp.Velocity = Vector3.new(0, 0, 0)
-                                hrp.RotVelocity = Vector3.new(0, 0, 0)
-                                hrp.CFrame = origPos
-                                sendNotification("Success", "Sheriff neutralized & Returned to position!", 2)
+                                sendNotification("Success", "Murderer neutralized & Returned!", 2)
                                 task.wait(0.5)
                             end
                         end
@@ -940,7 +879,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Script fully ready with button-controlled speed/jump!", 3)
+        sendNotification("Loaded", "FOV, X-Ray & Silent Aim successfully integrated!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
