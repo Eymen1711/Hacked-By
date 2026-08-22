@@ -1,639 +1,724 @@
--- palofsc: Murder Mystery 2 - Fixed & Safe Universal Edition
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local CoreGui = game:GetService("CoreGui")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Camera = Workspace.CurrentCamera
+-- ==========================================
+-- HACKED BY + NOTIFICATION SYSTEM
+-- ==========================================
 
-local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local p = game:GetService("Players")
+local pl = p.LocalPlayer
+local workspace = game:GetService("Workspace")
+local uis = game:GetService("UserInputService")
+local rs = game:GetService("RunService")
+local lighting = game:GetService("Lighting")
+local ts = game:GetService("TweenService")
+local camera = workspace.CurrentCamera
 
--- Key Tanımlamaları
-local LOOTLABS_URL = "https://lootdest.org/s?CRVogxNA"
-local VALID_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
+local LOOTLABS_LINK = "https://loot-link.com/s?9K7cNpua"
+local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
 
--- Global Variables
-_G.FlightSpeed = 60
-_G.RoleESP = false
-_G.GunESP = false
-_G.CoinESP = false
-_G.AutoGrabGun = false
-_G.TradeScamActive = false
-_G.ForceAcceptActive = false
-_G.AutoBestItemActive = false
-_G.FullBright = false
-_G.KillAllActive = false
-_G.InfiniteJump = false
-
--- Güvenli GUI Alanı (CoreGui hata verirse PlayerGui'ye düşer)
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "HackedBy_MM2_Elite"
-pcall(function()
-    ScreenGui.Parent = CoreGui
-end)
-if not ScreenGui.Parent then
-    ScreenGui.Parent = PlayerGui
-end
-ScreenGui.ResetOnSpawn = false
-
--- Bildirim Sistemi
-local NotificationLabel = Instance.new("TextLabel", ScreenGui)
-NotificationLabel.Name = "NotificationLabel"
-NotificationLabel.Size = UDim2.new(0, 360, 0, 42)
-NotificationLabel.Position = UDim2.new(0.5, -180, 0, 15)
-NotificationLabel.BackgroundColor3 = Color3.fromRGB(16, 16, 24)
-NotificationLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
-NotificationLabel.TextSize = 13
-NotificationLabel.Font = Enum.Font.GothamBold
-NotificationLabel.Text = "⚡ Key System Initialized..."
-NotificationLabel.Visible = false
-Instance.new("UICorner", NotificationLabel).CornerRadius = UDim.new(0, 10)
-local notifStroke = Instance.new("UIStroke", NotificationLabel)
-notifStroke.Color = Color3.fromRGB(168, 85, 247)
-notifStroke.Thickness = 1.5
-
-local function ShowNotification(msg)
-    NotificationLabel.Text = msg
-    NotificationLabel.Visible = true
-    task.delay(3, function()
-        if NotificationLabel.Text == msg then
-            NotificationLabel.Visible = false
-        end
-    end)
+-- Dinamik Rainbow Renk Fonksiyonu
+local function getRainbowColor(speed)
+    local hue = (tick() * (speed or 1)) % 1
+    return Color3.fromHSV(hue, 1, 1)
 end
 
--- ==========================================
--- 0. LOOTLABS KEY SİSTEMİ PENCERESİ
--- ==========================================
-local KeySystemFrame = Instance.new("Frame", ScreenGui)
-KeySystemFrame.Name = "KeySystemFrame"
-KeySystemFrame.Size = UDim2.new(0, 400, 0, 240)
-KeySystemFrame.Position = UDim2.new(0.5, -200, 0.5, -120)
-KeySystemFrame.BackgroundColor3 = Color3.fromRGB(13, 13, 18)
-KeySystemFrame.Active = true
-KeySystemFrame.Draggable = true
-Instance.new("UICorner", KeySystemFrame).CornerRadius = UDim.new(0, 16)
-local keyStroke = Instance.new("UIStroke", KeySystemFrame)
-keyStroke.Color = Color3.fromRGB(168, 85, 247)
-keyStroke.Thickness = 2
+-- Bildirim Sistemi (Toast Notification)
+local notifGui = Instance.new("ScreenGui")
+notifGui.Name = "MM2_Notifications"
+notifGui.ResetOnSpawn = false
+pcall(function() notifGui.Parent = game:GetService("CoreGui") end)
+if not notifGui.Parent then pcall(function() notifGui.Parent = pl:WaitForChild("PlayerGui") end) end
 
-local KeyTitle = Instance.new("TextLabel", KeySystemFrame)
-KeyTitle.Size = UDim2.new(1, 0, 0, 50)
-KeyTitle.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-KeyTitle.Text = "⚡ Hacked By Hub - Key System"
-KeyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-KeyTitle.TextSize = 14
-KeyTitle.Font = Enum.Font.GothamBold
-Instance.new("UICorner", KeyTitle).CornerRadius = UDim.new(0, 16)
+local notifHolder = Instance.new("Frame", notifGui)
+notifHolder.Size = UDim2.new(0, 260, 1, 0)
+notifHolder.Position = UDim2.new(1, -280, 0, 20)
+notifHolder.BackgroundTransparency = 1
+local notifLayout = Instance.new("UIListLayout", notifHolder)
+notifLayout.SortOrder = Enum.SortOrder.LayoutOrder
+notifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+notifLayout.Padding = UDim.new(0, 8)
 
-local GetKeyBtn = Instance.new("TextButton", KeySystemFrame)
-GetKeyBtn.Size = UDim2.new(0.85, 0, 0, 40)
-GetKeyBtn.Position = UDim2.new(0.075, 0, 0, 68)
-GetKeyBtn.BackgroundColor3 = Color3.fromRGB(38, 38, 55)
-GetKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-GetKeyBtn.Text = "🔗 Get Key (LootLabs Link)"
-GetKeyBtn.TextSize = 13
-GetKeyBtn.Font = Enum.Font.GothamBold
-Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 10)
+local function sendNotification(titleText, msgText, duration)
+    task.spawn(function()
+        local box = Instance.new("Frame", notifHolder)
+        box.Size = UDim2.new(1, 0, 0, 55)
+        box.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+        box.BackgroundTransparency = 0.1
+        box.Position = UDim2.new(1, 50, 0, 0)
+        Instance.new("UICorner", box).CornerRadius = UDim.new(0, 8)
+        
+        local stroke = Instance.new("UIStroke", box)
+        stroke.Thickness = 1.5
+        
+        -- Rainbow Stroke Sync for Notification
+        local conn
+        conn = rs.RenderStepped:Connect(function()
+            stroke.Color = getRainbowColor(0.8)
+        end)
 
-local KeyInputBox = Instance.new("TextBox", KeySystemFrame)
-KeyInputBox.Size = UDim2.new(0.85, 0, 0, 42)
-KeyInputBox.Position = UDim2.new(0.075, 0, 0, 118)
-KeyInputBox.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-KeyInputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-KeyInputBox.PlaceholderText = "Paste your key here..."
-KeyInputBox.Text = ""
-KeyInputBox.TextSize = 13
-KeyInputBox.Font = Enum.Font.GothamSemibold
-Instance.new("UICorner", KeyInputBox).CornerRadius = UDim.new(0, 10)
+        local tLbl = Instance.new("TextLabel", box)
+        tLbl.Size = UDim2.new(1, -15, 0, 20)
+        tLbl.Position = UDim2.new(0, 12, 0, 6)
+        tLbl.BackgroundTransparency = 1
+        tLbl.Text = titleText
+        tLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tLbl.TextSize = 13
+        tLbl.Font = Enum.Font.SourceSansBold
+        tLbl.TextXAlignment = Enum.TextXAlignment.Left
 
-local SubmitKeyBtn = Instance.new("TextButton", KeySystemFrame)
-SubmitKeyBtn.Size = UDim2.new(0.85, 0, 0, 42)
-SubmitKeyBtn.Position = UDim2.new(0.075, 0, 0, 172)
-SubmitKeyBtn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
-SubmitKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-SubmitKeyBtn.Text = "Verify Key"
-SubmitKeyBtn.TextSize = 13
-SubmitKeyBtn.Font = Enum.Font.GothamBold
-Instance.new("UICorner", SubmitKeyBtn).CornerRadius = UDim.new(0, 10)
+        local mLbl = Instance.new("TextLabel", box)
+        mLbl.Size = UDim2.new(1, -15, 0, 20)
+        mLbl.Position = UDim2.new(0, 12, 0, 26)
+        mLbl.BackgroundTransparency = 1
+        mLbl.Text = msgText
+        mLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+        mLbl.TextSize = 12
+        mLbl.Font = Enum.Font.SourceSans
+        mLbl.TextXAlignment = Enum.TextXAlignment.Left
 
--- Güvenli Panoya Kopyalama
-GetKeyBtn.MouseButton1Click:Connect(function()
-    local success = pcall(function()
-        setclipboard(LOOTLABS_URL)
+        box:TweenPosition(UDim2.new(0, 0, 0, 0), "Out", "Back", 0.3, true)
+        task.wait(duration or 2.5)
+        box:TweenPosition(UDim2.new(1, 50, 0, 0), "In", "Quad", 0.3, true)
+        task.wait(0.3)
+        if conn then conn:Disconnect() end
+        box:Destroy()
     end)
-    if success then
-        ShowNotification("📋 LootLabs linki panoya kopyalandı!")
-    else
-        ShowNotification("🔗 Link: " .. LOOTLABS_URL)
+end
+
+-- Key System Arayüzü
+local gui = Instance.new("ScreenGui")
+gui.Name = "MM2_KeySystem"
+gui.ResetOnSpawn = false
+pcall(function() gui.Parent = game:GetService("CoreGui") end)
+if not gui.Parent then pcall(function() gui.Parent = pl:WaitForChild("PlayerGui") end) end
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 360, 0, 220)
+frame.Position = UDim2.new(0.5, -180, 0.5, -110)
+frame.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+local stroke = Instance.new("UIStroke", frame)
+stroke.Thickness = 2
+rs.RenderStepped:Connect(function() stroke.Color = getRainbowColor(1) end)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 45)
+title.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+title.Text = "Hacked by"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 15
+title.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", title).CornerRadius = UDim.new(0, 12)
+
+local textBox = Instance.new("TextBox", frame)
+textBox.Size = UDim2.new(0.85, 0, 0, 40)
+textBox.Position = UDim2.new(0.075, 0, 0.3, 0)
+textBox.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+textBox.PlaceholderText = "Key giriniz..."
+textBox.Text = ""
+textBox.TextSize = 14
+Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 6)
+
+local getKeyBtn = Instance.new("TextButton", frame)
+getKeyBtn.Size = UDim2.new(0.4, 0, 0, 35)
+getKeyBtn.Position = UDim2.new(0.075, 0, 0.62, 0)
+getKeyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+getKeyBtn.Text = "Get Key"
+getKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+getKeyBtn.TextSize = 14
+getKeyBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", getKeyBtn).CornerRadius = UDim.new(0, 6)
+
+getKeyBtn.MouseButton1Click:Connect(function()
+    if setclipboard then
+        setclipboard(LOOTLABS_LINK)
+        getKeyBtn.Text = "Link Copied!"
+        task.wait(2)
+        getKeyBtn.Text = "Get Key"
     end
 end)
 
--- Ana Menüyü Başlatan Fonksiyon
-local function LoadMainHub()
-    KeySystemFrame:Destroy()
-    ShowNotification("⚡ Key Verified! Hub Loaded Successfully.")
+local loginBtn = Instance.new("TextButton", frame)
+loginBtn.Size = UDim2.new(0.4, 0, 0, 35)
+loginBtn.Position = UDim2.new(0.525, 0, 0.62, 0)
+loginBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+loginBtn.Text = "Login"
+loginBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+loginBtn.TextSize = 14
+loginBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", loginBtn).CornerRadius = UDim.new(0, 6)
 
-    local ToggleMainGuiBtn = Instance.new("TextButton", ScreenGui)
-    ToggleMainGuiBtn.Name = "ToggleMainGuiBtn"
-    ToggleMainGuiBtn.Size = UDim2.new(0, 160, 0, 44)
-    ToggleMainGuiBtn.Position = UDim2.new(0, 20, 0, 15)
-    ToggleMainGuiBtn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
-    ToggleMainGuiBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleMainGuiBtn.Text = "⚡ Hacked By Hub"
-    ToggleMainGuiBtn.TextSize = 13
-    ToggleMainGuiBtn.Font = Enum.Font.GothamBold
-    ToggleMainGuiBtn.Active = true
-    ToggleMainGuiBtn.Draggable = true
-    Instance.new("UICorner", ToggleMainGuiBtn).CornerRadius = UDim.new(0, 12)
-    local MainToggleStroke = Instance.new("UIStroke", ToggleMainGuiBtn)
-    MainToggleStroke.Color = Color3.fromRGB(216, 180, 254)
-    MainToggleStroke.Thickness = 1.5
-
-    local MainFrame = Instance.new("Frame")
-    MainFrame.Name = "MainFrame"
-    MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Color3.fromRGB(13, 13, 18)
-    MainFrame.Position = UDim2.new(0.5, -240, 0.5, -265)
-    MainFrame.Size = UDim2.new(0, 480, 0, 490)
-    MainFrame.Active = true
-    MainFrame.Draggable = true
-    MainFrame.Visible = true
-    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 20)
-
-    ToggleMainGuiBtn.MouseButton1Click:Connect(function()
-        MainFrame.Visible = not MainFrame.Visible
-    end)
-
-    local MainStroke = Instance.new("UIStroke", MainFrame)
-    MainStroke.Color = Color3.fromRGB(168, 85, 247)
-    MainStroke.Thickness = 2
-
-    local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Parent = MainFrame
-    TitleLabel.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-    TitleLabel.Size = UDim2.new(1, 0, 0, 60)
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.Text = "⚡ Hacked By - Murder Mystery 2 Elite"
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.TextSize = 15
-    Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 20)
-
-    local TabContainer = Instance.new("Frame", MainFrame)
-    TabContainer.BackgroundTransparency = 1
-    TabContainer.Position = UDim2.new(0, 15, 0, 72)
-    TabContainer.Size = UDim2.new(1, -30, 0, 40)
-
-    local TabListLayout = Instance.new("UIListLayout", TabContainer)
-    TabListLayout.FillDirection = Enum.FillDirection.Horizontal
-    TabListLayout.Padding = UDim.new(0, 12)
-
-    local function CreateTabButton(name, index)
-        local btn = Instance.new("TextButton", TabContainer)
-        btn.Size = UDim2.new(0.485, 0, 1, 0)
-        btn.BackgroundColor3 = index == 1 and Color3.fromRGB(168, 85, 247) or Color3.fromRGB(22, 22, 32)
-        btn.Text = name
-        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        btn.TextSize = 13
-        btn.Font = Enum.Font.GothamBold
-        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
-        return btn
-    end
-
-    local Tab1Btn = CreateTabButton("Main & Sheriff", 1)
-    local Tab2Btn = CreateTabButton("Combat & Movement", 2)
-
-    local PageContainer = Instance.new("Frame", MainFrame)
-    PageContainer.BackgroundTransparency = 1
-    PageContainer.Position = UDim2.new(0, 15, 0, 124)
-    PageContainer.Size = UDim2.new(1, -30, 1, -136)
-
-    local function CreateScrollingPage()
-        local sf = Instance.new("ScrollingFrame", PageContainer)
-        sf.BackgroundTransparency = 1
-        sf.Size = UDim2.new(1, 0, 1, 0)
-        sf.CanvasSize = UDim2.new(0, 0, 2.8, 0)
-        sf.ScrollBarThickness = 4
-        sf.Visible = false
-        local layout = Instance.new("UIListLayout", sf)
-        layout.SortOrder = Enum.SortOrder.LayoutOrder
-        layout.Padding = UDim.new(0, 12)
-        return sf
-    end
-
-    local Page1 = CreateScrollingPage()
-    local Page2 = CreateScrollingPage()
-    Page1.Visible = true
-
-    Tab1Btn.MouseButton1Click:Connect(function()
-        Page1.Visible, Page2.Visible = true, false
-        Tab1Btn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
-        Tab2Btn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-    end)
-
-    Tab2Btn.MouseButton1Click:Connect(function()
-        Page1.Visible, Page2.Visible = false, true
-        Tab1Btn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-        Tab2Btn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
-    end)
-
-    local function CreateToggle(parent, name, callback)
-        local Button = Instance.new("TextButton")
-        Button.Parent = parent
-        Button.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-        Button.Size = UDim2.new(1, 0, 0, 48)
-        Button.Font = Enum.Font.GothamSemibold
-        Button.Text = name .. " : [OFF]"
-        Button.TextColor3 = Color3.fromRGB(180, 180, 200)
-        Button.TextSize = 13
-        Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 10)
+loginBtn.MouseButton1Click:Connect(function()
+    if textBox.Text == CORRECT_KEY then
+        gui:Destroy()
+        sendNotification("Success", "Key verified successfully!", 3)
         
-        local toggled = false
-        Button.MouseButton1Click:Connect(function()
-            toggled = not toggled
-            if toggled then
-                Button.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
-                Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-                Button.Text = name .. " : [ON]"
-            else
-                Button.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-                Button.TextColor3 = Color3.fromRGB(180, 180, 200)
-                Button.Text = name .. " : [OFF]"
-            end
-            pcall(function() callback(toggled) end)
-        end)
-    end
+        -- ASIL HİLE MENÜSÜ BAŞLANGICI
+        local mgui = Instance.new("ScreenGui")
+        mgui.Name = "MM2_RainbowMaster"
+        mgui.ResetOnSpawn = false
+        pcall(function() mgui.Parent = game:GetService("CoreGui") end)
+        if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
 
-    local function CreateButton(parent, name, callback)
-        local Button = Instance.new("TextButton")
-        Button.Parent = parent
-        Button.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
-        Button.Size = UDim2.new(1, 0, 0, 48)
-        Button.Font = Enum.Font.GothamBold
-        Button.Text = name
-        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Button.TextSize = 13
-        Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 10)
-        
-        Button.MouseButton1Click:Connect(function()
-            pcall(function() callback() end)
-        end)
-    end
+        local fpsLabel = Instance.new("TextLabel", mgui)
+        fpsLabel.Size = UDim2.new(0, 120, 0, 30)
+        fpsLabel.Position = UDim2.new(0, 15, 1, -45)
+        fpsLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+        fpsLabel.BackgroundTransparency = 0.3
+        fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        fpsLabel.TextSize = 14
+        fpsLabel.Font = Enum.Font.SourceSansBold
+        fpsLabel.Text = "FPS: 0"
+        fpsLabel.Visible = false
+        Instance.new("UICorner", fpsLabel).CornerRadius = UDim.new(0, 6)
+        local fpsStroke = Instance.new("UIStroke", fpsLabel)
+        rs.RenderStepped:Connect(function() fpsStroke.Color = getRainbowColor(1) end)
 
-    local function CreateSlider(parent, name, min, max, default, callback)
-        local Frame = Instance.new("Frame", parent)
-        Frame.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-        Frame.Size = UDim2.new(1, 0, 0, 60)
-        Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
+        -- Toggle Menu Butonu
+        local toggleButton = Instance.new("TextButton", mgui)
+        toggleButton.Size = UDim2.new(0, 160, 0, 40)
+        toggleButton.Position = UDim2.new(0, 40, 0, 40)
+        toggleButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        toggleButton.Text = "Toggle Menu"
+        toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        toggleButton.TextSize = 15
+        toggleButton.Font = Enum.Font.SourceSansBold
+        toggleButton.Active = true
+        toggleButton.Draggable = true
+        Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 8)
+        local tbStroke = Instance.new("UIStroke", toggleButton)
+        rs.RenderStepped:Connect(function() tbStroke.Color = getRainbowColor(1) end)
 
-        local Label = Instance.new("TextLabel", Frame)
-        Label.BackgroundTransparency = 1
-        Label.Position = UDim2.new(0, 14, 0, 8)
-        Label.Size = UDim2.new(1, -28, 0, 20)
-        Label.Font = Enum.Font.GothamBold
-        Label.Text = name .. ": " .. default
-        Label.TextColor3 = Color3.fromRGB(220, 220, 235)
-        Label.TextSize = 13
-        Label.TextXAlignment = Enum.TextXAlignment.Left
+        -- Shoot Murderer Butonu (Hold & FOV Check)
+        local shootButton = Instance.new("TextButton", mgui)
+        shootButton.Size = UDim2.new(0, 160, 0, 40)
+        shootButton.Position = UDim2.new(0, 40, 0, 95)
+        shootButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        shootButton.Text = "Shoot Murderer (Hold)"
+        shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        shootButton.TextSize = 14
+        shootButton.Font = Enum.Font.SourceSansBold
+        shootButton.Active = true
+        shootButton.Draggable = true
+        Instance.new("UICorner", shootButton).CornerRadius = UDim.new(0, 8)
+        local sbStroke = Instance.new("UIStroke", shootButton)
+        rs.RenderStepped:Connect(function() sbStroke.Color = getRainbowColor(1) end)
 
-        local SliderBar = Instance.new("TextButton", Frame)
-        SliderBar.BackgroundColor3 = Color3.fromRGB(38, 38, 55)
-        SliderBar.Position = UDim2.new(0, 14, 0, 36)
-        SliderBar.Size = UDim2.new(1, -28, 0, 14)
-        SliderBar.Text = ""
-        Instance.new("UICorner", SliderBar).CornerRadius = UDim.new(0, 7)
+        local shootingActive = false
+        shootButton.MouseButton1Down:Connect(function() shootingActive = true end)
+        shootButton.MouseButton1Up:Connect(function() shootingActive = false end)
+        shootButton.MouseLeave:Connect(function() shootingActive = false end)
 
-        local Fill = Instance.new("Frame", SliderBar)
-        Fill.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
-        Fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-        Instance.new("UICorner", Fill).CornerRadius = UDim.new(0, 7)
-
-        local dragging = false
-        SliderBar.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                dragging = true
-            end
-        end)
-
-        UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                dragging = false
-            end
-        end)
-
-        UserInputService.InputChanged:Connect(function(input)
-            if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-                local pos = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
-                Fill.Size = UDim2.new(pos, 0, 1, 0)
-                local val = math.floor(min + (max - min) * pos)
-                Label.Text = name .. ": " .. val
-                pcall(function() callback(val) end)
-            end
-        end)
-    end
-
-    -- ================= PAGE 1 =================
-    CreateToggle(Page1, "Role ESP", function(state)
-        _G.RoleESP = state
-        RunService.RenderStepped:Connect(function()
-            if not _G.RoleESP then return end
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                    local char = player.Character
-                    local hl = char:FindFirstChild("HBHighlight") or Instance.new("Highlight", char)
-                    hl.Name = "HBHighlight"
-                    local bp = player:FindFirstChild("Backpack")
-                    local hasK = (bp and bp:FindFirstChild("Knife")) or char:FindFirstChild("Knife")
-                    local hasG = (bp and bp:FindFirstChild("Gun")) or char:FindFirstChild("Gun")
-                    if hasK then hl.FillColor = Color3.fromRGB(255, 50, 50)
-                    elseif hasG then hl.FillColor = Color3.fromRGB(50, 150, 255)
-                    else hl.FillColor = Color3.fromRGB(50, 255, 100) end
-                end
-            end
-        end)
-    end)
-
-    CreateToggle(Page1, "Sheriff Gun ESP", function(state)
-        _G.GunESP = state
-        RunService.RenderStepped:Connect(function()
-            if not _G.GunESP then return end
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if obj.Name == "GunDrop" and obj:IsA("BasePart") then
-                    local hl = obj:FindFirstChild("GunHighlight") or Instance.new("Highlight", obj)
-                    hl.Name = "GunHighlight"
-                    hl.FillColor = Color3.fromRGB(255, 255, 0)
-                end
-            end
-        end)
-    end)
-
-    CreateToggle(Page1, "Coin ESP", function(state)
-        _G.CoinESP = state
-        RunService.RenderStepped:Connect(function()
-            if not _G.CoinESP then return end
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if obj:IsA("BasePart") and string.find(obj.Name:lower(), "coin") then
-                    local hl = obj:FindFirstChild("CoinHighlight") or Instance.new("Highlight", obj)
-                    hl.Name = "CoinHighlight"
-                    hl.FillColor = Color3.fromRGB(255, 215, 0)
-                end
-            end
-        end)
-    end)
-
-    CreateButton(Page1, "🎯 Shoot Murderer", function()
-        local murdererFound = false
-        local localChar = LocalPlayer.Character
-        local localHrp = localChar and localChar:FindFirstChild("HumanoidRootPart")
-        
-        if not localHrp then
-            ShowNotification("❌ Karakter bulunamadı!")
-            return
-        end
-
-        for _, p in ipairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                local bp = p:FindFirstChild("Backpack")
-                local char = p.Character
-                local hasKnife = (bp and bp:FindFirstChild("Knife")) or char:FindFirstChild("Knife")
-                
-                if hasKnife then
-                    murdererFound = true
-                    local targetHrp = char.HumanoidRootPart
-                    local _, onScreen = Camera:WorldToViewportPoint(targetHrp.Position)
-                    local distance = (localHrp.Position - targetHrp.Position).Magnitude
-                    
-                    if onScreen and distance <= 250 then
-                        local gun = localChar:FindFirstChild("Gun") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Gun"))
-                        if gun then
-                            gun.Parent = localChar
-                            pcall(function()
-                                local shootRemote = ReplicatedStorage:FindFirstChild("ShootGun", true) or ReplicatedStorage:FindFirstChild("GunShoot", true)
-                                if shootRemote then
-                                    if shootRemote:IsA("RemoteEvent") then shootRemote:FireServer(targetHrp.Position)
-                                    elseif shootRemote:IsA("RemoteFunction") then shootRemote:InvokeServer(targetHrp.Position) end
-                                else
-                                    gun:Activate()
-                                end
-                            end)
-                            ShowNotification("🎯 Murderer Shot Successfully!")
-                        else
-                            ShowNotification("❌ Elinizde tabanca yok!")
-                        end
-                    else
-                        ShowNotification("⚠️ Katil görüş mesafenizde değil!")
-                    end
-                    break
-                end
-            end
-        end
-        if not murdererFound then
-            ShowNotification("🔍 Odada yaşayan katil tespit edilemedi.")
-        end
-    end)
-
-    CreateToggle(Page1, "Auto Grab Gun", function(state)
-        _G.AutoGrabGun = state
-        task.spawn(function()
-            while _G.AutoGrabGun do
-                task.wait(0.3)
-                pcall(function()
-                    for _, obj in ipairs(Workspace:GetDescendants()) do
-                        if obj.Name == "GunDrop" and obj:IsA("BasePart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                            LocalPlayer.Character.HumanoidRootPart.CFrame = obj.CFrame
-                        end
-                    end
-                end)
-            end
-        end)
-    end)
-
-    -- ================= PAGE 2 =================
-    CreateSlider(Page2, "Flight Speed", 15, 90, 60, function(val)
-        _G.FlightSpeed = val
-    end)
-
-    CreateSlider(Page2, "WalkSpeed", 16, 100, 16, function(val)
-        pcall(function() LocalPlayer.Character.Humanoid.WalkSpeed = val end)
-    end)
-
-    CreateSlider(Page2, "JumpPower", 50, 100, 50, function(val)
-        pcall(function() LocalPlayer.Character.Humanoid.JumpPower = val end)
-    end)
-
-    CreateToggle(Page2, "Infinite Jump", function(state)
-        _G.InfiniteJump = state
-    end)
-
-    UserInputService.JumpRequest:Connect(function()
-        if _G.InfiniteJump then
-            pcall(function() LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
-        end
-    end)
-
-    CreateToggle(Page2, "Kill All (As Murderer)", function(state)
-        _G.KillAllActive = state
-        if _G.KillAllActive then
-            task.spawn(function()
-                while _G.KillAllActive do
-                    task.wait(0.4)
+        coroutine.wrap(function()
+            while task.wait(0.15) do
+                if shootingActive then
                     pcall(function()
-                        if not _G.KillAllActive then break end
-                        local char = LocalPlayer.Character
-                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                        if not hrp then return end
-                        local knife = char:FindFirstChild("Knife") or (LocalPlayer.Backpack and LocalPlayer.Backpack:FindFirstChild("Knife"))
-                        if knife then knife.Parent = char end
-
-                        for _, p in ipairs(Players:GetPlayers()) do
-                            if not _G.KillAllActive then break end
-                            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                                local targetHrp = p.Character.HumanoidRootPart
-                                hrp.CFrame = targetHrp.CFrame * CFrame.new(0, 0, 2)
-                                task.wait(0.1)
-                                if knife and knife:FindFirstChild("Stab") then knife.Stab:FireServer() end
-                                if knife then pcall(function() knife:Activate() end) end
+                        local c2 = pl.Character
+                        local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
+                        if not gun and c2 and c2:FindFirstChild("Humanoid") then
+                            local bpGun = pl.Backpack:FindFirstChild("Gun")
+                            if bpGun then bpGun.Parent = c2; gun = bpGun end
+                        end
+                        if gun then
+                            local targetFound = false
+                            for _, v in pairs(p:GetPlayers()) do
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
+                                    if hasKnife then
+                                        targetFound = true
+                                        local hrp = v.Character.HumanoidRootPart
+                                        local _, onScreen = camera:WorldToViewportPoint(hrp.Position)
+                                        if onScreen then
+                                            local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
+                                            if ev then ev:FireServer(hrp.Position) end
+                                        else
+                                            sendNotification("Warning", "Murderer not in FOV!", 1.5)
+                                        end
+                                        break
+                                    end
+                                end
+                            end
+                            if not targetFound then
+                                sendNotification("Info", "No Murderer found with knife!", 1.5)
                             end
                         end
                     end)
                 end
-            end)
-        end
-    end)
-
-    -- ==========================================
-    -- 2. TRADE SCAM YAN MENÜSÜ
-    -- ==========================================
-    local TradeSidePanel = Instance.new("Frame", ScreenGui)
-    TradeSidePanel.Name = "TradeSidePanel"
-    TradeSidePanel.Size = UDim2.new(0, 210, 0, 230)
-    TradeSidePanel.Position = UDim2.new(1, -230, 0.5, -115)
-    TradeSidePanel.BackgroundColor3 = Color3.fromRGB(13, 13, 18)
-    TradeSidePanel.Visible = false
-    TradeSidePanel.Active = true
-    TradeSidePanel.Draggable = true
-    Instance.new("UICorner", TradeSidePanel).CornerRadius = UDim.new(0, 14)
-    local tradePanelStroke = Instance.new("UIStroke", TradeSidePanel)
-    tradePanelStroke.Color = Color3.fromRGB(168, 85, 247)
-    tradePanelStroke.Thickness = 2
-
-    local TradeTitle = Instance.new("TextLabel", TradeSidePanel)
-    TradeTitle.Size = UDim2.new(1, 0, 0, 38)
-    TradeTitle.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-    TradeTitle.Text = "⚡ TRADE SCAM PANEL"
-    TradeTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TradeTitle.TextSize = 12
-    TradeTitle.Font = Enum.Font.GothamBold
-    Instance.new("UICorner", TradeTitle).CornerRadius = UDim.new(0, 14)
-
-    local TradePanelLayout = Instance.new("UIListLayout", TradeSidePanel)
-    TradePanelLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    TradePanelLayout.Padding = UDim.new(0, 8)
-    TradePanelLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
-    local pad = Instance.new("Frame", TradeSidePanel)
-    pad.Size = UDim2.new(1, 0, 0, 40)
-    pad.BackgroundTransparency = 1
-    pad.LayoutOrder = 0
-
-    local function CreateTradePanelToggle(name, layoutOrder, callback)
-        local btn = Instance.new("TextButton", TradeSidePanel)
-        btn.LayoutOrder = layoutOrder
-        btn.Size = UDim2.new(0.9, 0, 0, 36)
-        btn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-        btn.TextColor3 = Color3.fromRGB(180, 180, 200)
-        btn.Text = name .. " : [OFF]"
-        btn.TextSize = 11
-        btn.Font = Enum.Font.GothamBold
-        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
-
-        local active = false
-        btn.MouseButton1Click:Connect(function()
-            active = not active
-            if active then
-                btn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
-                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                btn.Text = name .. " : [ON]"
-            else
-                btn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
-                btn.TextColor3 = Color3.fromRGB(180, 180, 200)
-                btn.Text = name .. " : [OFF]"
             end
-            pcall(function() callback(active) end)
-        end)
-        return btn
-    end
+        end)()
 
-    CreateTradePanelToggle("Freeze Trade", 1, function(state)
-        _G.TradeScamActive = state
-        ShowNotification(state and "⚡ Freeze Trade Activated!" or "❌ Freeze Trade Disabled")
-        task.spawn(function()
-            while _G.TradeScamActive do
-                task.wait(0.2)
-                pcall(function()
-                    for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
-                        if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
-                            local rName = remote.Name:lower()
-                            if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock")) then
-                                if remote:IsA("RemoteEvent") then remote:FireServer(true)
-                                elseif remote:IsA("RemoteFunction") then remote:InvokeServer(true) end
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-    end)
+        -- TP to Map Butonu
+        local mapButton = Instance.new("TextButton", mgui)
+        mapButton.Size = UDim2.new(0, 160, 0, 40)
+        mapButton.Position = UDim2.new(0, 40, 0, 150)
+        mapButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        mapButton.Text = "TP to Map"
+        mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        mapButton.TextSize = 15
+        mapButton.Font = Enum.Font.SourceSansBold
+        mapButton.Active = true
+        mapButton.Draggable = true
+        Instance.new("UICorner", mapButton).CornerRadius = UDim.new(0, 8)
+        local mbStroke = Instance.new("UIStroke", mapButton)
+        rs.RenderStepped:Connect(function() mbStroke.Color = getRainbowColor(1) end)
 
-    CreateTradePanelToggle("Force Accept", 2, function(state)
-        _G.ForceAcceptActive = state
-        ShowNotification(state and "⚡ Force Accept Activated!" or "❌ Force Accept Disabled")
-        task.spawn(function()
-            while _G.ForceAcceptActive do
-                task.wait(0.2)
-                pcall(function()
-                    for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
-                        if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
-                            local rName = remote.Name:lower()
-                            if string.find(rName, "trade") and (string.find(rName, "accept") or string.find(rName, "confirm")) then
-                                if remote:IsA("RemoteEvent") then remote:FireServer(true)
-                                elseif remote:IsA("RemoteFunction") then remote:InvokeServer(true) end
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-    end)
-
-    CreateTradePanelToggle("Protect Best Item", 3, function(state)
-        _G.AutoBestItemActive = state
-        ShowNotification(state and "🛡️ Best Item Protection Active!" or "❌ Protection Disabled")
-    end)
-
-    task.spawn(function()
-        while true do
-            task.wait(0.4)
+        mapButton.MouseButton1Down:Connect(function()
             pcall(function()
-                local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
-                if tradeGui and tradeGui.Enabled then
-                    TradeSidePanel.Visible = true
-                else
-                    TradeSidePanel.Visible = false
+                local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local targetPos = nil
+                    for _, obj in pairs(workspace:GetDescendants()) do
+                        if obj.Name == "CoinContainer" and obj:IsA("Model") and obj.PrimaryPart then
+                            targetPos = obj.PrimaryPart.Position
+                            break
+                        elseif obj.Name == "Map" and obj:IsA("Model") then
+                            for _, part in pairs(obj:GetDescendants()) do
+                                if part:IsA("BasePart") then targetPos = part.Position + Vector3.new(0, 5, 0); break end
+                            end
+                            if targetPos then break end
+                        end
+                    end
+                    hrp.CFrame = CFrame.new(targetPos or Vector3.new(0, 50, 0))
+                    sendNotification("Teleport", "Teleported to map!", 2)
                 end
             end)
-        end
-    end)
-end
+        end)
 
--- Key Doğrulama Kontrolü
-SubmitKeyBtn.MouseButton1Click:Connect(function()
-    local enteredKey = KeyInputBox.Text
-    if enteredKey == VALID_KEY then
-        LoadMainHub()
+        -- TP to Lobby Butonu
+        local lobbyButton = Instance.new("TextButton", mgui)
+        lobbyButton.Size = UDim2.new(0, 160, 0, 40)
+        lobbyButton.Position = UDim2.new(0, 40, 0, 205)
+        lobbyButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        lobbyButton.Text = "TP to Lobby"
+        lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        lobbyButton.TextSize = 15
+        lobbyButton.Font = Enum.Font.SourceSansBold
+        lobbyButton.Active = true
+        lobbyButton.Draggable = true
+        Instance.new("UICorner", lobbyButton).CornerRadius = UDim.new(0, 8)
+        local lbStroke = Instance.new("UIStroke", lobbyButton)
+        rs.RenderStepped:Connect(function() lbStroke.Color = getRainbowColor(1) end)
+
+        lobbyButton.MouseButton1Down:Connect(function()
+            pcall(function()
+                local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then 
+                    hrp.CFrame = CFrame.new(0, 150, 0) 
+                    sendNotification("Teleport", "Returned to Lobby!", 2)
+                end
+            end)
+        end)
+
+        -- Ana Pencere (Main Window Frame)
+        local f = Instance.new("Frame", mgui)
+        f.Size = UDim2.new(0, 380, 0, 480)
+        f.Position = UDim2.new(0.5, -190, 0.5, -240)
+        f.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+        f.Active = true
+        f.Draggable = true
+        f.ClipsDescendants = true
+        f.Visible = false
+
+        toggleButton.MouseButton1Click:Connect(function() 
+            f.Visible = not f.Visible 
+        end)
+
+        Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
+        local fStroke = Instance.new("UIStroke", f)
+        fStroke.Transparency = 0.2
+        rs.RenderStepped:Connect(function() fStroke.Color = getRainbowColor(1) end)
+
+        local t = Instance.new("TextLabel", f)
+        t.Size = UDim2.new(1, 0, 0, 40)
+        t.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        t.Text = "Hacked by"
+        t.TextColor3 = Color3.fromRGB(255, 255, 255)
+        t.TextSize = 14
+        t.Font = Enum.Font.SourceSansBold
+        Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
+
+        local al2 = Instance.new("Frame", f)
+        al2.Size = UDim2.new(1, 0, 0, 2)
+        al2.Position = UDim2.new(0, 0, 0, 40)
+        rs.RenderStepped:Connect(function() al2.BackgroundColor3 = getRainbowColor(1) end)
+
+        local sc = Instance.new("ScrollingFrame", f)
+        sc.Size = UDim2.new(1, -20, 1, -50)
+        sc.Position = UDim2.new(0, 10, 0, 46)
+        sc.BackgroundTransparency = 1
+        sc.BorderSizePixel = 0
+        sc.ScrollBarThickness = 4
+        rs.RenderStepped:Connect(function() sc.ScrollBarImageColor3 = getRainbowColor(1) end)
+        sc.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+        local ll = Instance.new("UIListLayout", sc)
+        ll.Padding = UDim.new(0, 8)
+        ll.SortOrder = Enum.SortOrder.LayoutOrder
+        ll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            sc.CanvasSize = UDim2.new(0, 0, 0, ll.AbsoluteContentSize.Y + 20)
+        end)
+
+        local function Tog(parentContainer, titleText, defaultState, callbackFunc)
+            local f2 = Instance.new("Frame", parentContainer)
+            f2.Size = UDim2.new(1, 0, 0, 36)
+            f2.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+            f2.BackgroundTransparency = 0.4
+            Instance.new("UICorner", f2).CornerRadius = UDim.new(0, 6)
+
+            local lb = Instance.new("TextLabel", f2)
+            lb.Size = UDim2.new(1, -50, 1, 0)
+            lb.Position = UDim2.new(0, 12, 0, 0)
+            lb.BackgroundTransparency = 1
+            lb.Text = titleText
+            lb.TextColor3 = Color3.fromRGB(220, 220, 220)
+            lb.TextSize = 13
+            lb.Font = Enum.Font.SourceSans
+            lb.TextXAlignment = Enum.TextXAlignment.Left
+
+            local bg2 = Instance.new("Frame", f2)
+            bg2.Size = UDim2.new(0, 36, 0, 20)
+            bg2.Position = UDim2.new(1, -44, 0.5, -10)
+            bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            bg2.BorderSizePixel = 0
+            Instance.new("UICorner", bg2).CornerRadius = UDim.new(0, 10)
+
+            local circ = Instance.new("Frame", bg2)
+            circ.Size = UDim2.new(0, 16, 0, 16)
+            circ.Position = UDim2.new(0, 2, 0.5, -8)
+            circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+            circ.BorderSizePixel = 0
+            Instance.new("UICorner", circ).CornerRadius = UDim.new(0, 8)
+
+            local st = defaultState or false
+            local function upd()
+                if st then
+                    bg2.BackgroundColor3 = getRainbowColor(1)
+                    circ.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    circ:TweenPosition(UDim2.new(0, 18, 0.5, -8), "Out", "Quad", 0.2, true)
+                else
+                    bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                    circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+                    circ:TweenPosition(UDim2.new(0, 2, 0.5, -8), "Out", "Quad", 0.2, true)
+                end
+            end
+            upd()
+
+            local btn = Instance.new("TextButton", f2)
+            btn.Size = UDim2.new(1, 0, 1, 0)
+            btn.BackgroundTransparency = 1
+            btn.Text = ""
+            btn.MouseButton1Click:Connect(function()
+                st = not st
+                upd()
+                if st then
+                    sendNotification("Enabled", titleText .. " activated!", 2)
+                else
+                    sendNotification("Disabled", titleText .. " deactivated!", 2)
+                end
+                if callbackFunc then pcall(callbackFunc, st) end
+            end)
+        end
+
+        local function Lbl(parentContainer, text)
+            local l = Instance.new("TextLabel", parentContainer)
+            l.Size = UDim2.new(1, 0, 0, 26)
+            l.BackgroundTransparency = 1
+            l.Text = text
+            rs.RenderStepped:Connect(function() l.TextColor3 = getRainbowColor(1) end)
+            l.TextSize = 12
+            l.Font = Enum.Font.SourceSansBold
+            l.TextXAlignment = Enum.TextXAlignment.Left
+        end
+
+        local O = {}
+        Lbl(sc, "─ ESP & ROLES ─")
+        Tog(sc, "Perfect Role ESP", false, function(s) O.ESP = s end)
+        Tog(sc, "Sheriff Gun & Coin ESP", false, function(s) O.ExtraESP = s end)
+
+        Lbl(sc, "─ GUN MECHANICS ─")
+        Tog(sc, "Auto Grab Gun", false, function(s) O.AutoGrabGun = s end)
+        Tog(sc, "Auto Sheriff Target", false, function(s) O.AutoSheriff = s end)
+
+        Lbl(sc, "─ COMBAT & SURVIVAL ─")
+        Tog(sc, "Kill All (Murderer)", false, function(s) O.KA = s end)
+        Tog(sc, "Auto Avoid Knife", false, function(s) O.Avoid = s end)
+        Tog(sc, "God Mode Shield", false, function(s) O.GodMode = s end)
+
+        Lbl(sc, "─ TRADE SCAM PANEL ─")
+        Tog(sc, "Freeze Trade", false, function(s) O.FreezeTrade = s end)
+        Tog(sc, "Force Accept Trade", false, function(s) O.ForceAccept = s end)
+
+        Lbl(sc, "─ MOVEMENT & VISUALS ─")
+        Tog(sc, "Fly Mode", false, function(s) O.Fly = s end)
+        Tog(sc, "Infinite Jump", false, function(s) O.InfJump = s end)
+        Tog(sc, "FullBright", false, function(s) 
+            lighting.Brightness = s and 2 or 1
+            lighting.ClockTime = s and 14 or 0
+            lighting.FogEnd = s and 100000 or 10000
+        end)
+        Tog(sc, "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
+
+        Lbl(sc, "─ AUTO FARM ─")
+        Tog(sc, "Auto Farm (40 Coin Limit)", false, function(s) O.AF = s end)
+
+        -- FPS Sayacı
+        local lastTick, frameCount = tick(), 0
+        rs.RenderStepped:Connect(function()
+            frameCount = frameCount + 1
+            if tick() - lastTick >= 1 then
+                if O.FPS then fpsLabel.Text = "FPS: " .. tostring(frameCount) end
+                frameCount, lastTick = 0, tick()
+            end
+        end)
+
+        -- Infinite Jump Bağlantısı
+        uis.JumpRequest:Connect(function()
+            if O.InfJump then
+                pcall(function()
+                    pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end)
+            end
+        end)
+
+        -- Role ESP Mantığı
+        coroutine.wrap(function()
+            while task.wait(0.5) do
+                if O.ESP then
+                    for _, v in pairs(p:GetPlayers()) do
+                        if v ~= pl and v.Character then
+                            local hl = v.Character:FindFirstChild("PerfectESP") or Instance.new("Highlight", v.Character)
+                            hl.Name = "PerfectESP"
+                            hl.FillTransparency = 0.5
+                            hl.OutlineTransparency = 0.2
+                            hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                            
+                            local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife"))
+                            local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
+                            
+                            hl.FillColor = hasKnife and Color3.fromRGB(255, 0, 0) or (hasGun and Color3.fromRGB(0, 150, 255) or Color3.fromRGB(0, 255, 0))
+                            hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                        end
+                    end
+                else
+                    for _, v in pairs(p:GetPlayers()) do
+                        if v.Character and v.Character:FindFirstChild("PerfectESP") then v.Character.PerfectESP:Destroy() end
+                    end
+                end
+            end
+        end)()
+
+        -- Sheriff Gun & Coin ESP Mantığı
+        coroutine.wrap(function()
+            while task.wait(1) do
+                if O.ExtraESP then
+                    for _, obj in pairs(workspace:GetDescendants()) do
+                        if obj.Name == "GunDrop" and obj:IsA("BasePart") then
+                            local hl = obj:FindFirstChild("GunESP") or Instance.new("Highlight", obj)
+                            hl.Name = "GunESP"
+                            hl.FillColor = Color3.fromRGB(255, 255, 0)
+                            hl.FillTransparency = 0.3
+                        elseif obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold")) then
+                            local hl = obj:FindFirstChild("CoinESP") or Instance.new("Highlight", obj)
+                            hl.Name = "CoinESP"
+                            hl.FillColor = Color3.fromRGB(255, 215, 0)
+                            hl.FillTransparency = 0.4
+                        end
+                    end
+                else
+                    for _, obj in pairs(workspace:GetDescendants()) do
+                        if obj:IsA("Highlight") and (obj.Name == "GunESP" or obj.Name == "CoinESP") then
+                            obj:Destroy()
+                        end
+                    end
+                end
+            end
+        end)()
+
+        -- Auto Grab Gun
+        coroutine.wrap(function()
+            while task.wait(0.2) do
+                if O.AutoGrabGun then
+                    local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        for _, obj in pairs(workspace:GetDescendants()) do
+                            if obj.Name == "GunDrop" and obj:IsA("BasePart") then hrp.CFrame = obj.CFrame; task.wait(0.1); break end
+                        end
+                    end
+                end
+            end
+        end)()
+
+        -- Auto Sheriff Target
+        coroutine.wrap(function()
+            while task.wait(0.3) do
+                if O.AutoSheriff then
+                    local c2 = pl.Character
+                    local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
+                    if not gun and c2 and c2:FindFirstChild("Humanoid") then
+                        local bpGun = pl.Backpack:FindFirstChild("Gun")
+                        if bpGun then bpGun.Parent = c2; gun = bpGun end
+                    end
+                    if gun then
+                        for _, v in pairs(p:GetPlayers()) do
+                            if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                if v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) then
+                                    local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
+                                    if ev then ev:FireServer(v.Character.HumanoidRootPart.Position) end
+                                    break
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)()
+
+        -- Kill All (Murderer)
+        coroutine.wrap(function()
+            while task.wait(0.3) do
+                if O.KA then
+                    local c2 = pl.Character
+                    local knife = c2 and (c2:FindFirstChild("Knife") or pl.Backpack:FindFirstChild("Knife"))
+                    if knife then
+                        if knife.Parent == pl.Backpack then knife.Parent = c2 end
+                        for _, v in pairs(p:GetPlayers()) do
+                            if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then
+                                local rp = c2:FindFirstChild("HumanoidRootPart")
+                                if rp then
+                                    rp.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2)
+                                    task.wait(0.05)
+                                    local ev = knife:FindFirstChildWhichIsA("RemoteEvent")
+                                    if ev then ev:FireServer(v.Character.HumanoidRootPart) end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)()
+
+        -- Auto Avoid Knife
+        coroutine.wrap(function()
+            while task.wait(0.1) do
+                if O.Avoid then
+                    local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        for _, v in pairs(p:GetPlayers()) do
+                            if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                if v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) then
+                                    if (hrp.Position - v.Character.HumanoidRootPart.Position).Magnitude < 14 then
+                                        hrp.CFrame = hrp.CFrame + (hrp.CFrame.LookVector * -10) + Vector3.new(0, 5, 0)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)()
+
+        -- God Mode Shield
+        coroutine.wrap(function()
+            while task.wait(0.05) do
+                if O.GodMode then
+                    local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                    if hum and hum.Health < hum.MaxHealth then hum.Health = hum.MaxHealth end
+                end
+            end
+        end)()
+
+        -- Trade Scam Simulation (Freeze & Force Accept)
+        coroutine.wrap(function()
+            while task.wait(0.5) do
+                pcall(function()
+                    local tradeGui = pl.PlayerGui:FindFirstChild("TradeGui") or pl.PlayerGui:FindFirstChild("Trade")
+                    if tradeGui then
+                        if O.FreezeTrade then
+                            -- Trade verilerini dondurma simülasyonu
+                        end
+                        if O.ForceAccept then
+                            local acceptBtn = tradeGui:FindFirstChild("AcceptButton", true) or tradeGui:FindFirstChild("ConfirmButton", true)
+                            if acceptBtn and acceptBtn:IsA("TextButton") then
+                                for _, conn in pairs(getconnections(acceptBtn.MouseButton1Click)) do
+                                    conn:Fire()
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)()
+
+        -- Fly Mode
+        local flying, bg, bv = false, nil, nil
+        rs.RenderStepped:Connect(function()
+            local c2 = pl.Character
+            local hrp = c2 and c2:FindFirstChild("HumanoidRootPart")
+            local hum = c2 and c2:FindFirstChildOfClass("Humanoid")
+            if O.Fly and hrp and hum then
+                if not flying then
+                    flying = true
+                    bg = Instance.new("BodyGyro", hrp)
+                    bg.P, bg.maxTorque = 9e4, Vector3.new(9e4, 9e4, 9e4)
+                    bg.CFrame = hrp.CFrame
+                    bv = Instance.new("BodyVelocity", hrp)
+                    bv.velocity, bv.maxForce = Vector3.new(0, 0.1, 0), Vector3.new(9e4, 9e4, 9e4)
+                    hum.PlatformStand = true
+                end
+                local moveDir = Vector3.new()
+                if uis:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + camera.CFrame.LookVector end
+                if uis:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - camera.CFrame.LookVector end
+                if uis:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - camera.CFrame.RightVector end
+                if uis:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + camera.CFrame.RightVector end
+                bv.velocity = moveDir * 50
+                bg.CFrame = camera.CFrame
+            else
+                if flying then
+                    flying = false
+                    if bg then bg:Destroy() end
+                    if bv then bv:Destroy() end
+                    if hum then hum.PlatformStand = false end
+                end
+            end
+        end)
+
+        -- Auto Farm
+        coroutine.wrap(function()
+            local cc = 0
+            while task.wait(0.05) do
+                if O.AF then
+                    local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                    local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                    if hrp and hum and hum.Health > 0 then
+                        for _, v in pairs((workspace:FindFirstChild("CoinContainer") or workspace):GetDescendants()) do
+                            if not O.AF then break end
+                            if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) and v.Transparency < 1 then
+                                hrp.CFrame = v.CFrame + Vector3.new(0, 0.5, 0)
+                                cc = cc + 1
+                                task.wait(0.03)
+                                if cc >= 40 then 
+                                    cc = 0
+                                    sendNotification("AutoFarm", "Hit 40 coin limit, resetting safely!", 2)
+                                    hum.Health = 0
+                                    task.wait(3)
+                                    break 
+                                end
+                            end
+                        end
+                    end
+                else
+                    cc = 0
+                end
+            end
+        end)()
+
+        sendNotification("Loaded", "Hacked by is ready!", 3)
     else
-        ShowNotification("❌ Hatalı Key! Lütfen geçerli bir key girin.")
+        textBox.Text = ""
+        textBox.PlaceholderText = "YANLIŞ ANAHTAR!"
+        task.wait(1.5)
+        textBox.PlaceholderText = "Key giriniz..."
     end
 end)
