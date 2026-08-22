@@ -1,4 +1,4 @@
--- palofsc: Murder Mystery 2 - LootLabs Key System & Complete Edition (Fixed & Optimized)
+-- palofsc: Murder Mystery 2 - Fixed & Safe Universal Edition
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -27,10 +27,15 @@ _G.FullBright = false
 _G.KillAllActive = false
 _G.InfiniteJump = false
 
--- Ana GUI Alanı
+-- Güvenli GUI Alanı (CoreGui hata verirse PlayerGui'ye düşer)
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "HackedBy_MM2_Elite"
-ScreenGui.Parent = CoreGui
+pcall(function()
+    ScreenGui.Parent = CoreGui
+end)
+if not ScreenGui.Parent then
+    ScreenGui.Parent = PlayerGui
+end
 ScreenGui.ResetOnSpawn = false
 
 -- Bildirim Sistemi
@@ -114,12 +119,16 @@ SubmitKeyBtn.TextSize = 13
 SubmitKeyBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", SubmitKeyBtn).CornerRadius = UDim.new(0, 10)
 
--- LootLabs Linkini Panoya Kopyalama
+-- Güvenli Panoya Kopyalama
 GetKeyBtn.MouseButton1Click:Connect(function()
-    pcall(function()
+    local success = pcall(function()
         setclipboard(LOOTLABS_URL)
     end)
-    ShowNotification("📋 LootLabs linki panoya kopyalandı!")
+    if success then
+        ShowNotification("📋 LootLabs linki panoya kopyalandı!")
+    else
+        ShowNotification("🔗 Link: " .. LOOTLABS_URL)
+    end
 end)
 
 -- Ana Menüyü Başlatan Fonksiyon
@@ -127,9 +136,6 @@ local function LoadMainHub()
     KeySystemFrame:Destroy()
     ShowNotification("⚡ Key Verified! Hub Loaded Successfully.")
 
-    -- ==========================================
-    -- 1. ANA MENÜ
-    -- ==========================================
     local ToggleMainGuiBtn = Instance.new("TextButton", ScreenGui)
     ToggleMainGuiBtn.Name = "ToggleMainGuiBtn"
     ToggleMainGuiBtn.Size = UDim2.new(0, 160, 0, 44)
