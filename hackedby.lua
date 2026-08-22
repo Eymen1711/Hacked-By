@@ -21,6 +21,7 @@ local currentWalkSpeed = 16
 local currentJumpPower = 50
 local autoFarmSpeed = 25
 local currentFOV = 70
+local silentAimFOV = 150
 
 -- Taste Bread Tarzı Tatlı/Oyun Fontu
 local CUSTOM_FONT = Enum.Font.FredokaOne
@@ -32,6 +33,21 @@ local function getThemeColor(speed)
     else
         return customThemeColor
     end
+end
+
+-- Rol Kontrol Yardımcı Fonksiyonları
+local function isMurderer(player)
+    if not player or not player.Character then return false end
+    local char = player.Character
+    local bp = player:FindFirstChild("Backpack")
+    return char:FindFirstChild("Knife") or char:FindFirstChild("KnifeServer") or (bp and bp:FindFirstChild("Knife")) ~= nil
+end
+
+local function isSheriff(player)
+    if not player or not player.Character then return false end
+    local char = player.Character
+    local bp = player:FindFirstChild("Backpack")
+    return char:FindFirstChild("Gun") or (bp and bp:FindFirstChild("Gun")) ~= nil
 end
 
 -- Anti-Ban Security Layer
@@ -195,7 +211,6 @@ loginBtn.MouseButton1Click:Connect(function()
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
 
-        -- Constant Character Loop to enforce WalkSpeed, JumpPower & FOV
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -261,7 +276,6 @@ loginBtn.MouseButton1Click:Connect(function()
         local tbStroke = Instance.new("UIStroke", toggleButton)
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
-        -- Silent Aim Toggle Button (On/Off)
         local silentAimActive = false
         local silentAimButton = Instance.new("TextButton", mgui)
         silentAimButton.Size = UDim2.new(0, 190, 0, 48)
@@ -277,12 +291,30 @@ loginBtn.MouseButton1Click:Connect(function()
         local sabStroke = Instance.new("UIStroke", silentAimButton)
         rs.RenderStepped:Connect(function() if sabStroke and sabStroke.Parent then sabStroke.Color = getThemeColor(1) end end)
 
+        local fovCircle = Drawing.new("Circle")
+        fovCircle.Thickness = 2
+        fovCircle.NumSides = 64
+        fovCircle.Radius = silentAimFOV
+        fovCircle.Filled = false
+        fovCircle.Visible = false
+        fovCircle.Color = Color3.fromRGB(0, 162, 255)
+
+        rs.RenderStepped:Connect(function()
+            if silentAimActive then
+                fovCircle.Visible = true
+                fovCircle.Position = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
+                fovCircle.Color = getThemeColor(1)
+            else
+                fovCircle.Visible = false
+            end
+        end)
+
         silentAimButton.MouseButton1Click:Connect(function()
             silentAimActive = not silentAimActive
             if silentAimActive then
                 silentAimButton.Text = "Silent Aim: ON"
                 silentAimButton.TextColor3 = Color3.fromRGB(50, 255, 50)
-                sendNotification("Silent Aim", "Enabled successfully!", 1.5)
+                sendNotification("Silent Aim", "Enhanced with Air Prediction!", 1.5)
             else
                 silentAimButton.Text = "Silent Aim: OFF"
                 silentAimButton.TextColor3 = Color3.fromRGB(255, 50, 50)
@@ -290,61 +322,9 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        local shootButton = Instance.new("TextButton", mgui)
-        shootButton.Size = UDim2.new(0, 190, 0, 48)
-        shootButton.Position = UDim2.new(0, 40, 0, 170)
-        shootButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-        shootButton.Text = "Shoot Murderer"
-        shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        shootButton.TextSize = 16
-        shootButton.Font = CUSTOM_FONT
-        shootButton.Active = true
-        shootButton.Draggable = true
-        Instance.new("UICorner", shootButton).CornerRadius = UDim.new(0, 8)
-        local sbStroke = Instance.new("UIStroke", shootButton)
-        rs.RenderStepped:Connect(function() if sbStroke and sbStroke.Parent then sbStroke.Color = getThemeColor(1) end end)
-
-        shootButton.MouseButton1Click:Connect(function()
-            pcall(function()
-                local c2 = pl.Character
-                local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
-                if not gun and c2 and c2:FindFirstChild("Humanoid") then
-                    local bpGun = pl.Backpack:FindFirstChild("Gun")
-                    if bpGun then bpGun.Parent = c2; gun = bpGun end
-                end
-
-                if not gun then
-                    sendNotification("Error", "You don't have a gun!", 1.5)
-                    return
-                end
-
-                local murderer = nil
-                for _, v in pairs(p:GetPlayers()) do
-                    if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                        local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                        if hasKnife then
-                            murderer = v
-                            break
-                        end
-                    end
-                end
-
-                if not murderer then
-                    sendNotification("Info", "No Murderer found with knife!", 1.5)
-                    return
-                end
-
-                local murdererHRP = murderer.Character:FindFirstChild("HumanoidRootPart")
-                if not murdererHRP then return end
-                local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
-                if ev then ev:FireServer(murdererHRP.Position) end
-                sendNotification("Success", "Shot Murderer accurately!", 2)
-            end)
-        end)
-
         local mapButton = Instance.new("TextButton", mgui)
         mapButton.Size = UDim2.new(0, 190, 0, 48)
-        mapButton.Position = UDim2.new(0, 40, 0, 235)
+        mapButton.Position = UDim2.new(0, 40, 0, 170)
         mapButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         mapButton.Text = "TP to Map"
         mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -375,7 +355,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local lobbyButton = Instance.new("TextButton", mgui)
         lobbyButton.Size = UDim2.new(0, 190, 0, 48)
-        lobbyButton.Position = UDim2.new(0, 40, 0, 300)
+        lobbyButton.Position = UDim2.new(0, 40, 0, 235)
         lobbyButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         lobbyButton.Text = "TP to Lobby"
         lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -395,7 +375,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Main Panel Frame
         local f = Instance.new("Frame", mgui)
         f.Size = UDim2.new(0, 560, 0, 600)
         f.Position = UDim2.new(0.5, -280, 0.5, -300)
@@ -638,6 +617,7 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(pageFrames[4], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
         Tog(pageFrames[4], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
         Tog(pageFrames[4], "Infinite Jump", false, function(s) O.InfJump = s end)
+        Tog(pageFrames[4], "Noclip (Walk Through Walls)", false, function(s) O.Noclip = s end)
         Tog(pageFrames[4], "FullBright", false, function(s) 
             lighting.Brightness = s and 2 or 1
             lighting.ClockTime = s and 14 or 0
@@ -663,7 +643,6 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
         createStepControl(pageFrames[5], "Autofarm Speed", 25, 10, 100, 5, function(v) autoFarmSpeed = v end)
 
-        -- Background Loops & Core Functionality
         task.spawn(function()
             while true do
                 task.wait(0.3)
@@ -672,6 +651,9 @@ loginBtn.MouseButton1Click:Connect(function()
                         for _, v in pairs(p:GetPlayers()) do
                             if v ~= pl and v.Character then
                                 local hl = v.Character:FindFirstChild("PerfectESP")
+                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                                local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
+                                
                                 if not hl then
                                     hl = Instance.new("Highlight", v.Character)
                                     hl.Name = "PerfectESP"
@@ -680,8 +662,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                     hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                                     hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 end
-                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                                local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
+                                
                                 if hasKnife then hl.FillColor = Color3.fromRGB(255, 0, 0)
                                 elseif hasGun then hl.FillColor = Color3.fromRGB(0, 150, 255)
                                 else hl.FillColor = Color3.fromRGB(0, 255, 0) end
@@ -696,24 +677,59 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Silent Aim Loop
+        rs.Stepped:Connect(function()
+            if O.Noclip then
+                pcall(function()
+                    local char = pl.Character
+                    if char then
+                        for _, part in pairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- GÜÇLENDİRİLMİŞ SİLEN AIM LOOP (HAVA & HAREKET TAHMİNİ - AIR PREDICTION)
         task.spawn(function()
             while true do
-                task.wait(0.05)
+                task.wait(0.01)
                 pcall(function()
                     if silentAimActive then
                         local c2 = pl.Character
                         local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
                         if gun then
+                            local bestTarget = nil
+                            local shortestDistance = silentAimFOV
+                            
                             for _, v in pairs(p:GetPlayers()) do
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
                                     local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                                    if hasKnife then
-                                        local targetHrp = v.Character.HumanoidRootPart
-                                        camera.CFrame = CFrame.new(camera.CFrame.Position, targetHrp.Position)
-                                        break
+                                    if hasKnife and v.Character.Humanoid.Health > 0 then
+                                        local targetPart = v.Character.HumanoidRootPart
+                                        local screenPos, onScreen = camera:WorldToViewportPoint(targetPart.Position)
+                                        
+                                        if onScreen then
+                                            local mousePos = uis:GetMouseLocation()
+                                            local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+                                            
+                                            if dist < shortestDistance then
+                                                shortestDistance = dist
+                                                bestTarget = targetPart
+                                            end
+                                        end
                                     end
                                 end
+                            end
+                            
+                            if bestTarget then
+                                -- Zıplama/Hava hareketlerini de içeren gelişmiş 3D tahmin algoritması
+                                local targetVel = bestTarget.Velocity
+                                local predictionFactor = 0.09
+                                local predictedPos = bestTarget.Position + Vector3.new(targetVel.X * predictionFactor, targetVel.Y * 0.04, targetVel.Z * predictionFactor)
+                                camera.CFrame = CFrame.new(camera.CFrame.Position, predictedPos)
                             end
                         end
                     end
@@ -746,27 +762,36 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- GÜNCELLENEN AUTO GRAB GUN (Konumu kaydedip geri dönme özellikli)
+        -- GÜVENLİ & KATİLKEN ÇALIŞMAYAN AUTO GRAB GUN (Anlık Görünmez Işınlanma)
         task.spawn(function()
             while true do
-                task.wait(0.2)
+                task.wait(0.1)
                 pcall(function()
-                    if O.AutoGrabGun then
+                    -- Katilken ASLA çalışmaz!
+                    if O.AutoGrabGun and not isMurderer(pl) then
                         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                         if hrp then
-                            for _, obj in pairs(workspace:GetDescendants()) do
-                                if obj.Name == "GunDrop" and obj:IsA("BasePart") then
-                                    -- 1. Silahı almadan HEMEN ÖNCE mevcut konumu kaydet
-                                    local savedCFrame = hrp.CFrame
-                                    
-                                    -- 2. Silahın konumuna ışınlan
-                                    hrp.CFrame = obj.CFrame
-                                    task.wait(0.15)
-                                    
-                                    -- 3. Kaydedilen eski yere geri dön
-                                    hrp.CFrame = savedCFrame
-                                    sendNotification("Auto Grab", "Gun grabbed & returned!", 2)
-                                    break 
+                            local safeToGrab = true
+                            for _, v in pairs(p:GetPlayers()) do
+                                if v ~= pl and isMurderer(v) and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                    if (hrp.Position - v.Character.HumanoidRootPart.Position).Magnitude < 15 then
+                                        safeToGrab = false
+                                        break
+                                    end
+                                end
+                            end
+
+                            if safeToGrab then
+                                for _, obj in pairs(workspace:GetDescendants()) do
+                                    if obj.Name == "GunDrop" and obj:IsA("BasePart") then
+                                        local savedCFrame = hrp.CFrame
+                                        hrp.CFrame = obj.CFrame + Vector3.new(0, 0.5, 0)
+                                        rs.RenderStepped:Wait() -- Tek karede alıp anında geri dönüyor
+                                        hrp.CFrame = savedCFrame
+                                        sendNotification("Auto Grab", "Gun grabbed instantly!", 1.5)
+                                        task.wait(1)
+                                        break 
+                                    end
                                 end
                             end
                         end
@@ -789,7 +814,7 @@ loginBtn.MouseButton1Click:Connect(function()
                         if gun then
                             for _, v in pairs(p:GetPlayers()) do
                                 if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                                    if v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) then
+                                    if isMurderer(v) then
                                         local ev = gun:FindFirstChildWhichIsA("RemoteEvent")
                                         if ev then ev:FireServer(v.Character.HumanoidRootPart.Position) end
                                         break
@@ -802,23 +827,33 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- UÇURULMUŞ & ANINDA LOBİYİ ASLA HEDEFLEMEYEN KILL ALL (Göz Kırpma Hızında Işınlanma)
         task.spawn(function()
             while true do
-                task.wait(0.3)
+                task.wait(0.01)
                 pcall(function()
                     if O.KA then
                         local c2 = pl.Character
                         local knife = c2 and (c2:FindFirstChild("Knife") or pl.Backpack:FindFirstChild("Knife"))
                         if knife then
                             if knife.Parent == pl.Backpack then knife.Parent = c2 end
-                            for _, v in pairs(p:GetPlayers()) do
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then
-                                    local rp = c2:FindFirstChild("HumanoidRootPart")
-                                    if rp then
-                                        rp.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2)
-                                        task.wait(0.05)
-                                        local ev = knife:FindFirstChildWhichIsA("RemoteEvent")
-                                        if ev then ev:FireServer(v.Character.HumanoidRootPart) end
+                            local rp = c2:FindFirstChild("HumanoidRootPart")
+                            if rp then
+                                for _, v in pairs(p:GetPlayers()) do
+                                    if not O.KA then break end
+                                    if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then
+                                        local targetHrp = v.Character.HumanoidRootPart
+                                        -- Sadece haritadaki aktif oyuncuları hedefle (Y > -20 filtresi lobideki boşta duranları ekarte eder)
+                                        if targetHrp.Position.Y > -20 then 
+                                            local savedPos = rp.CFrame
+                                            rp.CFrame = targetHrp.CFrame * CFrame.new(0, 0, 1.5)
+                                            local ev = knife:FindFirstChildWhichIsA("RemoteEvent")
+                                            if ev then 
+                                                ev:FireServer(targetHrp) 
+                                            end
+                                            rs.RenderStepped:Wait() -- Göz açıp kapayıncaya kadar eski yerine döner, ölme ihtimali sıfıra iner
+                                            rp.CFrame = savedPos
+                                        end
                                     end
                                 end
                             end
@@ -854,8 +889,7 @@ loginBtn.MouseButton1Click:Connect(function()
                             for _, v in pairs(p:GetPlayers()) do
                                 if not O.FlingMurderer then break end
                                 if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
-                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                                    if hasKnife then
+                                    if isMurderer(v) then
                                         targeted = true
                                         local targetHrp = v.Character.HumanoidRootPart
                                         local targetHum = v.Character.Humanoid
