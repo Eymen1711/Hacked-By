@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (FOV, X-RAY & SILENT AIM)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -21,6 +21,9 @@ local currentWalkSpeed = 16
 local currentJumpPower = 50
 local autoFarmSpeed = 25
 local currentFOV = 70
+
+-- Taste Bread Tarzı Tatlı/Oyun Fontu
+local CUSTOM_FONT = Enum.Font.FredokaOne
 
 local function getThemeColor(speed)
     if rainbowModeActive then
@@ -90,7 +93,7 @@ local function sendNotification(titleText, msgText, duration)
         tLbl.Text = titleText
         tLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
         tLbl.TextSize = 16
-        tLbl.Font = Enum.Font.Antique
+        tLbl.Font = CUSTOM_FONT
         tLbl.TextXAlignment = Enum.TextXAlignment.Left
 
         local mLbl = Instance.new("TextLabel", box)
@@ -100,7 +103,7 @@ local function sendNotification(titleText, msgText, duration)
         mLbl.Text = msgText
         mLbl.TextColor3 = Color3.fromRGB(190, 190, 190)
         mLbl.TextSize = 14
-        mLbl.Font = Enum.Font.Antique
+        mLbl.Font = CUSTOM_FONT
         mLbl.TextXAlignment = Enum.TextXAlignment.Left
 
         pcall(function() box:TweenPosition(UDim2.new(0, 0, 0, 0), "Out", "Back", 0.3, true) end)
@@ -137,7 +140,7 @@ title.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
 title.Text = "Hacked by (Key System)"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 18
-title.Font = Enum.Font.Antique
+title.Font = CUSTOM_FONT
 Instance.new("UICorner", title).CornerRadius = UDim.new(0, 12)
 
 local textBox = Instance.new("TextBox", frame)
@@ -148,7 +151,7 @@ textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 textBox.PlaceholderText = "Enter key..."
 textBox.Text = ""
 textBox.TextSize = 16
-textBox.Font = Enum.Font.Antique
+textBox.Font = CUSTOM_FONT
 Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 8)
 
 local getKeyBtn = Instance.new("TextButton", frame)
@@ -158,7 +161,7 @@ getKeyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 getKeyBtn.Text = "Get Key"
 getKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 getKeyBtn.TextSize = 16
-getKeyBtn.Font = Enum.Font.Antique
+getKeyBtn.Font = CUSTOM_FONT
 Instance.new("UICorner", getKeyBtn).CornerRadius = UDim.new(0, 8)
 
 getKeyBtn.MouseButton1Click:Connect(function()
@@ -177,7 +180,7 @@ loginBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 loginBtn.Text = "Login"
 loginBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 loginBtn.TextSize = 16
-loginBtn.Font = Enum.Font.Antique
+loginBtn.Font = CUSTOM_FONT
 Instance.new("UICorner", loginBtn).CornerRadius = UDim.new(0, 8)
 
 loginBtn.MouseButton1Click:Connect(function()
@@ -220,7 +223,7 @@ loginBtn.MouseButton1Click:Connect(function()
         fpsLabel.BackgroundTransparency = 0.3
         fpsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
         fpsLabel.TextSize = 16
-        fpsLabel.Font = Enum.Font.Antique
+        fpsLabel.Font = CUSTOM_FONT
         fpsLabel.Text = "FPS: 0"
         fpsLabel.Visible = false
         Instance.new("UICorner", fpsLabel).CornerRadius = UDim.new(0, 8)
@@ -251,21 +254,50 @@ loginBtn.MouseButton1Click:Connect(function()
         toggleButton.Text = "Toggle Menu"
         toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         toggleButton.TextSize = 17
-        toggleButton.Font = Enum.Font.Antique
+        toggleButton.Font = CUSTOM_FONT
         toggleButton.Active = true
         toggleButton.Draggable = true
         Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 8)
         local tbStroke = Instance.new("UIStroke", toggleButton)
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
+        -- Silent Aim Toggle Button (On/Off)
+        local silentAimActive = false
+        local silentAimButton = Instance.new("TextButton", mgui)
+        silentAimButton.Size = UDim2.new(0, 190, 0, 48)
+        silentAimButton.Position = UDim2.new(0, 40, 0, 105)
+        silentAimButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        silentAimButton.Text = "Silent Aim: OFF"
+        silentAimButton.TextColor3 = Color3.fromRGB(255, 50, 50)
+        silentAimButton.TextSize = 16
+        silentAimButton.Font = CUSTOM_FONT
+        silentAimButton.Active = true
+        silentAimButton.Draggable = true
+        Instance.new("UICorner", silentAimButton).CornerRadius = UDim.new(0, 8)
+        local sabStroke = Instance.new("UIStroke", silentAimButton)
+        rs.RenderStepped:Connect(function() if sabStroke and sabStroke.Parent then sabStroke.Color = getThemeColor(1) end end)
+
+        silentAimButton.MouseButton1Click:Connect(function()
+            silentAimActive = not silentAimActive
+            if silentAimActive then
+                silentAimButton.Text = "Silent Aim: ON"
+                silentAimButton.TextColor3 = Color3.fromRGB(50, 255, 50)
+                sendNotification("Silent Aim", "Enabled successfully!", 1.5)
+            else
+                silentAimButton.Text = "Silent Aim: OFF"
+                silentAimButton.TextColor3 = Color3.fromRGB(255, 50, 50)
+                sendNotification("Silent Aim", "Disabled!", 1.5)
+            end
+        end)
+
         local shootButton = Instance.new("TextButton", mgui)
         shootButton.Size = UDim2.new(0, 190, 0, 48)
-        shootButton.Position = UDim2.new(0, 40, 0, 105)
+        shootButton.Position = UDim2.new(0, 40, 0, 170)
         shootButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         shootButton.Text = "Shoot Murderer"
         shootButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         shootButton.TextSize = 16
-        shootButton.Font = Enum.Font.Antique
+        shootButton.Font = CUSTOM_FONT
         shootButton.Active = true
         shootButton.Draggable = true
         Instance.new("UICorner", shootButton).CornerRadius = UDim.new(0, 8)
@@ -312,12 +344,12 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local mapButton = Instance.new("TextButton", mgui)
         mapButton.Size = UDim2.new(0, 190, 0, 48)
-        mapButton.Position = UDim2.new(0, 40, 0, 170)
+        mapButton.Position = UDim2.new(0, 40, 0, 235)
         mapButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         mapButton.Text = "TP to Map"
         mapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         mapButton.TextSize = 17
-        mapButton.Font = Enum.Font.Antique
+        mapButton.Font = CUSTOM_FONT
         Instance.new("UICorner", mapButton).CornerRadius = UDim.new(0, 8)
         local mbStroke = Instance.new("UIStroke", mapButton)
         rs.RenderStepped:Connect(function() if mbStroke and mbStroke.Parent then mbStroke.Color = getThemeColor(1) end end)
@@ -343,12 +375,12 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local lobbyButton = Instance.new("TextButton", mgui)
         lobbyButton.Size = UDim2.new(0, 190, 0, 48)
-        lobbyButton.Position = UDim2.new(0, 40, 0, 235)
+        lobbyButton.Position = UDim2.new(0, 40, 0, 300)
         lobbyButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         lobbyButton.Text = "TP to Lobby"
         lobbyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         lobbyButton.TextSize = 17
-        lobbyButton.Font = Enum.Font.Antique
+        lobbyButton.Font = CUSTOM_FONT
         Instance.new("UICorner", lobbyButton).CornerRadius = UDim.new(0, 8)
         local lbStroke = Instance.new("UIStroke", lobbyButton)
         rs.RenderStepped:Connect(function() if lbStroke and lbStroke.Parent then lbStroke.Color = getThemeColor(1) end end)
@@ -385,7 +417,7 @@ loginBtn.MouseButton1Click:Connect(function()
         t.Text = "Hacked by - Panel"
         t.TextColor3 = Color3.fromRGB(255, 255, 255)
         t.TextSize = 18
-        t.Font = Enum.Font.Antique
+        t.Font = CUSTOM_FONT
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
         local catHolder = Instance.new("ScrollingFrame", f)
@@ -431,7 +463,7 @@ loginBtn.MouseButton1Click:Connect(function()
             cBtn.Text = catName
             cBtn.TextColor3 = Color3.fromRGB(230, 230, 230)
             cBtn.TextSize = 13
-            cBtn.Font = Enum.Font.Antique
+            cBtn.Font = CUSTOM_FONT
             Instance.new("UICorner", cBtn).CornerRadius = UDim.new(0, 8)
 
             cBtn.MouseButton1Click:Connect(function()
@@ -455,7 +487,7 @@ loginBtn.MouseButton1Click:Connect(function()
             lb.Text = titleText
             lb.TextColor3 = Color3.fromRGB(240, 240, 240)
             lb.TextSize = 15
-            lb.Font = Enum.Font.Antique
+            lb.Font = CUSTOM_FONT
             lb.TextXAlignment = Enum.TextXAlignment.Left
 
             local bg2 = Instance.new("Frame", f2)
@@ -511,7 +543,7 @@ loginBtn.MouseButton1Click:Connect(function()
             lbl.Text = labelName .. ": " .. defaultVal
             lbl.TextColor3 = Color3.fromRGB(240, 240, 240)
             lbl.TextSize = 15
-            lbl.Font = Enum.Font.Antique
+            lbl.Font = CUSTOM_FONT
             lbl.TextXAlignment = Enum.TextXAlignment.Left
 
             local val = defaultVal
@@ -523,7 +555,7 @@ loginBtn.MouseButton1Click:Connect(function()
             minusBtn.Text = "-"
             minusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
             minusBtn.TextSize = 20
-            minusBtn.Font = Enum.Font.Antique
+            minusBtn.Font = CUSTOM_FONT
             Instance.new("UICorner", minusBtn).CornerRadius = UDim.new(0, 6)
 
             local plusBtn = Instance.new("TextButton", frameBox)
@@ -533,7 +565,7 @@ loginBtn.MouseButton1Click:Connect(function()
             plusBtn.Text = "+"
             plusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
             plusBtn.TextSize = 20
-            plusBtn.Font = Enum.Font.Antique
+            plusBtn.Font = CUSTOM_FONT
             Instance.new("UICorner", plusBtn).CornerRadius = UDim.new(0, 6)
 
             minusBtn.MouseButton1Click:Connect(function()
@@ -596,7 +628,6 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(pageFrames[2], "Sheriff Gun & Coin ESP", false, function(s) O.ExtraESP = s end)
 
         -- Tab 3: Combat & Aim
-        Tog(pageFrames[3], "Silent Aim (Auto Lock Murderer)", false, function(s) O.SilentAim = s end)
         Tog(pageFrames[3], "Auto Grab Gun", false, function(s) O.AutoGrabGun = s end)
         Tog(pageFrames[3], "Auto Sheriff Target", false, function(s) O.AutoSheriff = s end)
         Tog(pageFrames[3], "Kill All (Murderer)", false, function(s) O.KA = s end)
@@ -665,12 +696,12 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Silent Aim Loop (Kusursuz Hedef Kilitleme)
+        -- Silent Aim Loop
         task.spawn(function()
             while true do
                 task.wait(0.05)
                 pcall(function()
-                    if O.SilentAim then
+                    if silentAimActive then
                         local c2 = pl.Character
                         local gun = c2 and (c2:FindFirstChild("Gun") or pl.Backpack:FindFirstChild("Gun"))
                         if gun then
@@ -879,7 +910,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "FOV, X-Ray & Silent Aim successfully integrated!", 3)
+        sendNotification("Loaded", "Taste Bread font applied successfully!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
