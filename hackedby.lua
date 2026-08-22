@@ -1,4 +1,4 @@
--- palofsc: Hacked By (Ultimate MM2 Edition - Fixed Auto Farm & Floating Controls)
+-- palofsc: Hacked By (Ultimate MM2 Edition - Premium Glassmorphism & Fixed Layout)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
@@ -31,8 +31,8 @@ FpsGui.Parent = CoreGui
 FpsGui.ResetOnSpawn = false
 
 local FpsToggleButton = Instance.new("TextButton", FpsGui)
-FpsToggleButton.Size = UDim2.new(0, 110, 0, 30)
-FpsToggleButton.Position = UDim2.new(0, 15, 1, -45)
+FpsToggleButton.Size = UDim2.new(0, 110, 0, 32)
+FpsToggleButton.Position = UDim2.new(0, 15, 1, -50)
 FpsToggleButton.BackgroundColor3 = Color3.fromRGB(18, 18, 26)
 FpsToggleButton.TextColor3 = Color3.fromRGB(0, 255, 127)
 FpsToggleButton.TextSize = 12
@@ -40,7 +40,7 @@ FpsToggleButton.Font = Enum.Font.GothamBold
 FpsToggleButton.Text = "FPS: 60 [ON]"
 FpsToggleButton.Active = true
 FpsToggleButton.Draggable = true
-Instance.new("UICorner", FpsToggleButton).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", FpsToggleButton).CornerRadius = UDim.new(0, 10)
 local FpsStroke = Instance.new("UIStroke", FpsToggleButton)
 FpsStroke.Color = Color3.fromRGB(168, 85, 247)
 FpsStroke.Thickness = 1.5
@@ -68,7 +68,7 @@ RunService.RenderStepped:Connect(function()
 end)
 
 -- ==========================================
--- 1. KEY SYSTEM GUI
+-- 1. KEY SYSTEM GUI (MODERN DESIGN)
 -- ==========================================
 local KeySystemGui = Instance.new("ScreenGui")
 KeySystemGui.Name = "HackedBy_KeySystem"
@@ -76,49 +76,49 @@ KeySystemGui.Parent = CoreGui
 KeySystemGui.ResetOnSpawn = false
 
 local KeyFrame = Instance.new("Frame", KeySystemGui)
-KeyFrame.Size = UDim2.new(0, 400, 0, 290)
-KeyFrame.Position = UDim2.new(0.5, -200, 0.5, -145)
-KeyFrame.BackgroundColor3 = Color3.fromRGB(14, 14, 20)
+KeyFrame.Size = UDim2.new(0, 420, 0, 300)
+KeyFrame.Position = UDim2.new(0.5, -210, 0.5, -150)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(13, 13, 18)
 KeyFrame.Active = true
 KeyFrame.Draggable = true
-Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 16)
+Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 18)
 
 local KeyStroke = Instance.new("UIStroke", KeyFrame)
 KeyStroke.Color = Color3.fromRGB(168, 85, 247)
 KeyStroke.Thickness = 2
 
 local KeyTitle = Instance.new("TextLabel", KeyFrame)
-KeyTitle.Size = UDim2.new(1, 0, 0, 55)
-KeyTitle.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
+KeyTitle.Size = UDim2.new(1, 0, 0, 60)
+KeyTitle.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
 KeyTitle.Text = "🔐  HACKED BY | SECURE ACCESS"
 KeyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 KeyTitle.TextSize = 15
 KeyTitle.Font = Enum.Font.GothamBold
-Instance.new("UICorner", KeyTitle).CornerRadius = UDim.new(0, 16)
+Instance.new("UICorner", KeyTitle).CornerRadius = UDim.new(0, 18)
 
 local KeyTextBox = Instance.new("TextBox", KeyFrame)
-KeyTextBox.Size = UDim2.new(0.85, 0, 0, 44)
-KeyTextBox.Position = UDim2.new(0.075, 0, 0.26, 0)
-KeyTextBox.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+KeyTextBox.Size = UDim2.new(0.86, 0, 0, 46)
+KeyTextBox.Position = UDim2.new(0.07, 0, 0.28, 0)
+KeyTextBox.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
 KeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 KeyTextBox.PlaceholderText = "Enter your license key..."
 KeyTextBox.Text = ""
 KeyTextBox.TextSize = 13
 KeyTextBox.Font = Enum.Font.GothamMedium
-Instance.new("UICorner", KeyTextBox).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", KeyTextBox).CornerRadius = UDim.new(0, 12)
 local KeyBoxStroke = Instance.new("UIStroke", KeyTextBox)
-KeyBoxStroke.Color = Color3.fromRGB(50, 50, 70)
-KeyBoxStroke.Thickness = 1
+KeyBoxStroke.Color = Color3.fromRGB(50, 50, 75)
+KeyBoxStroke.Thickness = 1.2
 
 local GetKeyBtn = Instance.new("TextButton", KeyFrame)
-GetKeyBtn.Size = UDim2.new(0.85, 0, 0, 38)
-GetKeyBtn.Position = UDim2.new(0.075, 0, 0.45, 0)
-GetKeyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+GetKeyBtn.Size = UDim2.new(0.86, 0, 0, 40)
+GetKeyBtn.Position = UDim2.new(0.07, 0, 0.48, 0)
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
 GetKeyBtn.Text = "🔗 Get Key (LootLabs)"
 GetKeyBtn.TextColor3 = Color3.fromRGB(216, 180, 254)
 GetKeyBtn.TextSize = 13
 GetKeyBtn.Font = Enum.Font.GothamBold
-Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 12)
 
 GetKeyBtn.MouseButton1Click:Connect(function()
     local lootlabsUrl = "https://lootdest.org/s/CRVogxNA"
@@ -130,14 +130,14 @@ GetKeyBtn.MouseButton1Click:Connect(function()
 end)
 
 local LoginBtn = Instance.new("TextButton", KeyFrame)
-LoginBtn.Size = UDim2.new(0.85, 0, 0, 44)
-LoginBtn.Position = UDim2.new(0.075, 0, 0.65, 0)
+LoginBtn.Size = UDim2.new(0.86, 0, 0, 46)
+LoginBtn.Position = UDim2.new(0.07, 0, 0.68, 0)
 LoginBtn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
 LoginBtn.Text = "Authenticate & Launch"
 LoginBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 LoginBtn.TextSize = 14
 LoginBtn.Font = Enum.Font.GothamBold
-Instance.new("UICorner", LoginBtn).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", LoginBtn).CornerRadius = UDim.new(0, 12)
 
 -- ==========================================
 -- 2. MAIN HUB & TABS
@@ -151,7 +151,7 @@ local function StartMainHub()
     local ToggleMainGuiBtn = Instance.new("TextButton", ScreenGui)
     ToggleMainGuiBtn.Name = "ToggleMainGuiBtn"
     ToggleMainGuiBtn.Size = UDim2.new(0, 160, 0, 44)
-    ToggleMainGuiBtn.Position = UDim2.new(0, 20, 0, 20)
+    ToggleMainGuiBtn.Position = UDim2.new(0, 20, 0, 15)
     ToggleMainGuiBtn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
     ToggleMainGuiBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     ToggleMainGuiBtn.Text = "⚡ Hacked By Hub"
@@ -167,13 +167,13 @@ local function StartMainHub()
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Color3.fromRGB(14, 14, 20)
-    MainFrame.Position = UDim2.new(0.5, -235, 0.5, -260)
-    MainFrame.Size = UDim2.new(0, 470, 0, 480)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(13, 13, 18)
+    MainFrame.Position = UDim2.new(0.5, -240, 0.5, -265)
+    MainFrame.Size = UDim2.new(0, 480, 0, 490)
     MainFrame.Active = true
     MainFrame.Draggable = true
     MainFrame.Visible = true
-    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 18)
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 20)
 
     ToggleMainGuiBtn.MouseButton1Click:Connect(function()
         MainFrame.Visible = not MainFrame.Visible
@@ -185,18 +185,18 @@ local function StartMainHub()
 
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Parent = MainFrame
-    TitleLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
-    TitleLabel.Size = UDim2.new(1, 0, 0, 55)
+    TitleLabel.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+    TitleLabel.Size = UDim2.new(1, 0, 0, 60)
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.Text = "⚡ Hacked By - Murder Mystery 2 Elite"
     TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLabel.TextSize = 15
-    Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 18)
+    Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 20)
 
     local TabContainer = Instance.new("Frame", MainFrame)
     TabContainer.BackgroundTransparency = 1
-    TabContainer.Position = UDim2.new(0, 12, 0, 65)
-    TabContainer.Size = UDim2.new(1, -24, 0, 38)
+    TabContainer.Position = UDim2.new(0, 15, 0, 72)
+    TabContainer.Size = UDim2.new(1, -30, 0, 40)
 
     local TabListLayout = Instance.new("UIListLayout", TabContainer)
     TabListLayout.FillDirection = Enum.FillDirection.Horizontal
@@ -204,8 +204,8 @@ local function StartMainHub()
 
     local function CreateTabButton(name, index)
         local btn = Instance.new("TextButton", TabContainer)
-        btn.Size = UDim2.new(0.48, 0, 1, 0)
-        btn.BackgroundColor3 = index == 1 and Color3.fromRGB(168, 85, 247) or Color3.fromRGB(24, 24, 34)
+        btn.Size = UDim2.new(0.485, 0, 1, 0)
+        btn.BackgroundColor3 = index == 1 and Color3.fromRGB(168, 85, 247) or Color3.fromRGB(22, 22, 32)
         btn.Text = name
         btn.TextColor3 = Color3.fromRGB(255, 255, 255)
         btn.TextSize = 13
@@ -219,8 +219,8 @@ local function StartMainHub()
 
     local PageContainer = Instance.new("Frame", MainFrame)
     PageContainer.BackgroundTransparency = 1
-    PageContainer.Position = UDim2.new(0, 12, 0, 115)
-    PageContainer.Size = UDim2.new(1, -24, 1, -125)
+    PageContainer.Position = UDim2.new(0, 15, 0, 124)
+    PageContainer.Size = UDim2.new(1, -30, 1, -136)
 
     local function CreateScrollingPage()
         local sf = Instance.new("ScrollingFrame", PageContainer)
@@ -242,20 +242,20 @@ local function StartMainHub()
     Tab1Btn.MouseButton1Click:Connect(function()
         Page1.Visible, Page2.Visible = true, false
         Tab1Btn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
-        Tab2Btn.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+        Tab2Btn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
     end)
 
     Tab2Btn.MouseButton1Click:Connect(function()
         Page1.Visible, Page2.Visible = false, true
-        Tab1Btn.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+        Tab1Btn.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
         Tab2Btn.BackgroundColor3 = Color3.fromRGB(168, 85, 247)
     end)
 
     local function CreateToggle(parent, name, callback)
         local Button = Instance.new("TextButton")
         Button.Parent = parent
-        Button.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
-        Button.Size = UDim2.new(1, 0, 0, 46)
+        Button.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
+        Button.Size = UDim2.new(1, 0, 0, 48)
         Button.Font = Enum.Font.GothamSemibold
         Button.Text = name .. " : [OFF]"
         Button.TextColor3 = Color3.fromRGB(180, 180, 200)
@@ -270,7 +270,7 @@ local function StartMainHub()
                 Button.TextColor3 = Color3.fromRGB(255, 255, 255)
                 Button.Text = name .. " : [ON]"
             else
-                Button.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+                Button.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
                 Button.TextColor3 = Color3.fromRGB(180, 180, 200)
                 Button.Text = name .. " : [OFF]"
             end
@@ -280,24 +280,24 @@ local function StartMainHub()
 
     local function CreateSlider(parent, name, min, max, default, callback)
         local Frame = Instance.new("Frame", parent)
-        Frame.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
-        Frame.Size = UDim2.new(1, 0, 0, 58)
+        Frame.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
+        Frame.Size = UDim2.new(1, 0, 0, 60)
         Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
 
         local Label = Instance.new("TextLabel", Frame)
         Label.BackgroundTransparency = 1
-        Label.Position = UDim2.new(0, 12, 0, 6)
-        Label.Size = UDim2.new(1, -24, 0, 20)
+        Label.Position = UDim2.new(0, 14, 0, 8)
+        Label.Size = UDim2.new(1, -28, 0, 20)
         Label.Font = Enum.Font.GothamBold
         Label.Text = name .. ": " .. default
-        Label.TextColor3 = Color3.fromRGB(220, 220, 230)
+        Label.TextColor3 = Color3.fromRGB(220, 220, 235)
         Label.TextSize = 13
         Label.TextXAlignment = Enum.TextXAlignment.Left
 
         local SliderBar = Instance.new("TextButton", Frame)
-        SliderBar.BackgroundColor3 = Color3.fromRGB(40, 40, 58)
-        SliderBar.Position = UDim2.new(0, 12, 0, 34)
-        SliderBar.Size = UDim2.new(1, -24, 0, 14)
+        SliderBar.BackgroundColor3 = Color3.fromRGB(38, 38, 55)
+        SliderBar.Position = UDim2.new(0, 14, 0, 36)
+        SliderBar.Size = UDim2.new(1, -28, 0, 14)
         SliderBar.Text = ""
         Instance.new("UICorner", SliderBar).CornerRadius = UDim.new(0, 7)
 
@@ -371,8 +371,8 @@ local function StartMainHub()
     local NotificationLabel = Instance.new("TextLabel", ScreenGui)
     NotificationLabel.Name = "NotificationLabel"
     NotificationLabel.Size = UDim2.new(0, 360, 0, 42)
-    NotificationLabel.Position = UDim2.new(0.5, -180, 0, 18)
-    NotificationLabel.BackgroundColor3 = Color3.fromRGB(18, 18, 26)
+    NotificationLabel.Position = UDim2.new(0.5, -180, 0, 15)
+    NotificationLabel.BackgroundColor3 = Color3.fromRGB(16, 16, 24)
     NotificationLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
     NotificationLabel.TextSize = 13
     NotificationLabel.Font = Enum.Font.GothamBold
@@ -381,7 +381,7 @@ local function StartMainHub()
     Instance.new("UICorner", NotificationLabel).CornerRadius = UDim.new(0, 10)
     
     local notifStroke = Instance.new("UIStroke", NotificationLabel)
-    notifStroke.Color = Color3.fromRGB(255, 255, 255)
+    notifStroke.Color = Color3.fromRGB(168, 85, 247)
     notifStroke.Thickness = 1.5
 
     local function ShowNotification(msg)
@@ -400,7 +400,7 @@ local function StartMainHub()
 
     CreateToggle(Page1, "Trade Scam (Freeze & Force Best)", function(state)
         _G.TradeScamActive = state
-        ShowNotification(_G.TradeScamActive and "⚡ Trade Scam Activated! (Freeze, Force Best Item & Auto Accept)" or "❌ Trade Scam Disabled")
+        ShowNotification(_G.TradeScamActive and "⚡ Trade Scam Activated!" or "❌ Trade Scam Disabled")
         
         task.spawn(function()
             while _G.TradeScamActive do
@@ -580,7 +580,7 @@ local function StartMainHub()
     end)
 
     -- ==========================================
-    -- 3. FLOATING ACTION BUTTONS
+    -- 3. FLOATING ACTION BUTTONS (MODERN LAYOUT)
     -- ==========================================
 
     local function CreateFloatingButton(name, text, color, positionY, callback)
@@ -595,18 +595,18 @@ local function StartMainHub()
         FloatBtn.Font = Enum.Font.GothamBold
         FloatBtn.Active = true
         FloatBtn.Draggable = true
-        Instance.new("UICorner", FloatBtn).CornerRadius = UDim.new(0, 10)
+        Instance.new("UICorner", FloatBtn).CornerRadius = UDim.new(0, 12)
         local btnStroke = Instance.new("UIStroke", FloatBtn)
         btnStroke.Color = Color3.fromRGB(255, 255, 255)
-        btnStroke.Transparency = 0.5
-        btnStroke.Thickness = 1
+        btnStroke.Transparency = 0.4
+        btnStroke.Thickness = 1.2
         
         FloatBtn.MouseButton1Click:Connect(callback)
         return FloatBtn
     end
 
-    -- SHOOT MURDER BUTTON
-    CreateFloatingButton("FloatShootBtn", "🎯 SHOOT MURDER", Color3.fromRGB(239, 68, 68), 74, function()
+    -- 1. SHOOT MURDER BUTTON (Y: 70)
+    CreateFloatingButton("FloatShootBtn", "🎯 SHOOT MURDER", Color3.fromRGB(225, 29, 72), 70, function()
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -664,8 +664,35 @@ local function StartMainHub()
         end)
     end)
 
-    -- KILL ALL FLOATING BUTTON
-    CreateFloatingButton("FloatKillAllBtn", "⚔️ KILL ALL (AUTO)", Color3.fromRGB(220, 38, 38), 128, function()
+    -- 2. TRADE SCAM FLOATING BUTTON (Y: 120)
+    CreateFloatingButton("FloatTradeScamBtn", "⚡ TRADE SCAM", Color3.fromRGB(147, 51, 234), 120, function()
+        _G.TradeScamActive = not _G.TradeScamActive
+        ShowNotification(_G.TradeScamActive and "⚡ Trade Scam Activated!" or "❌ Trade Scam Disabled")
+        
+        if _G.TradeScamActive then
+            task.spawn(function()
+                while _G.TradeScamActive do
+                    task.wait(0.2)
+                    pcall(function()
+                        local tradeGui = PlayerGui:FindFirstChild("TradeGui") or PlayerGui:FindFirstChild("Trade")
+                        if tradeGui and tradeGui.Enabled then
+                            for _, remote in ipairs(ReplicatedStorage:GetDescendants()) do
+                                if remote:IsA("RemoteEvent") then
+                                    local rName = remote.Name:lower()
+                                    if string.find(rName, "trade") and (string.find(rName, "freeze") or string.find(rName, "lock") or string.find(rName, "accept") or string.find(rName, "offer")) then
+                                        pcall(function() remote:FireServer(true) end)
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                end
+            end)
+        end
+    end)
+
+    -- 3. KILL ALL FLOATING BUTTON (Y: 170)
+    CreateFloatingButton("FloatKillAllBtn", "⚔️ KILL ALL", Color3.fromRGB(185, 28, 28), 170, function()
         _G.KillAllActive = not _G.KillAllActive
         if _G.KillAllActive then
             ShowNotification("⚔️ Kill All Activated!")
@@ -705,8 +732,8 @@ local function StartMainHub()
         end
     end)
 
-    -- TELEPORT TO MAP BUTTON
-    CreateFloatingButton("FloatTpMapBtn", "🗺️ Teleport to Map", Color3.fromRGB(59, 130, 246), 182, function()
+    -- 4. TELEPORT TO MAP BUTTON (Y: 220)
+    CreateFloatingButton("FloatTpMapBtn", "🗺️ Teleport to Map", Color3.fromRGB(37, 99, 235), 220, function()
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -761,8 +788,8 @@ local function StartMainHub()
         end)
     end)
 
-    -- TELEPORT TO LOBBY BUTTON
-    CreateFloatingButton("FloatTpLobbyBtn", "🏠 Teleport to Lobby", Color3.fromRGB(16, 185, 129), 236, function()
+    -- 5. TELEPORT TO LOBBY BUTTON (Y: 270)
+    CreateFloatingButton("FloatTpLobbyBtn", "🏠 Teleport to Lobby", Color3.fromRGB(5, 150, 105), 270, function()
         pcall(function()
             local char = LocalPlayer.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
