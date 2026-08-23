@@ -708,10 +708,10 @@ loginBtn.MouseButton1Click:Connect(function()
             O.Noclip = s 
             sendNotification("Troll Coin", s and "Troll Coin & Noclip Enabled" or "Disabled", 1.5)
         end)
-        Tog(pageFrames[5], "Auto Farm (Underground Smooth)", false, function(s) 
+        Tog(pageFrames[5], "Auto Farm", false, function(s) 
             O.AutoFarm = s 
             O.Noclip = s 
-            sendNotification("Auto Farm", s and "Auto Farm & Noclip aktif!" or "Kapatıldı", 1.5)
+            sendNotification("Auto Farm", s and "Auto Farm aktif!" or "Kapatıldı", 1.5)
         end)
         Tog(pageFrames[5], "Anti-Autofarm", false, function(s) 
             O.AntiAF = s 
@@ -998,8 +998,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
         -- TROLL COIN
         task.spawn(function()
-            while true do
-                task.wait(0.1)
+            while type(O.AF) == "boolean" and task.wait(0.1) then
                 pcall(function()
                     if O.AF then
                         local char = pl.Character
@@ -1019,29 +1018,25 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- AUTO FARM (Videodaki Akıcı Underground Mantığına Uyarlanmış Versiyon)
+        -- AUTO FARM (Teleport Mantığına Çevrilmiş Versiyon)
         task.spawn(function()
             while true do
-                task.wait(0.03)
+                task.wait(0.05)
                 pcall(function()
                     if O.AutoFarm then
                         local char = pl.Character
                         local hrp = char and char:FindFirstChild("HumanoidRootPart")
                         local hum = char and char:FindFirstChildOfClass("Humanoid")
                         if hrp and hum and hum.Health > 0 then
-                            hum.PlatformStand = true
-                            
                             for _, obj in pairs(workspace:GetDescendants()) do
                                 if not O.AutoFarm then break end
                                 if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
-                                    -- Videodaki gibi zeminin altından/içinden süzülerek coinleri toplar
-                                    hrp.CFrame = obj.CFrame - Vector3.new(0, 2.5, 0)
+                                    hrp.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
                                     hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                                     hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                                    task.wait(0.06)
+                                    task.wait(0.1)
                                 end
                             end
-                            hum.PlatformStand = false
                         end
                     end
                 end)
