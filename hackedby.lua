@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT - FULLY FIXED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT - FULLY FIXED & LEFT TABS)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -251,7 +251,7 @@ loginBtn.MouseButton1Click:Connect(function()
         toggleButton.Size = UDim2.new(0, 190, 0, 48)
         toggleButton.Position = UDim2.new(0, 40, 0, 40)
         toggleButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-        toggleButton.Text = "Toggle Menu"
+        toggleButton.Text = "Hacked By - Menu" -- Burası güncellendi
         toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         toggleButton.TextSize = 17
         toggleButton.Font = CUSTOM_FONT
@@ -378,6 +378,7 @@ loginBtn.MouseButton1Click:Connect(function()
         local catLayout = Instance.new("UIListLayout", catHolder)
         catLayout.FillDirection = Enum.FillDirection.Horizontal
         catLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        catLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
         catLayout.Padding = UDim.new(0, 8)
 
         local function createPage()
@@ -593,6 +594,8 @@ loginBtn.MouseButton1Click:Connect(function()
             lighting.FogEnd = s and 100000 or 10000
         end)
         Tog(pageFrames[4], "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
+        Tog(pageFrames[4], "Fling Sheriff", false, function(s) O.FlingSheriff = s end)
+        Tog(pageFrames[4], "Fling Murderer", false, function(s) O.FlingRoleMurderer = s end)
 
         createStepControl(pageFrames[4], "Character FOV", 70, 50, 120, 5, function(v) currentFOV = v end)
         createStepControl(pageFrames[4], "WalkSpeed", 16, 16, 200, 4, function(v)
@@ -608,11 +611,9 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Tab 5: Auto Farm & Role Fling / Anti-Autofarm
+        -- Tab 5: Auto Farm & Anti-Autofarm
         Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
         Tog(pageFrames[5], "Anti-Autofarm (Fling Other Farmers)", false, function(s) O.AntiAF = s end)
-        Tog(pageFrames[5], "Fling Sheriff", false, function(s) O.FlingSheriff = s end)
-        Tog(pageFrames[5], "Fling Murderer", false, function(s) O.FlingRoleMurderer = s end)
         createStepControl(pageFrames[5], "Autofarm Speed", 25, 5, 50, 5, function(v) autoFarmSpeed = v end)
 
         -- Background Loops & Core Functionality
@@ -911,7 +912,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- DÜZELTİLDİ: JavaScript ok fonksiyonu yerine standart Lua fonksiyonu kullanıldı
         uis.JumpRequest:Connect(function()
             if O.InfJump then
                 pcall(function() pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
