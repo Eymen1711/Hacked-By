@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT - FIXED AUTOFARM)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT - FIXED SYNTAX)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -911,7 +911,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        uis.JumpRequest:Connect(value => {
+        uis.JumpRequest:Connect(function()
             if O.InfJump then
                 pcall(function() pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
             end
