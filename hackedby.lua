@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (FIXED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (FINAL FIXED)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -19,7 +19,7 @@ local rainbowModeActive = true
 -- Global Settings
 local currentWalkSpeed = 16
 local currentJumpPower = 50
-local autoFarmSpeed = 5 -- Başlangıç hızı 5 olarak ayarlandı
+local autoFarmSpeed = 5
 local currentFOV = 70
 
 local CUSTOM_FONT = Enum.Font.FredokaOne
@@ -342,7 +342,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Main Panel Frame (Sol Dikey Sekmeli Yapı)
+        -- Main Panel Frame
         local f = Instance.new("Frame", mgui)
         f.Size = UDim2.new(0, 620, 0, 450)
         f.Position = UDim2.new(0.5, -310, 0.5, -225)
@@ -367,7 +367,6 @@ loginBtn.MouseButton1Click:Connect(function()
         t.Font = CUSTOM_FONT
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
-        -- Sol Dikey Sekme Listesi Alanı
         local catHolder = Instance.new("ScrollingFrame", f)
         catHolder.Size = UDim2.new(0, 150, 1, -55)
         catHolder.Position = UDim2.new(0, 8, 0, 50)
@@ -539,7 +538,10 @@ loginBtn.MouseButton1Click:Connect(function()
         local O = {}
         
         -- Tab 1: Theme
-        Tog(pageFrames[1], "Rainbow Mode", true, function(s) rainbowModeActive = s end)
+        Tog(pageFrames[1], "Rainbow Mode", true, function(s) 
+            rainbowModeActive = s 
+            sendNotification("Theme", s and "Rainbow Mode Enabled" or "Rainbow Mode Disabled", 1.5)
+        end)
         local colorContainer = Instance.new("Frame", pageFrames[1])
         colorContainer.Size = UDim2.new(1, -10, 0, 45)
         colorContainer.BackgroundTransparency = 1
@@ -565,7 +567,10 @@ loginBtn.MouseButton1Click:Connect(function()
         end
 
         -- Tab 2: ESP & X-Ray
-        Tog(pageFrames[2], "Perfect Role ESP", false, function(s) O.ESP = s end)
+        Tog(pageFrames[2], "Perfect Role ESP", false, function(s) 
+            O.ESP = s 
+            sendNotification("ESP", s and "Role ESP Enabled" or "Role ESP Disabled", 1.5)
+        end)
         Tog(pageFrames[2], "Wallhack X-Ray", false, function(s) 
             O.XRay = s
             for _, part in pairs(workspace:GetDescendants()) do
@@ -577,29 +582,70 @@ loginBtn.MouseButton1Click:Connect(function()
                     end
                 end
             end
+            sendNotification("X-Ray", s and "X-Ray Enabled" or "X-Ray Disabled", 1.5)
         end)
-        Tog(pageFrames[2], "Sheriff Gun & Coin ESP", false, function(s) O.ExtraESP = s end)
+        Tog(pageFrames[2], "Sheriff Gun & Coin ESP", false, function(s) 
+            O.ExtraESP = s 
+            sendNotification("Extra ESP", s and "Gun & Coin ESP Enabled" or "Disabled", 1.5)
+        end)
 
         -- Tab 3: Combat & Aim
-        Tog(pageFrames[3], "Auto Grab Gun", false, function(s) O.AutoGrabGun = s end)
-        Tog(pageFrames[3], "Auto Sheriff Target", false, function(s) O.AutoSheriff = s end)
-        Tog(pageFrames[3], "Kill All (Murderer)", false, function(s) O.KA = s end)
-        Tog(pageFrames[3], "God Mode Shield", false, function(s) O.GodMode = s end)
-        Tog(pageFrames[3], "God Fling Murderer", false, function(s) O.FlingMurderer = s end)
+        Tog(pageFrames[3], "Auto Grab Gun", false, function(s) 
+            O.AutoGrabGun = s 
+            sendNotification("Auto Grab Gun", s and "Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[3], "Auto Sheriff Target", false, function(s) 
+            O.AutoSheriff = s 
+            sendNotification("Auto Sheriff", s and "Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[3], "Kill All (Murderer)", false, function(s) 
+            O.KA = s 
+            sendNotification("Kill All", s and "Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[3], "God Mode Shield", false, function(s) 
+            O.GodMode = s 
+            sendNotification("God Mode", s and "Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[3], "God Fling Murderer", false, function(s) 
+            O.FlingMurderer = s 
+            sendNotification("God Fling Murderer", s and "Enabled" or "Disabled", 1.5)
+        end)
 
         -- Tab 4: Trade & Misc
-        Tog(pageFrames[4], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
-        Tog(pageFrames[4], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
-        Tog(pageFrames[4], "Infinite Jump", false, function(s) O.InfJump = s end)
-        Tog(pageFrames[4], "Noclip (Walk Through Walls)", false, function(s) O.Noclip = s end)
+        Tog(pageFrames[4], "Freeze Trade", false, function(s) 
+            O.FreezeTrade = s 
+            sendNotification("Trade", s and "Freeze Trade Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[4], "Force Accept Trade", false, function(s) 
+            O.ForceAccept = s 
+            sendNotification("Trade", s and "Force Accept Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[4], "Infinite Jump", false, function(s) 
+            O.InfJump = s 
+            sendNotification("Misc", s and "Infinite Jump Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[4], "Noclip (Walk Through Walls)", false, function(s) 
+            O.Noclip = s 
+            sendNotification("Noclip", s and "Enabled" or "Disabled", 1.5)
+        end)
         Tog(pageFrames[4], "FullBright", false, function(s) 
             lighting.Brightness = s and 2 or 1
             lighting.ClockTime = s and 14 or 0
             lighting.FogEnd = s and 100000 or 10000
+            sendNotification("FullBright", s and "Enabled" or "Disabled", 1.5)
         end)
-        Tog(pageFrames[4], "FPS Display", false, function(s) O.FPS = s; fpsLabel.Visible = s end)
-        Tog(pageFrames[4], "Fling Sheriff", false, function(s) O.FlingSheriff = s end)
-        Tog(pageFrames[4], "Fling Murderer", false, function(s) O.FlingRoleMurderer = s end)
+        Tog(pageFrames[4], "FPS Display", false, function(s) 
+            O.FPS = s; fpsLabel.Visible = s 
+            sendNotification("FPS Display", s and "Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[4], "Fling Sheriff", false, function(s) 
+            O.FlingSheriff = s 
+            sendNotification("Fling Sheriff", s and "Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[4], "Fling Murderer", false, function(s) 
+            O.FlingRoleMurderer = s 
+            sendNotification("Fling Murderer", s and "Enabled" or "Disabled", 1.5)
+        end)
 
         createStepControl(pageFrames[4], "Character FOV", 70, 50, 120, 5, function(v) currentFOV = v end)
         createStepControl(pageFrames[4], "WalkSpeed", 16, 16, 200, 4, function(v)
@@ -616,9 +662,15 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         -- Tab 5: Auto Farm & Anti-Autofarm
-        Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
-        Tog(pageFrames[5], "Anti-Autofarm", false, function(s) O.AntiAF = s end)
-        createStepControl(pageFrames[5], "Autofarm Speed", 5, 1, 50, 1, function(v) autoFarmSpeed = v end) -- Varsayılan 5, 1'er artıp azalıyor
+        Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) 
+            O.AF = s 
+            sendNotification("Auto Farm", s and "Auto Farm Enabled" or "Auto Farm Disabled", 1.5)
+        end)
+        Tog(pageFrames[5], "Anti-Autofarm", false, function(s) 
+            O.AntiAF = s 
+            sendNotification("Anti-Autofarm", s and "Anti-Autofarm Enabled" or "Disabled", 1.5)
+        end)
+        createStepControl(pageFrames[5], "Autofarm Speed", 5, 1, 50, 1, function(v) autoFarmSpeed = v end)
 
         -- Background Loops & Core Functionality
         task.spawn(function()
@@ -638,7 +690,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                     hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 end
                                 local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                                local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun"))
+                                local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun")) or v.Character:FindFirstChild("GunServer")
                                 if hasKnife then hl.FillColor = Color3.fromRGB(255, 0, 0)
                                 elseif hasGun then hl.FillColor = Color3.fromRGB(0, 150, 255)
                                 else hl.FillColor = Color3.fromRGB(0, 255, 0) end
@@ -668,7 +720,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- DÜZELTİLDİ: Anti-Autofarm
+        -- Kesinleştirilmiş Anti-Autofarm
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -677,11 +729,11 @@ loginBtn.MouseButton1Click:Connect(function()
                         for _, player in pairs(p:GetPlayers()) do
                             if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
                                 local otherHRP = player.Character.HumanoidRootPart
-                                local otherHumanoid = player.Character:FindFirstChildOfClass("Humanoid")
-                                if otherHRP and otherHumanoid and otherHumanoid.Health > 0 then
-                                    -- Eğer oyuncu normal yürümüyorsa / uçuyorsa (coin toplamak için hareket ediyorsa) müdahale et
-                                    if otherHRP.Position.Y > 5 and math.abs(otherHRP.Velocity.Y) > 50 then
-                                        otherHRP.Velocity = Vector3.new(otherHRP.Velocity.X, -50, otherHRP.Velocity.Z)
+                                local otherHum = player.Character:FindFirstChildOfClass("Humanoid")
+                                if otherHRP and otherHum and otherHum.Health > 0 then
+                                    -- Havada asılı kalan şüpheli farm pozisyonlarını engelle
+                                    if otherHRP.Position.Y > 35 and math.abs(otherHRP.AssemblyLinearVelocity.Y) < 2 then
+                                        otherHRP.CFrame = otherHRP.CFrame - Vector3.new(0, 5, 0)
                                     end
                                 end
                             end
@@ -691,19 +743,30 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- DÜZELTİLDİ: Fling Sheriff
+        -- Geliştirilmiş Fling Sheriff
         task.spawn(function()
             while true do
-                task.wait(0.2)
+                task.wait(0.1)
                 pcall(function()
                     if O.FlingSheriff then
-                        for _, player in pairs(p:GetPlayers()) do
-                            if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                                local hasGun = player.Character:FindFirstChild("Gun") or (player.Backpack and player.Backpack:FindFirstChild("Gun")) or player.Character:FindFirstChild("GunServer")
-                                if hasGun then
-                                    local otherHRP = player.Character.HumanoidRootPart
-                                    otherHRP.Velocity = Vector3.new(30000, 30000, 30000)
-                                    otherHRP.RotVelocity = Vector3.new(30000, 30000, 30000)
+                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                        if hrp and hum and hum.Health > 0 then
+                            for _, player in pairs(p:GetPlayers()) do
+                                if not O.FlingSheriff then break end
+                                if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                    local hasGun = player.Character:FindFirstChild("Gun") or (player.Backpack and player.Backpack:FindFirstChild("Gun")) or player.Character:FindFirstChild("GunServer")
+                                    if hasGun then
+                                        local targetHRP = player.Character.HumanoidRootPart
+                                        local startTime = tick()
+                                        while targetHRP and targetHRP.Parent and O.FlingSheriff and (tick() - startTime < 1.5) do
+                                            hum.PlatformStand = true
+                                            hrp.CFrame = targetHRP.CFrame
+                                            hrp.AssemblyAngularVelocity = Vector3.new(0, 99999, 0)
+                                            rs.RenderStepped:Wait()
+                                        end
+                                        hum.PlatformStand = false
+                                    end
                                 end
                             end
                         end
@@ -712,19 +775,30 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- DÜZELTİLDİ: Fling Murderer (Rolü Bıçak Olanlar)
+        -- Geliştirilmiş Fling Murderer
         task.spawn(function()
             while true do
-                task.wait(0.2)
+                task.wait(0.1)
                 pcall(function()
                     if O.FlingRoleMurderer then
-                        for _, player in pairs(p:GetPlayers()) do
-                            if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                                local hasKnife = player.Character:FindFirstChild("Knife") or (player.Backpack and player.Backpack:FindFirstChild("Knife")) or player.Character:FindFirstChild("KnifeServer")
-                                if hasKnife then
-                                    local otherHRP = player.Character.HumanoidRootPart
-                                    otherHRP.Velocity = Vector3.new(30000, 30000, 30000)
-                                    otherHRP.RotVelocity = Vector3.new(30000, 30000, 30000)
+                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
+                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                        if hrp and hum and hum.Health > 0 then
+                            for _, player in pairs(p:GetPlayers()) do
+                                if not O.FlingRoleMurderer then break end
+                                if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                    local hasKnife = player.Character:FindFirstChild("Knife") or (player.Backpack and player.Backpack:FindFirstChild("Knife")) or player.Character:FindFirstChild("KnifeServer")
+                                    if hasKnife then
+                                        local targetHRP = player.Character.HumanoidRootPart
+                                        local startTime = tick()
+                                        while targetHRP and targetHRP.Parent and O.FlingRoleMurderer and (tick() - startTime < 1.5) do
+                                            hum.PlatformStand = true
+                                            hrp.CFrame = targetHRP.CFrame
+                                            hrp.AssemblyAngularVelocity = Vector3.new(0, 99999, 0)
+                                            rs.RenderStepped:Wait()
+                                        end
+                                        hum.PlatformStand = false
+                                    end
                                 end
                             end
                         end
@@ -767,7 +841,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                 local hl = Instance.new("Highlight", obj)
                                 hl.Name = "GunESP"
                                 hl.FillColor = Color3.fromRGB(255, 255, 0)
-                            elseif obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold")) and not obj:FindFirstChild("CoinESP") then
+                            elseif obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and not obj:FindFirstChild("CoinESP") then
                                 local hl = Instance.new("Highlight", obj)
                                 hl.Name = "CoinESP"
                                 hl.FillColor = Color3.fromRGB(255, 215, 0)
@@ -782,21 +856,27 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- Auto Grab Gun
         task.spawn(function()
             while true do
                 task.wait(0.2)
                 pcall(function()
                     if O.AutoGrabGun then
-                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-                        if hrp then
-                            for _, obj in pairs(workspace:GetDescendants()) do
-                                if obj.Name == "GunDrop" and obj:IsA("BasePart") then
-                                    local savedCFrame = hrp.CFrame
-                                    hrp.CFrame = obj.CFrame
-                                    task.wait(0.15)
-                                    hrp.CFrame = savedCFrame
-                                    sendNotification("Auto Grab", "Gun grabbed & returned!", 2)
-                                    break 
+                        local c2 = pl.Character
+                        local isMurderer = c2 and (c2:FindFirstChild("Knife") or pl.Backpack:FindFirstChild("Knife") or c2:FindFirstChild("KnifeServer"))
+                        
+                        if not isMurderer then
+                            local hrp = c2 and c2:FindFirstChild("HumanoidRootPart")
+                            if hrp then
+                                for _, obj in pairs(workspace:GetDescendants()) do
+                                    if obj.Name == "GunDrop" and obj:IsA("BasePart") then
+                                        local savedCFrame = hrp.CFrame
+                                        hrp.CFrame = obj.CFrame
+                                        task.wait(0.15)
+                                        hrp.CFrame = savedCFrame
+                                        sendNotification("Auto Grab", "Gun grabbed & returned!", 2)
+                                        break 
+                                    end
                                 end
                             end
                         end
@@ -832,6 +912,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- Kill All (Murderer)
         task.spawn(function()
             while true do
                 task.wait(0.3)
@@ -843,12 +924,15 @@ loginBtn.MouseButton1Click:Connect(function()
                             if knife.Parent == pl.Backpack then knife.Parent = c2 end
                             for _, v in pairs(p:GetPlayers()) do
                                 if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then
-                                    local rp = c2:FindFirstChild("HumanoidRootPart")
-                                    if rp then
-                                        rp.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2)
-                                        task.wait(0.05)
-                                        local ev = knife:FindFirstChildWhichIsA("RemoteEvent")
-                                        if ev then ev:FireServer(v.Character.HumanoidRootPart) end
+                                    local otherHRP = v.Character.HumanoidRootPart
+                                    if otherHRP.Position.Y > 0 and otherHRP.Position.Y < 300 then 
+                                        local rp = c2:FindFirstChild("HumanoidRootPart")
+                                        if rp then
+                                            rp.CFrame = otherHRP.CFrame * CFrame.new(0, 0, 2)
+                                            task.wait(0.05)
+                                            local ev = knife:FindFirstChildWhichIsA("RemoteEvent")
+                                            if ev then ev:FireServer(otherHRP) end
+                                        end
                                     end
                                 end
                             end
@@ -870,6 +954,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- God Fling Murderer
         task.spawn(function()
             while true do
                 task.wait(0.1)
@@ -878,35 +963,25 @@ loginBtn.MouseButton1Click:Connect(function()
                         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                         local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
                         if hrp and hum and hum.Health > 0 then
-                            local origPos = hrp.CFrame
-                            local targeted = false
-                            
                             for _, v in pairs(p:GetPlayers()) do
                                 if not O.FlingMurderer then break end
                                 if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
                                     local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
                                     if hasKnife then
-                                        targeted = true
                                         local targetHrp = v.Character.HumanoidRootPart
                                         local targetHum = v.Character.Humanoid
-                                        
-                                        while targetHrp and targetHrp.Parent and targetHum.Health > 0 and O.FlingMurderer do
+                                        local startTime = tick()
+                                        while targetHrp and targetHrp.Parent and targetHum.Health > 0 and O.FlingMurderer and (tick() - startTime < 2) do
                                             hum.Health = hum.MaxHealth
+                                            hum.PlatformStand = true
                                             hrp.CFrame = targetHrp.CFrame
-                                            hrp.Velocity = Vector3.new(40000, 40000, 40000)
-                                            hrp.RotVelocity = Vector3.new(40000, 40000, 40000)
-                                            task.wait(0.02)
+                                            hrp.AssemblyAngularVelocity = Vector3.new(0, 99999, 0)
+                                            rs.RenderStepped:Wait()
                                         end
+                                        hum.PlatformStand = false
+                                        sendNotification("Success", "Murderer neutralized!", 2)
                                     end
                                 end
-                            end
-                            
-                            if targeted then
-                                hrp.Velocity = Vector3.new(0, 0, 0)
-                                hrp.RotVelocity = Vector3.new(0, 0, 0)
-                                hrp.CFrame = origPos
-                                sendNotification("Success", "Murderer neutralized & Returned!", 2)
-                                task.wait(0.5)
                             end
                         end
                     end
@@ -914,12 +989,13 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        uis.JumpRequest:Connect(function()
+        uis.JumpRequest:Connect(value => {
             if O.InfJump then
                 pcall(function() pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
             end
         end)
 
+        -- Hatasız, Sarsıntısız ve Tam Zamanında Çalışan Auto Farm
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -929,26 +1005,38 @@ loginBtn.MouseButton1Click:Connect(function()
                         local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
                         if hrp and hum and hum.Health > 0 then
                             hum.PlatformStand = true
-                            for _, v in pairs((workspace:FindFirstChild("CoinContainer") or workspace):GetDescendants()) do
+                            
+                            -- Tüm coin olası kaynaklarını tara (CoinContainer veya Map altı)
+                            local targets = {}
+                            for _, obj in pairs(workspace:GetDescendants()) do
+                                if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
+                                    table.insert(targets, obj)
+                                end
+                            end
+                            
+                            for _, v in pairs(targets) do
                                 if not O.AF then break end
-                                if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) and v.Transparency < 1 then
-                                    local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
+                                if v and v.Parent then
+                                    local targetCF = v.CFrame + Vector3.new(0, 0.1, 0)
                                     local distance = (hrp.Position - targetCF.Position).Magnitude
                                     
                                     local speedVal = math.clamp(autoFarmSpeed, 1, 50)
-                                    local travelTime = distance / (speedVal * 10)
-                                    travelTime = math.clamp(travelTime, 0.05, 1.5)
+                                    local travelTime = distance / (speedVal * 20)
+                                    travelTime = math.clamp(travelTime, 0.02, 0.8)
                                     
                                     local startTime = tick()
                                     local startCF = hrp.CFrame
                                     while tick() - startTime < travelTime do
-                                        if not O.AF then break end
+                                        if not O.AF or not v or not v.Parent then break end
                                         local alpha = (tick() - startTime) / travelTime
                                         hrp.CFrame = startCF:Lerp(targetCF, alpha)
+                                        hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                                         rs.RenderStepped:Wait()
                                     end
-                                    hrp.CFrame = targetCF
-                                    task.wait(0.05)
+                                    if v and v.Parent then
+                                        hrp.CFrame = targetCF
+                                    end
+                                    task.wait(0.03)
                                 end
                             end
                             hum.PlatformStand = false
@@ -958,7 +1046,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Fixes applied successfully!", 3)
+        sendNotification("Loaded", "All fixes and optimizations applied!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
