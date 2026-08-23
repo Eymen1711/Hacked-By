@@ -586,6 +586,7 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(pageFrames[4], "Freeze Trade", false, function(s) O.FreezeTrade = s end)
         Tog(pageFrames[4], "Force Accept Trade", false, function(s) O.ForceAccept = s end)
         Tog(pageFrames[4], "Infinite Jump", false, function(s) O.InfJump = s end)
+        Tog(pageFrames[4], "Noclip (Walk Through Walls)", false, function(s) O.Noclip = s end)
         Tog(pageFrames[4], "FullBright", false, function(s) 
             lighting.Brightness = s and 2 or 1
             lighting.ClockTime = s and 14 or 0
@@ -607,8 +608,11 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Tab 5: Auto Farm
+        -- Tab 5: Auto Farm & Role Fling / Anti-Autofarm
         Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
+        Tog(pageFrames[5], "Anti-Autofarm (Fling Other Farmers)", false, function(s) O.AntiAF = s end)
+        Tog(pageFrames[5], "Fling Sheriff", false, function(s) O.FlingSheriff = s end)
+        Tog(pageFrames[5], "Fling Murderer", false, function(s) O.FlingRoleMurderer = s end)
         createStepControl(pageFrames[5], "Autofarm Speed", 25, 10, 100, 5, function(v) autoFarmSpeed = v end)
 
         -- Background Loops & Core Functionality
@@ -638,6 +642,86 @@ loginBtn.MouseButton1Click:Connect(function()
                     else
                         for _, v in pairs(p:GetPlayers()) do
                             if v.Character and v.Character:FindFirstChild("PerfectESP") then v.Character.PerfectESP:Destroy() end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- NOCLIP LOOP
+        rs.Stepped:Connect(function()
+            if O.Noclip then
+                pcall(function()
+                    local char = pl.Character
+                    if char then
+                        for _, part in pairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- ANTI-AUTOFARM LOOP (Başka hesapları havaya uçurma)
+        task.spawn(function()
+            while true do
+                task.wait(0.5)
+                pcall(function()
+                    if O.AntiAF then
+                        for _, player in pairs(p:GetPlayers()) do
+                            if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                local otherHRP = player.Character.HumanoidRootPart
+                                local otherHumanoid = player.Character:FindFirstChildOfClass("Humanoid")
+                                if otherHRP.Position.Y < 300 and otherHumanoid then
+                                    otherHRP.Velocity = Vector3.new(0, 400, 0)
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- FLING SHERIFF LOOP (Şerifi Uçur)
+        task.spawn(function()
+            while true do
+                task.wait(0.5)
+                pcall(function()
+                    if O.FlingSheriff then
+                        for _, player in pairs(p:GetPlayers()) do
+                            if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                local hasGun = player.Character:FindFirstChild("Gun") or (player.Backpack and player.Backpack:FindFirstChild("Gun"))
+                                if hasGun then
+                                    local otherHRP = player.Character.HumanoidRootPart
+                                    if otherHRP.Position.Y < 300 then
+                                        otherHRP.Velocity = Vector3.new(0, 500, 0)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- FLING MURDERER LOOP (Katili Uçur)
+        task.spawn(function()
+            while true do
+                task.wait(0.5)
+                pcall(function()
+                    if O.FlingRoleMurderer then
+                        for _, player in pairs(p:GetPlayers()) do
+                            if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                local hasKnife = player.Character:FindFirstChild("Knife") or (player.Backpack and player.Backpack:FindFirstChild("Knife")) or player.Character:FindFirstChild("KnifeServer")
+                                if hasKnife then
+                                    local otherHRP = player.Character.HumanoidRootPart
+                                    if otherHRP.Position.Y < 300 then
+                                        otherHRP.Velocity = Vector3.new(0, 500, 0)
+                                    end
+                                end
+                            end
                         end
                     end
                 end)
@@ -833,6 +917,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- DÜZELTİLMİŞ UÇARAK ÇALIŞAN AUTO FARM
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -841,6 +926,7 @@ loginBtn.MouseButton1Click:Connect(function()
                         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                         local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
                         if hrp and hum and hum.Health > 0 then
+                            hum.PlatformStand = true
                             for _, v in pairs((workspace:FindFirstChild("CoinContainer") or workspace):GetDescendants()) do
                                 if not O.AF then break end
                                 if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) and v.Transparency < 1 then
@@ -860,6 +946,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                     task.wait(0.02 + math.random(1, 3)/100)
                                 end
                             end
+                            hum.PlatformStand = false
                         end
                     end
                 end)
