@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (FINAL FIXED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (FLING FIXED)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -111,6 +111,53 @@ local function sendNotification(titleText, msgText, duration)
         task.wait(0.3)
         if conn then conn:Disconnect() end
         if box then box:Destroy() end
+    end)
+end
+
+-- Kesin Çalışan Güçlendirilmiş Fling Fonksiyonu (Roblox Physics Exploit)
+local function applyFlingToTarget(targetCharacter)
+    task.spawn(function()
+        local char = pl.Character
+        if not char then return end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        local targetHRP = targetCharacter and targetCharacter:FindFirstChild("HumanoidRootPart")
+        
+        if hrp and hum and targetHRP then
+            local startTime = tick()
+            local originalPos = hrp.CFrame
+            
+            -- Çarpışmaları ve devrilmeyi sabitle
+            hum.PlatformStand = true
+            for _, part in pairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CustomPhysicalProperties = PhysicalProperties.new(100, 0, 0, 100, 100)
+                    part.CanCollide = false
+                end
+            end
+            
+            -- Hızlı yörünge ve patlatma döngüsü (Fling Core)
+            while tick() - startTime < 1.2 and targetHRP and targetHRP.Parent and hrp and hrp.Parent do
+                rs.RenderStepped:Wait()
+                local angle = tick() * 50
+                local offset = Vector3.new(math.cos(angle) * 4, 3, math.sin(angle) * 4)
+                hrp.CFrame = targetHRP.CFrame + offset
+                hrp.AssemblyLinearVelocity = Vector3.new(35000, 35000, 35000)
+                hrp.AssemblyAngularVelocity = Vector3.new(99999, 99999, 99999)
+            end
+            
+            -- Eski haline getir
+            hum.PlatformStand = false
+            for _, part in pairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CustomPhysicalProperties = nil
+                    part.CanCollide = true
+                end
+            end
+            hrp.CFrame = originalPos
+            hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+            hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+        end
     end)
 end
 
@@ -720,7 +767,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Kesinleştirilmiş Anti-Autofarm
+        -- Anti-Autofarm
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -731,7 +778,6 @@ loginBtn.MouseButton1Click:Connect(function()
                                 local otherHRP = player.Character.HumanoidRootPart
                                 local otherHum = player.Character:FindFirstChildOfClass("Humanoid")
                                 if otherHRP and otherHum and otherHum.Health > 0 then
-                                    -- Havada asılı kalan şüpheli farm pozisyonlarını engelle
                                     if otherHRP.Position.Y > 35 and math.abs(otherHRP.AssemblyLinearVelocity.Y) < 2 then
                                         otherHRP.CFrame = otherHRP.CFrame - Vector3.new(0, 5, 0)
                                     end
@@ -743,30 +789,19 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Geliştirilmiş Fling Sheriff
+        -- Yenilenmiş Kesin Çalışan Fling Sheriff
         task.spawn(function()
             while true do
-                task.wait(0.1)
+                task.wait(0.2)
                 pcall(function()
                     if O.FlingSheriff then
-                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
-                        if hrp and hum and hum.Health > 0 then
-                            for _, player in pairs(p:GetPlayers()) do
-                                if not O.FlingSheriff then break end
-                                if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                                    local hasGun = player.Character:FindFirstChild("Gun") or (player.Backpack and player.Backpack:FindFirstChild("Gun")) or player.Character:FindFirstChild("GunServer")
-                                    if hasGun then
-                                        local targetHRP = player.Character.HumanoidRootPart
-                                        local startTime = tick()
-                                        while targetHRP and targetHRP.Parent and O.FlingSheriff and (tick() - startTime < 1.5) do
-                                            hum.PlatformStand = true
-                                            hrp.CFrame = targetHRP.CFrame
-                                            hrp.AssemblyAngularVelocity = Vector3.new(0, 99999, 0)
-                                            rs.RenderStepped:Wait()
-                                        end
-                                        hum.PlatformStand = false
-                                    end
+                        for _, player in pairs(p:GetPlayers()) do
+                            if not O.FlingSheriff then break end
+                            if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                local hasGun = player.Character:FindFirstChild("Gun") or (player.Backpack and player.Backpack:FindFirstChild("Gun")) or player.Character:FindFirstChild("GunServer")
+                                if hasGun then
+                                    applyFlingToTarget(player.Character)
+                                    task.wait(1.3)
                                 end
                             end
                         end
@@ -775,30 +810,19 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Geliştirilmiş Fling Murderer
+        -- Yenilenmiş Kesin Çalışan Fling Murderer
         task.spawn(function()
             while true do
-                task.wait(0.1)
+                task.wait(0.2)
                 pcall(function()
                     if O.FlingRoleMurderer then
-                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
-                        if hrp and hum and hum.Health > 0 then
-                            for _, player in pairs(p:GetPlayers()) do
-                                if not O.FlingRoleMurderer then break end
-                                if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                                    local hasKnife = player.Character:FindFirstChild("Knife") or (player.Backpack and player.Backpack:FindFirstChild("Knife")) or player.Character:FindFirstChild("KnifeServer")
-                                    if hasKnife then
-                                        local targetHRP = player.Character.HumanoidRootPart
-                                        local startTime = tick()
-                                        while targetHRP and targetHRP.Parent and O.FlingRoleMurderer and (tick() - startTime < 1.5) do
-                                            hum.PlatformStand = true
-                                            hrp.CFrame = targetHRP.CFrame
-                                            hrp.AssemblyAngularVelocity = Vector3.new(0, 99999, 0)
-                                            rs.RenderStepped:Wait()
-                                        end
-                                        hum.PlatformStand = false
-                                    end
+                        for _, player in pairs(p:GetPlayers()) do
+                            if not O.FlingRoleMurderer then break end
+                            if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                local hasKnife = player.Character:FindFirstChild("Knife") or (player.Backpack and player.Backpack:FindFirstChild("Knife")) or player.Character:FindFirstChild("KnifeServer")
+                                if hasKnife then
+                                    applyFlingToTarget(player.Character)
+                                    task.wait(1.3)
                                 end
                             end
                         end
@@ -954,33 +978,20 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- God Fling Murderer
+        -- God Fling Murderer (Combat Tab)
         task.spawn(function()
             while true do
-                task.wait(0.1)
+                task.wait(0.2)
                 pcall(function()
                     if O.FlingMurderer then
-                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
-                        if hrp and hum and hum.Health > 0 then
-                            for _, v in pairs(p:GetPlayers()) do
-                                if not O.FlingMurderer then break end
-                                if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
-                                    local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                                    if hasKnife then
-                                        local targetHrp = v.Character.HumanoidRootPart
-                                        local targetHum = v.Character.Humanoid
-                                        local startTime = tick()
-                                        while targetHrp and targetHrp.Parent and targetHum.Health > 0 and O.FlingMurderer and (tick() - startTime < 2) do
-                                            hum.Health = hum.MaxHealth
-                                            hum.PlatformStand = true
-                                            hrp.CFrame = targetHrp.CFrame
-                                            hrp.AssemblyAngularVelocity = Vector3.new(0, 99999, 0)
-                                            rs.RenderStepped:Wait()
-                                        end
-                                        hum.PlatformStand = false
-                                        sendNotification("Success", "Murderer neutralized!", 2)
-                                    end
+                        for _, v in pairs(p:GetPlayers()) do
+                            if not O.FlingMurderer then break end
+                            if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                                if hasKnife then
+                                    applyFlingToTarget(v.Character)
+                                    sendNotification("Success", "Murderer targeted for fling!", 2)
+                                    task.wait(1.3)
                                 end
                             end
                         end
@@ -989,13 +1000,13 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        uis.JumpRequest:Connect(value => {
+        uis.JumpRequest:Connect(function()
             if O.InfJump then
                 pcall(function() pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
             end
         end)
 
-        -- Hatasız, Sarsıntısız ve Tam Zamanında Çalışan Auto Farm
+        -- Auto Farm
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -1006,7 +1017,6 @@ loginBtn.MouseButton1Click:Connect(function()
                         if hrp and hum and hum.Health > 0 then
                             hum.PlatformStand = true
                             
-                            -- Tüm coin olası kaynaklarını tara (CoinContainer veya Map altı)
                             local targets = {}
                             for _, obj in pairs(workspace:GetDescendants()) do
                                 if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
@@ -1046,7 +1056,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "All fixes and optimizations applied!", 3)
+        sendNotification("Loaded", "Fling mechanics rebuilt & loaded!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
