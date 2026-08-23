@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT
+-- HACKED BY + ULTIMATE MM2 SCRIPT (FIXED AUTO FARM)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -139,7 +139,9 @@ local function applyFlingToTarget(targetCharacter)
                 rs.RenderStepped:Wait()
                 local angle = tick() * 30
                 local offset = Vector3.new(math.cos(angle) * 3, 2, math.sin(angle) * 3)
-                hrp.CFrame = targetHRP.CFrame + offset
+                pcall(function()
+                    hrp.CFrame = targetHRP.CFrame + offset
+                end)
                 hrp.AssemblyLinearVelocity = Vector3.new(30000, 30000, 30000)
                 hrp.AssemblyAngularVelocity = Vector3.new(50000, 50000, 50000)
             end
@@ -151,7 +153,7 @@ local function applyFlingToTarget(targetCharacter)
                     part.CanCollide = true
                 end
             end
-            hrp.CFrame = originalPos
+            pcall(function() hrp.CFrame = originalPos end)
             hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
             hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
         end
@@ -710,7 +712,7 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
         Tog(pageFrames[5], "Auto Farm", false, function(s) 
             O.AutoFarm = s 
-            O.Noclip = s 
+            O.Noclip = s -- Noclip otomatik açılır/kapanır
             sendNotification("Auto Farm", s and "Auto Farm & Noclip aktif!" or "Kapatıldı", 1.5)
         end)
         Tog(pageFrames[5], "Anti-Autofarm", false, function(s) 
@@ -778,7 +780,9 @@ loginBtn.MouseButton1Click:Connect(function()
                                 local otherHum = player.Character:FindFirstChildOfClass("Humanoid")
                                 if otherHRP and otherHum and otherHum.Health > 0 then
                                     if otherHRP.Position.Y > 35 and math.abs(otherHRP.AssemblyLinearVelocity.Y) < 2 then
-                                        otherHRP.CFrame = otherHRP.CFrame - Vector3.new(0, 5, 0)
+                                        pcall(function()
+                                            otherHRP.CFrame = otherHRP.CFrame - Vector3.new(0, 5, 0)
+                                        end)
                                     end
                                 end
                             end
@@ -885,9 +889,9 @@ loginBtn.MouseButton1Click:Connect(function()
                                 for _, obj in pairs(workspace:GetDescendants()) do
                                     if obj.Name == "GunDrop" and obj:IsA("BasePart") then
                                         local savedCFrame = hrp.CFrame
-                                        hrp.CFrame = obj.CFrame
+                                        pcall(function() hrp.CFrame = obj.CFrame end)
                                         task.wait(0.15)
-                                        hrp.CFrame = savedCFrame
+                                        pcall(function() hrp.CFrame = savedCFrame end)
                                         sendNotification("Auto Grab", "Gun grabbed & returned!", 2)
                                         break 
                                     end
@@ -942,7 +946,9 @@ loginBtn.MouseButton1Click:Connect(function()
                                     if otherHRP.Position.Y > 0 and otherHRP.Position.Y < 300 then 
                                         local rp = c2:FindFirstChild("HumanoidRootPart")
                                         if rp then
-                                            rp.CFrame = otherHRP.CFrame * CFrame.new(0, 0, 2)
+                                            pcall(function()
+                                                rp.CFrame = otherHRP.CFrame * CFrame.new(0, 0, 2)
+                                            end)
                                             task.wait(0.05)
                                             local ev = knife:FindFirstChildWhichIsA("RemoteEvent")
                                             if ev then ev:FireServer(otherHRP) end
@@ -996,7 +1002,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- TROLL COIN (Sadece round başındaki mevcut/orijinal coinleri alır, sonradan spawn olanlara dokunmaz)
+        -- TROLL COIN
         local initialCoins = {}
         task.spawn(function()
             while true do
@@ -1025,7 +1031,9 @@ loginBtn.MouseButton1Click:Connect(function()
                             for _, obj in ipairs(initialCoins) do
                                 if not O.AF then break end
                                 if obj and obj.Parent and obj:IsA("BasePart") and obj.Transparency < 1 then
-                                    obj.CFrame = hrp.CFrame * CFrame.new(0, 0, -3)
+                                    pcall(function()
+                                        obj.CFrame = hrp.CFrame * CFrame.new(math.random(-2, 2), 0, math.random(-2, 2))
+                                    end)
                                     task.wait(0.02)
                                 end
                             end
@@ -1035,7 +1043,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- AUTO FARM (Uçarak / Süzülerek - Tween Mantığı)
+        -- AUTO FARM (UÇARAK / SÜZÜLEREK - ANTI-CHEAT BYPASS LERP SİSTEMİ)
         task.spawn(function()
             while true do
                 task.wait(0.1)
@@ -1048,24 +1056,21 @@ loginBtn.MouseButton1Click:Connect(function()
                             for _, obj in pairs(workspace:GetDescendants()) do
                                 if not O.AutoFarm then break end
                                 if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
-                                    local dist = (hrp.Position - obj.Position).Magnitude
-                                    local speed = 50 
-                                    local timeToTravel = dist / speed
+                                    
+                                    local targetCFrame = obj.CFrame + Vector3.new(0, 2, 0)
+                                    local distance = (hrp.Position - targetCFrame.Position).Magnitude
                                     
                                     hum.PlatformStand = true
-                                    local tweenInfo = TweenInfo.new(timeToTravel, Enum.EasingStyle.Linear)
-                                    local tween = ts:Create(hrp, tweenInfo, {CFrame = obj.CFrame + Vector3.new(0, 3, 0)})
-                                    tween:Play()
                                     
-                                    local reached = false
-                                    local conn
-                                    conn = tween.Completed:Connect(function()
-                                        reached = true
-                                        if conn then conn:Disconnect() end
-                                    end)
-                                    
-                                    while not reached and O.AutoFarm and obj.Parent and obj.Transparency < 1 do
-                                        task.wait(0.05)
+                                    -- Lerp ile kademeli ve yumuşak uçuş (Hata 267 engeller)
+                                    local steps = math.clamp(math.floor(distance / 12), 4, 25)
+                                    for i = 1, steps do
+                                        if not O.AutoFarm then break end
+                                        local alpha = i / steps
+                                        pcall(function()
+                                            hrp.CFrame = hrp.CFrame:Lerp(targetCFrame, alpha)
+                                        end)
+                                        rs.Heartbeat:Wait()
                                     end
                                     
                                     hum.PlatformStand = false
