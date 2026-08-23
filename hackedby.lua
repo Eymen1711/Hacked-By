@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT - FULLY FIXED & LEFT TABS)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (LEFT TABS FIXED)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -34,7 +34,7 @@ local function getThemeColor(speed)
     end
 end
 
--- Anti-Ban Security Layer (Güvenli pcall ile sarıldı)
+-- Anti-Ban Security Layer
 pcall(function()
     local mt = getrawmetatable(game)
     setreadonly(mt, false)
@@ -195,7 +195,7 @@ loginBtn.MouseButton1Click:Connect(function()
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
 
-        -- Constant Character Loop to enforce WalkSpeed, JumpPower & FOV
+        -- Constant Character Loop
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -251,7 +251,7 @@ loginBtn.MouseButton1Click:Connect(function()
         toggleButton.Size = UDim2.new(0, 190, 0, 48)
         toggleButton.Position = UDim2.new(0, 40, 0, 40)
         toggleButton.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
-        toggleButton.Text = "Hacked By - Menu" -- Burası güncellendi
+        toggleButton.Text = "Hacked By - Menu"
         toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         toggleButton.TextSize = 17
         toggleButton.Font = CUSTOM_FONT
@@ -261,7 +261,7 @@ loginBtn.MouseButton1Click:Connect(function()
         local tbStroke = Instance.new("UIStroke", toggleButton)
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
-        -- Silent Aim Toggle Button (On/Off)
+        -- Silent Aim Toggle Button
         local silentAimActive = false
         local silentAimButton = Instance.new("TextButton", mgui)
         silentAimButton.Size = UDim2.new(0, 190, 0, 48)
@@ -343,10 +343,10 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Main Panel Frame
+        -- Main Panel Frame (Sol Sekmeli Düzene Uyarlanmıştır)
         local f = Instance.new("Frame", mgui)
-        f.Size = UDim2.new(0, 560, 0, 600)
-        f.Position = UDim2.new(0.5, -280, 0.5, -300)
+        f.Size = UDim2.new(0, 620, 0, 450)
+        f.Position = UDim2.new(0.5, -310, 0.5, -225)
         f.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
         f.Active = true
         f.Draggable = true
@@ -360,7 +360,7 @@ loginBtn.MouseButton1Click:Connect(function()
         rs.RenderStepped:Connect(function() if fStroke and fStroke.Parent then fStroke.Color = getThemeColor(1) end end)
 
         local t = Instance.new("TextLabel", f)
-        t.Size = UDim2.new(1, 0, 0, 52)
+        t.Size = UDim2.new(1, 0, 0, 45)
         t.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
         t.Text = "Hacked by - Panel"
         t.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -368,33 +368,38 @@ loginBtn.MouseButton1Click:Connect(function()
         t.Font = CUSTOM_FONT
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
+        -- Sol Sekme Listesi Alanı
         local catHolder = Instance.new("ScrollingFrame", f)
-        catHolder.Size = UDim2.new(1, -24, 0, 42)
-        catHolder.Position = UDim2.new(0, 12, 0, 60)
+        catHolder.Size = UDim2.new(0, 150, 1, -55)
+        catHolder.Position = UDim2.new(0, 8, 0, 50)
         catHolder.BackgroundTransparency = 1
-        catHolder.CanvasSize = UDim2.new(0, 550, 0, 0)
-        catHolder.ScrollBarThickness = 0
+        catHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+        catHolder.ScrollBarThickness = 2
 
         local catLayout = Instance.new("UIListLayout", catHolder)
-        catLayout.FillDirection = Enum.FillDirection.Horizontal
+        catLayout.FillDirection = Enum.FillDirection.Vertical
         catLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        catLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-        catLayout.Padding = UDim.new(0, 8)
+        catLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+        catLayout.Padding = UDim.new(0, 6)
+
+        catLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            catHolder.CanvasSize = UDim2.new(0, 0, 0, catLayout.AbsoluteContentSize.Y + 20)
+        end)
 
         local function createPage()
             local sc = Instance.new("ScrollingFrame", f)
-            sc.Size = UDim2.new(1, -24, 1, -120)
-            sc.Position = UDim2.new(0, 12, 0, 110)
+            sc.Size = UDim2.new(1, -170, 1, -55)
+            sc.Position = UDim2.new(0, 162, 0, 50)
             sc.BackgroundTransparency = 1
             sc.BorderSizePixel = 0
             sc.ScrollBarThickness = 6
             sc.Visible = false
             rs.RenderStepped:Connect(function() if sc and sc.Parent then sc.ScrollBarImageColor3 = getThemeColor(1) end end)
             local ll = Instance.new("UIListLayout", sc)
-            ll.Padding = UDim.new(0, 10)
+            ll.Padding = UDim.new(0, 8)
             ll.SortOrder = Enum.SortOrder.LayoutOrder
             ll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                sc.CanvasSize = UDim2.new(0, 0, 0, ll.AbsoluteContentSize.Y + 30)
+                sc.CanvasSize = UDim2.new(0, 0, 0, ll.AbsoluteContentSize.Y + 20)
             end)
             return sc
         end
@@ -407,7 +412,7 @@ loginBtn.MouseButton1Click:Connect(function()
             table.insert(pageFrames, page)
 
             local cBtn = Instance.new("TextButton", catHolder)
-            cBtn.Size = UDim2.new(0, 100, 0, 40)
+            cBtn.Size = UDim2.new(1, -10, 0, 40)
             cBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
             cBtn.Text = catName
             cBtn.TextColor3 = Color3.fromRGB(230, 230, 230)
@@ -424,45 +429,45 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local function Tog(parentContainer, titleText, defaultState, callbackFunc)
             local f2 = Instance.new("Frame", parentContainer)
-            f2.Size = UDim2.new(1, 0, 0, 50)
+            f2.Size = UDim2.new(1, -10, 0, 46)
             f2.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
             f2.BackgroundTransparency = 0.4
             Instance.new("UICorner", f2).CornerRadius = UDim.new(0, 8)
 
             local lb = Instance.new("TextLabel", f2)
             lb.Size = UDim2.new(1, -70, 1, 0)
-            lb.Position = UDim2.new(0, 16, 0, 0)
+            lb.Position = UDim2.new(0, 14, 0, 0)
             lb.BackgroundTransparency = 1
             lb.Text = titleText
             lb.TextColor3 = Color3.fromRGB(240, 240, 240)
-            lb.TextSize = 15
+            lb.TextSize = 14
             lb.Font = CUSTOM_FONT
             lb.TextXAlignment = Enum.TextXAlignment.Left
 
             local bg2 = Instance.new("Frame", f2)
-            bg2.Size = UDim2.new(0, 48, 0, 26)
-            bg2.Position = UDim2.new(1, -58, 0.5, -13)
+            bg2.Size = UDim2.new(0, 44, 0, 24)
+            bg2.Position = UDim2.new(1, -54, 0.5, -12)
             bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
             bg2.BorderSizePixel = 0
-            Instance.new("UICorner", bg2).CornerRadius = UDim.new(0, 13)
+            Instance.new("UICorner", bg2).CornerRadius = UDim.new(0, 12)
 
             local circ = Instance.new("Frame", bg2)
-            circ.Size = UDim2.new(0, 22, 0, 22)
-            circ.Position = UDim2.new(0, 2, 0.5, -11)
+            circ.Size = UDim2.new(0, 20, 0, 20)
+            circ.Position = UDim2.new(0, 2, 0.5, -10)
             circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
             circ.BorderSizePixel = 0
-            Instance.new("UICorner", circ).CornerRadius = UDim.new(0, 11)
+            Instance.new("UICorner", circ).CornerRadius = UDim.new(0, 10)
 
             local st = defaultState or false
             local function upd()
                 if st then
                     bg2.BackgroundColor3 = getThemeColor(1)
                     circ.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    pcall(function() circ:TweenPosition(UDim2.new(0, 24, 0.5, -11), "Out", "Quad", 0.2, true) end)
+                    pcall(function() circ:TweenPosition(UDim2.new(0, 22, 0.5, -10), "Out", "Quad", 0.2, true) end)
                 else
                     bg2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
                     circ.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-                    pcall(function() circ:TweenPosition(UDim2.new(0, 2, 0.5, -11), "Out", "Quad", 0.2, true) end)
+                    pcall(function() circ:TweenPosition(UDim2.new(0, 2, 0.5, -10), "Out", "Quad", 0.2, true) end)
                 end
             end
             upd()
@@ -480,40 +485,40 @@ loginBtn.MouseButton1Click:Connect(function()
 
         local function createStepControl(parentContainer, labelName, defaultVal, minVal, maxVal, step, callback)
             local frameBox = Instance.new("Frame", parentContainer)
-            frameBox.Size = UDim2.new(1, 0, 0, 60)
+            frameBox.Size = UDim2.new(1, -10, 0, 55)
             frameBox.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
             frameBox.BackgroundTransparency = 0.4
             Instance.new("UICorner", frameBox).CornerRadius = UDim.new(0, 8)
 
             local lbl = Instance.new("TextLabel", frameBox)
-            lbl.Size = UDim2.new(1, -140, 1, 0)
-            lbl.Position = UDim2.new(0, 16, 0, 0)
+            lbl.Size = UDim2.new(1, -130, 1, 0)
+            lbl.Position = UDim2.new(0, 14, 0, 0)
             lbl.BackgroundTransparency = 1
             lbl.Text = labelName .. ": " .. defaultVal
             lbl.TextColor3 = Color3.fromRGB(240, 240, 240)
-            lbl.TextSize = 15
+            lbl.TextSize = 14
             lbl.Font = CUSTOM_FONT
             lbl.TextXAlignment = Enum.TextXAlignment.Left
 
             local val = defaultVal
 
             local minusBtn = Instance.new("TextButton", frameBox)
-            minusBtn.Size = UDim2.new(0, 42, 0, 36)
-            minusBtn.Position = UDim2.new(1, -110, 0.5, -18)
+            minusBtn.Size = UDim2.new(0, 38, 0, 32)
+            minusBtn.Position = UDim2.new(1, -95, 0.5, -16)
             minusBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
             minusBtn.Text = "-"
             minusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-            minusBtn.TextSize = 20
+            minusBtn.TextSize = 18
             minusBtn.Font = CUSTOM_FONT
             Instance.new("UICorner", minusBtn).CornerRadius = UDim.new(0, 6)
 
             local plusBtn = Instance.new("TextButton", frameBox)
-            plusBtn.Size = UDim2.new(0, 42, 0, 36)
-            plusBtn.Position = UDim2.new(1, -58, 0.5, -18)
+            plusBtn.Size = UDim2.new(0, 38, 0, 32)
+            plusBtn.Position = UDim2.new(1, -52, 0.5, -16)
             plusBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
             plusBtn.Text = "+"
             plusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-            plusBtn.TextSize = 20
+            plusBtn.TextSize = 18
             plusBtn.Font = CUSTOM_FONT
             Instance.new("UICorner", plusBtn).CornerRadius = UDim.new(0, 6)
 
@@ -537,7 +542,7 @@ loginBtn.MouseButton1Click:Connect(function()
         -- Tab 1: Theme
         Tog(pageFrames[1], "Rainbow Mode", true, function(s) rainbowModeActive = s end)
         local colorContainer = Instance.new("Frame", pageFrames[1])
-        colorContainer.Size = UDim2.new(1, 0, 0, 48)
+        colorContainer.Size = UDim2.new(1, -10, 0, 45)
         colorContainer.BackgroundTransparency = 1
         local colors = {
             {Name = "Red", Color = Color3.fromRGB(255, 50, 50)},
@@ -562,7 +567,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
         -- Tab 2: ESP & X-Ray
         Tog(pageFrames[2], "Perfect Role ESP", false, function(s) O.ESP = s end)
-        Tog(pageFrames[2], "Wallhack X-Ray (See Through Walls)", false, function(s) 
+        Tog(pageFrames[2], "Wallhack X-Ray", false, function(s) 
             O.XRay = s
             for _, part in pairs(workspace:GetDescendants()) do
                 if part:IsA("BasePart") and not part:IsDescendantOf(pl.Character) then
@@ -613,7 +618,7 @@ loginBtn.MouseButton1Click:Connect(function()
 
         -- Tab 5: Auto Farm & Anti-Autofarm
         Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
-        Tog(pageFrames[5], "Anti-Autofarm (Fling Other Farmers)", false, function(s) O.AntiAF = s end)
+        Tog(pageFrames[5], "Anti-Autofarm", false, function(s) O.AntiAF = s end)
         createStepControl(pageFrames[5], "Autofarm Speed", 25, 5, 50, 5, function(v) autoFarmSpeed = v end)
 
         -- Background Loops & Core Functionality
@@ -649,7 +654,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- NOCLIP LOOP
         rs.Stepped:Connect(function()
             if O.Noclip then
                 pcall(function()
@@ -665,7 +669,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- ANTI-AUTOFARM LOOP
         task.spawn(function()
             while true do
                 task.wait(0.5)
@@ -685,7 +688,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- FLING SHERIFF LOOP
         task.spawn(function()
             while true do
                 task.wait(0.5)
@@ -707,7 +709,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- FLING MURDERER LOOP
         task.spawn(function()
             while true do
                 task.wait(0.5)
@@ -729,7 +730,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- SILENT AIM LOOP
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -779,7 +779,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- AUTO GRAB GUN
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -918,7 +917,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- AUTO FARM
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -957,7 +955,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Script fixed & ready to use!", 3)
+        sendNotification("Loaded", "Left tabs layout applied successfully!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
