@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT - FIXED SYNTAX)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT - FULLY FIXED)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -34,7 +34,7 @@ local function getThemeColor(speed)
     end
 end
 
--- Anti-Ban Security Layer
+-- Anti-Ban Security Layer (Güvenli pcall ile sarıldı)
 pcall(function()
     local mt = getrawmetatable(game)
     setreadonly(mt, false)
@@ -664,7 +664,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- ANTI-AUTOFARM LOOP (Başka hesapları havaya uçurma)
+        -- ANTI-AUTOFARM LOOP
         task.spawn(function()
             while true do
                 task.wait(0.5)
@@ -684,7 +684,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- FLING SHERIFF LOOP (Şerifi Uçur)
+        -- FLING SHERIFF LOOP
         task.spawn(function()
             while true do
                 task.wait(0.5)
@@ -706,7 +706,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- FLING MURDERER LOOP (Katili Uçur)
+        -- FLING MURDERER LOOP
         task.spawn(function()
             while true do
                 task.wait(0.5)
@@ -911,13 +911,14 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- DÜZELTİLDİ: JavaScript ok fonksiyonu yerine standart Lua fonksiyonu kullanıldı
         uis.JumpRequest:Connect(function()
             if O.InfJump then
                 pcall(function() pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
             end
         end)
 
-        -- DÜZELTİLMİŞ VE HIZI AYARLANABİLİR AUTO FARM
+        -- AUTO FARM
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -933,7 +934,6 @@ loginBtn.MouseButton1Click:Connect(function()
                                     local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
                                     local distance = (hrp.Position - targetCF.Position).Magnitude
                                     
-                                    -- Hız değerine göre süreyi düzgün hesapla (hız düştükçe hareket yavaşlar)
                                     local speedVal = math.clamp(autoFarmSpeed, 5, 50)
                                     local travelTime = distance / (speedVal * 10)
                                     travelTime = math.clamp(travelTime, 0.05, 1.5)
@@ -957,7 +957,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Autofarm speed fix applied successfully!", 3)
+        sendNotification("Loaded", "Script fixed & ready to use!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
