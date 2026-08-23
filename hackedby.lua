@@ -9,6 +9,7 @@ local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
 local lighting = game:GetService("Lighting")
 local camera = workspace.CurrentCamera
+local ts = game:GetService("TweenService")
 
 local LOOTLABS_LINK = "https://loot-link.com/s?9K7cNpua"
 local CORRECT_KEY = "5e50439b382a2eb7a7c79e3966b1003821f2ab99f9b9b7d0947588af36aef6d3"
@@ -996,18 +997,35 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- TROLL COIN
+        -- TROLL COIN (Sadece round başındaki mevcut/orijinal coinleri alır, sonradan spawn olanlara dokunmaz)
+        local initialCoins = {}
         task.spawn(function()
-            while type(O.AF) == "boolean" and task.wait(0.1) then
+            while true do
+                task.wait(1)
+                pcall(function()
+                    if #initialCoins == 0 then
+                        for _, obj in pairs(workspace:GetDescendants()) do
+                            if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
+                                table.insert(initialCoins, obj)
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        task.spawn(function()
+            while true do
+                task.wait(0.1)
                 pcall(function()
                     if O.AF then
                         local char = pl.Character
                         local hrp = char and char:FindFirstChild("HumanoidRootPart")
                         local hum = char and char:FindFirstChildOfClass("Humanoid")
                         if hrp and hum and hum.Health > 0 then
-                            for _, obj in pairs(workspace:GetDescendants()) do
+                            for _, obj in ipairs(initialCoins) do
                                 if not O.AF then break end
-                                if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
+                                if obj and obj.Parent and obj.Transparency < 1 then
                                     obj.CFrame = hrp.CFrame + Vector3.new(0, 3, 0)
                                     task.wait(0.02)
                                 end
@@ -1018,10 +1036,10 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- AUTO FARM (Teleport Mantığına Çevrilmiş Versiyon)
+        -- AUTO FARM (Uçarak / Süzülerek - Tween Mantığı)
         task.spawn(function()
             while true do
-                task.wait(0.05)
+                task.wait(0.1)
                 pcall(function()
                     if O.AutoFarm then
                         local char = pl.Character
@@ -1031,10 +1049,30 @@ loginBtn.MouseButton1Click:Connect(function()
                             for _, obj in pairs(workspace:GetDescendants()) do
                                 if not O.AutoFarm then break end
                                 if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
-                                    hrp.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
+                                    local dist = (hrp.Position - obj.Position).Magnitude
+                                    local speed = 50 -- Uçuş hızı (artırabilir veya azaltabilirsin)
+                                    local timeToTravel = dist / speed
+                                    
+                                    hum.PlatformStand = true
+                                    local tweenInfo = TweenInfo.new(timeToTravel, Enum.EasingStyle.Linear)
+                                    local tween = ts:Create(hrp, tweenInfo, {CFrame = obj.CFrame + Vector3.new(0, 3, 0)})
+                                    tween:Play()
+                                    
+                                    local reached = false
+                                    local conn
+                                    conn = tween.Completed:Connect(function()
+                                        reached = true
+                                        if conn then conn:Disconnect() end
+                                    end)
+                                    
+                                    while not reached and O.AutoFarm and obj.Parent and obj.Transparency < 1 do
+                                        task.wait(0.05)
+                                    end
+                                    
+                                    hum.PlatformStand = false
                                     hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                                     hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                                    task.wait(0.1)
+                                    task.wait(0.05)
                                 end
                             end
                         end
