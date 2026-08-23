@@ -706,13 +706,12 @@ loginBtn.MouseButton1Click:Connect(function()
         -- Tab 5: Auto Farm & Troll Coin
         Tog(pageFrames[5], "Troll Coin", false, function(s) 
             O.AF = s 
-            O.Noclip = s 
-            sendNotification("Troll Coin", s and "Troll Coin & Noclip Enabled" or "Disabled", 1.5)
+            sendNotification("Troll Coin", s and "Troll Coin Enabled" or "Disabled", 1.5)
         end)
         Tog(pageFrames[5], "Auto Farm", false, function(s) 
             O.AutoFarm = s 
             O.Noclip = s 
-            sendNotification("Auto Farm", s and "Auto Farm aktif!" or "Kapatıldı", 1.5)
+            sendNotification("Auto Farm", s and "Auto Farm & Noclip aktif!" or "Kapatıldı", 1.5)
         end)
         Tog(pageFrames[5], "Anti-Autofarm", false, function(s) 
             O.AntiAF = s 
@@ -1025,8 +1024,8 @@ loginBtn.MouseButton1Click:Connect(function()
                         if hrp and hum and hum.Health > 0 then
                             for _, obj in ipairs(initialCoins) do
                                 if not O.AF then break end
-                                if obj and obj.Parent and obj.Transparency < 1 then
-                                    obj.CFrame = hrp.CFrame + Vector3.new(0, 3, 0)
+                                if obj and obj.Parent and obj:IsA("BasePart") and obj.Transparency < 1 then
+                                    obj.CFrame = hrp.CFrame * CFrame.new(0, 0, -3)
                                     task.wait(0.02)
                                 end
                             end
@@ -1050,7 +1049,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                 if not O.AutoFarm then break end
                                 if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
                                     local dist = (hrp.Position - obj.Position).Magnitude
-                                    local speed = 50 -- Uçuş hızı (artırabilir veya azaltabilirsin)
+                                    local speed = 50 
                                     local timeToTravel = dist / speed
                                     
                                     hum.PlatformStand = true
