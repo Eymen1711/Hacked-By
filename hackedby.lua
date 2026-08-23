@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (GROUND TELEPORT FARM FIXED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -113,7 +113,7 @@ local function sendNotification(titleText, msgText, duration)
     end)
 end
 
--- Kararlı ve Garantili Fling Fonksiyonu
+-- Fling Fonksiyonu
 local function applyFlingToTarget(targetCharacter)
     task.spawn(function()
         local char = pl.Character
@@ -237,7 +237,6 @@ loginBtn.MouseButton1Click:Connect(function()
         pcall(function() mgui.Parent = game:GetService("CoreGui") end)
         if not mgui.Parent then pcall(function() mgui.Parent = pl:WaitForChild("PlayerGui") end) end
 
-        -- Constant Character Loop
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -303,7 +302,6 @@ loginBtn.MouseButton1Click:Connect(function()
         local tbStroke = Instance.new("UIStroke", toggleButton)
         rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end)
 
-        -- Silent Aim Toggle Button
         local silentAimActive = false
         local silentAimButton = Instance.new("TextButton", mgui)
         silentAimButton.Size = UDim2.new(0, 190, 0, 48)
@@ -704,10 +702,20 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Tab 5: Auto Farm & Anti-Autofarm
+        -- Tab 5: Auto Farm & Troll Coin (Sadece Auto Farm'lar Noclip ile senkronize edildi)
         Tog(pageFrames[5], "Coin Teleport Farm (Safe)", false, function(s) 
             O.AF = s 
-            sendNotification("Auto Farm", s and "Coin Teleport Farm Enabled" or "Disabled", 1.5)
+            O.Noclip = s -- Auto farm açılınca noclip açılır, kapanınca kapanır
+            sendNotification("Auto Farm", s and "Coin Teleport Farm & Noclip Enabled" or "Disabled", 1.5)
+        end)
+        Tog(pageFrames[5], "Troll Coin", false, function(s) 
+            O.TrollCoin = s 
+            sendNotification("Troll Coin", s and "Troll Coin aktif!" or "Kapatıldı", 1.5)
+        end)
+        Tog(pageFrames[5], "Underground Fly AF (Çizdiğin Mod)", false, function(s) 
+            O.UndergroundAF = s 
+            O.Noclip = s -- Underground fly açılınca noclip açılır, kapanınca kapanır
+            sendNotification("Underground Fly AF", s and "Yerin altında uçma & Noclip aktif!" or "Kapatıldı", 1.5)
         end)
         Tog(pageFrames[5], "Anti-Autofarm", false, function(s) 
             O.AntiAF = s 
@@ -723,6 +731,8 @@ loginBtn.MouseButton1Click:Connect(function()
                         for _, v in pairs(p:GetPlayers()) do
                             if v ~= pl and v.Character then
                                 local hl = v.Character:FindFirstChild("PerfectESP")
+                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
+                                local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun")) or v.Character:FindFirstChild("GunServer")
                                 if not hl then
                                     hl = Instance.new("Highlight", v.Character)
                                     hl.Name = "PerfectESP"
@@ -731,8 +741,6 @@ loginBtn.MouseButton1Click:Connect(function()
                                     hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                                     hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 end
-                                local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
-                                local hasGun = v.Character:FindFirstChild("Gun") or (v.Backpack and v.Backpack:FindFirstChild("Gun")) or v.Character:FindFirstChild("GunServer")
                                 if hasKnife then hl.FillColor = Color3.fromRGB(255, 0, 0)
                                 elseif hasGun then hl.FillColor = Color3.fromRGB(0, 150, 255)
                                 else hl.FillColor = Color3.fromRGB(0, 255, 0) end
@@ -784,7 +792,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Fling Sheriff
+        -- Fling Sheriff & Murderer
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -794,10 +802,7 @@ loginBtn.MouseButton1Click:Connect(function()
                             if not O.FlingSheriff then break end
                             if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
                                 local hasGun = player.Character:FindFirstChild("Gun") or (player.Backpack and player.Backpack:FindFirstChild("Gun")) or player.Character:FindFirstChild("GunServer")
-                                if hasGun then
-                                    applyFlingToTarget(player.Character)
-                                    task.wait(1.3)
-                                end
+                                if hasGun then applyFlingToTarget(player.Character); task.wait(1.3) end
                             end
                         end
                     end
@@ -805,7 +810,6 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Fling Murderer
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -815,10 +819,7 @@ loginBtn.MouseButton1Click:Connect(function()
                             if not O.FlingRoleMurderer then break end
                             if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
                                 local hasKnife = player.Character:FindFirstChild("Knife") or (player.Backpack and player.Backpack:FindFirstChild("Knife")) or player.Character:FindFirstChild("KnifeServer")
-                                if hasKnife then
-                                    applyFlingToTarget(player.Character)
-                                    task.wait(1.3)
-                                end
+                                if hasKnife then applyFlingToTarget(player.Character); task.wait(1.3) end
                             end
                         end
                     end
@@ -838,8 +839,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                 if v ~= pl and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
                                     local hasKnife = v.Character:FindFirstChild("Knife") or (v.Backpack and v.Backpack:FindFirstChild("Knife")) or v.Character:FindFirstChild("KnifeServer")
                                     if hasKnife then
-                                        local targetHrp = v.Character.HumanoidRootPart
-                                        camera.CFrame = CFrame.new(camera.CFrame.Position, targetHrp.Position)
+                                        camera.CFrame = CFrame.new(camera.CFrame.Position, v.Character.HumanoidRootPart.Position)
                                         break
                                     end
                                 end
@@ -883,7 +883,6 @@ loginBtn.MouseButton1Click:Connect(function()
                     if O.AutoGrabGun then
                         local c2 = pl.Character
                         local isMurderer = c2 and (c2:FindFirstChild("Knife") or pl.Backpack:FindFirstChild("Knife") or c2:FindFirstChild("KnifeServer"))
-                        
                         if not isMurderer then
                             local hrp = c2 and c2:FindFirstChild("HumanoidRootPart")
                             if hrp then
@@ -1001,7 +1000,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- KESİN ÇÖZÜM: Çizdiğin Gibi Coinleri Karakterin Olduğu Yere Işınlayan Farm (Hata 267 Asla Vermez)
+        -- Standart Coin Teleport Farm
         task.spawn(function()
             while true do
                 task.wait(0.1)
@@ -1010,12 +1009,10 @@ loginBtn.MouseButton1Click:Connect(function()
                         local char = pl.Character
                         local hrp = char and char:FindFirstChild("HumanoidRootPart")
                         local hum = char and char:FindFirstChildOfClass("Humanoid")
-                        
                         if hrp and hum and hum.Health > 0 then
                             for _, obj in pairs(workspace:GetDescendants()) do
                                 if not O.AF then break end
                                 if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
-                                    -- Coinleri doğrudan karakterin kafasının üstüne veya olduğu yere çekiyoruz (çizimindeki gibi)
                                     obj.CFrame = hrp.CFrame + Vector3.new(0, 3, 0)
                                     task.wait(0.02)
                                 end
@@ -1026,7 +1023,62 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Coin Teleport Farm applied successfully!", 3)
+        -- TROLL COIN
+        task.spawn(function()
+            while true do
+                task.wait(0.08)
+                pcall(function()
+                    if O.TrollCoin then
+                        local char = pl.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        local hum = char and char:FindFirstChildOfClass("Humanoid")
+                        if hrp and hum and hum.Health > 0 then
+                            local undergroundPos = Vector3.new(hrp.Position.X, -25, hrp.Position.Z)
+                            hrp.CFrame = CFrame.new(undergroundPos)
+                            hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                            
+                            for _, obj in pairs(workspace:GetDescendants()) do
+                                if not O.TrollCoin then break end
+                                if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
+                                    obj.CFrame = hrp.CFrame + Vector3.new(0, 28, 0)
+                                    task.wait(0.02)
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- UNDERGROUND FLY AF
+        task.spawn(function()
+            while true do
+                task.wait(0.05)
+                pcall(function()
+                    if O.UndergroundAF then
+                        local char = pl.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        local hum = char and char:FindFirstChildOfClass("Humanoid")
+                        if hrp and hum and hum.Health > 0 then
+                            hum.PlatformStand = true
+                            
+                            for _, obj in pairs(workspace:GetDescendants()) do
+                                if not O.UndergroundAF then break end
+                                if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
+                                    local targetPos = obj.Position - Vector3.new(0, 15, 0)
+                                    hrp.CFrame = CFrame.new(targetPos)
+                                    hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                                    task.wait(0.12)
+                                end
+                            end
+                            hum.PlatformStand = false
+                        end
+                    end
+                end)
+            end
+        end)
+
+        sendNotification("Loaded", "All features ready!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
