@@ -702,20 +702,16 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Tab 5: Auto Farm & Troll Coin (Sadece Auto Farm'lar Noclip ile senkronize edildi)
-        Tog(pageFrames[5], "Coin Teleport Farm (Safe)", false, function(s) 
-            O.AF = s 
-            O.Noclip = s -- Auto farm açılınca noclip açılır, kapanınca kapanır
-            sendNotification("Auto Farm", s and "Coin Teleport Farm & Noclip Enabled" or "Disabled", 1.5)
-        end)
+        -- Tab 5: Auto Farm & Troll Coin
         Tog(pageFrames[5], "Troll Coin", false, function(s) 
-            O.TrollCoin = s 
-            sendNotification("Troll Coin", s and "Troll Coin aktif!" or "Kapatıldı", 1.5)
+            O.AF = s 
+            O.Noclip = s 
+            sendNotification("Troll Coin", s and "Troll Coin & Noclip Enabled" or "Disabled", 1.5)
         end)
-        Tog(pageFrames[5], "Underground Fly AF (Çizdiğin Mod)", false, function(s) 
-            O.UndergroundAF = s 
-            O.Noclip = s -- Underground fly açılınca noclip açılır, kapanınca kapanır
-            sendNotification("Underground Fly AF", s and "Yerin altında uçma & Noclip aktif!" or "Kapatıldı", 1.5)
+        Tog(pageFrames[5], "Auto Farm (Underground Smooth)", false, function(s) 
+            O.AutoFarm = s 
+            O.Noclip = s 
+            sendNotification("Auto Farm", s and "Auto Farm & Noclip aktif!" or "Kapatıldı", 1.5)
         end)
         Tog(pageFrames[5], "Anti-Autofarm", false, function(s) 
             O.AntiAF = s 
@@ -1000,7 +996,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Standart Coin Teleport Farm
+        -- TROLL COIN
         task.spawn(function()
             while true do
                 task.wait(0.1)
@@ -1023,39 +1019,12 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- TROLL COIN
+        -- AUTO FARM (Videodaki Akıcı Underground Mantığına Uyarlanmış Versiyon)
         task.spawn(function()
             while true do
-                task.wait(0.08)
+                task.wait(0.03)
                 pcall(function()
-                    if O.TrollCoin then
-                        local char = pl.Character
-                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                        local hum = char and char:FindFirstChildOfClass("Humanoid")
-                        if hrp and hum and hum.Health > 0 then
-                            local undergroundPos = Vector3.new(hrp.Position.X, -25, hrp.Position.Z)
-                            hrp.CFrame = CFrame.new(undergroundPos)
-                            hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                            
-                            for _, obj in pairs(workspace:GetDescendants()) do
-                                if not O.TrollCoin then break end
-                                if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
-                                    obj.CFrame = hrp.CFrame + Vector3.new(0, 28, 0)
-                                    task.wait(0.02)
-                                end
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-
-        -- UNDERGROUND FLY AF
-        task.spawn(function()
-            while true do
-                task.wait(0.05)
-                pcall(function()
-                    if O.UndergroundAF then
+                    if O.AutoFarm then
                         local char = pl.Character
                         local hrp = char and char:FindFirstChild("HumanoidRootPart")
                         local hum = char and char:FindFirstChildOfClass("Humanoid")
@@ -1063,12 +1032,13 @@ loginBtn.MouseButton1Click:Connect(function()
                             hum.PlatformStand = true
                             
                             for _, obj in pairs(workspace:GetDescendants()) do
-                                if not O.UndergroundAF then break end
+                                if not O.AutoFarm then break end
                                 if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
-                                    local targetPos = obj.Position - Vector3.new(0, 15, 0)
-                                    hrp.CFrame = CFrame.new(targetPos)
+                                    -- Videodaki gibi zeminin altından/içinden süzülerek coinleri toplar
+                                    hrp.CFrame = obj.CFrame - Vector3.new(0, 2.5, 0)
                                     hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                                    task.wait(0.12)
+                                    hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                                    task.wait(0.06)
                                 end
                             end
                             hum.PlatformStand = false
