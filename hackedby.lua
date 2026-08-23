@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (FLING FIXED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (FLING & FARM FIXED)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -114,7 +114,7 @@ local function sendNotification(titleText, msgText, duration)
     end)
 end
 
--- Kesin Çalışan Güçlendirilmiş Fling Fonksiyonu (Roblox Physics Exploit)
+-- DÜZELTİLDİ: Kararlı ve Garantili Fling Fonksiyonu (Ağ Sahipliği ve Hız Dengelemesi)
 local function applyFlingToTarget(targetCharacter)
     task.spawn(function()
         local char = pl.Character
@@ -127,7 +127,6 @@ local function applyFlingToTarget(targetCharacter)
             local startTime = tick()
             local originalPos = hrp.CFrame
             
-            -- Çarpışmaları ve devrilmeyi sabitle
             hum.PlatformStand = true
             for _, part in pairs(char:GetDescendants()) do
                 if part:IsA("BasePart") then
@@ -136,17 +135,16 @@ local function applyFlingToTarget(targetCharacter)
                 end
             end
             
-            -- Hızlı yörünge ve patlatma döngüsü (Fling Core)
-            while tick() - startTime < 1.2 and targetHRP and targetHRP.Parent and hrp and hrp.Parent do
+            -- Fling Döngüsü (Güvenli ve yüksek açısal hız ile)
+            while tick() - startTime < 1.0 and targetHRP and targetHRP.Parent and hrp and hrp.Parent do
                 rs.RenderStepped:Wait()
-                local angle = tick() * 50
-                local offset = Vector3.new(math.cos(angle) * 4, 3, math.sin(angle) * 4)
+                local angle = tick() * 30
+                local offset = Vector3.new(math.cos(angle) * 3, 2, math.sin(angle) * 3)
                 hrp.CFrame = targetHRP.CFrame + offset
-                hrp.AssemblyLinearVelocity = Vector3.new(35000, 35000, 35000)
-                hrp.AssemblyAngularVelocity = Vector3.new(99999, 99999, 99999)
+                hrp.AssemblyLinearVelocity = Vector3.new(30000, 30000, 30000)
+                hrp.AssemblyAngularVelocity = Vector3.new(50000, 50000, 50000)
             end
             
-            -- Eski haline getir
             hum.PlatformStand = false
             for _, part in pairs(char:GetDescendants()) do
                 if part:IsA("BasePart") then
@@ -789,7 +787,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Yenilenmiş Kesin Çalışan Fling Sheriff
+        -- Fling Sheriff
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -810,7 +808,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Yenilenmiş Kesin Çalışan Fling Murderer
+        -- Fling Murderer
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -978,7 +976,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- God Fling Murderer (Combat Tab)
+        -- God Fling Murderer
         task.spawn(function()
             while true do
                 task.wait(0.2)
@@ -1006,7 +1004,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- Auto Farm
+        -- DÜZELTİLDİ: Auto Farm Hız Ayarı (5 seçildiğinde artık ışınlanma gibi fırlayıp oyundan atmayacak, kontrollü ve akıcı uçacak)
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -1030,9 +1028,10 @@ loginBtn.MouseButton1Click:Connect(function()
                                     local targetCF = v.CFrame + Vector3.new(0, 0.1, 0)
                                     local distance = (hrp.Position - targetCF.Position).Magnitude
                                     
+                                    -- Hız hesaplaması düzeltildi: 5 değeri artık ideal bir akışkanlık sağlar ve oyundan atılmayı engeller
                                     local speedVal = math.clamp(autoFarmSpeed, 1, 50)
-                                    local travelTime = distance / (speedVal * 20)
-                                    travelTime = math.clamp(travelTime, 0.02, 0.8)
+                                    local travelTime = distance / (speedVal * 12) 
+                                    travelTime = math.clamp(travelTime, 0.08, 1.5) -- Minimum süre artırılarak ani uçuş engellendi
                                     
                                     local startTime = tick()
                                     local startCF = hrp.CFrame
@@ -1046,7 +1045,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                     if v and v.Parent then
                                         hrp.CFrame = targetCF
                                     end
-                                    task.wait(0.03)
+                                    task.wait(0.05)
                                 end
                             end
                             hum.PlatformStand = false
@@ -1056,7 +1055,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Fling mechanics rebuilt & loaded!", 3)
+        sendNotification("Loaded", "Fling & Auto Farm fixed successfully!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
