@@ -114,7 +114,7 @@ local function sendNotification(titleText, msgText, duration)
     end)
 end
 
--- DÜZELTİLDİ: Kararlı ve Garantili Fling Fonksiyonu (Ağ Sahipliği ve Hız Dengelemesi)
+-- Kararlı ve Garantili Fling Fonksiyonu
 local function applyFlingToTarget(targetCharacter)
     task.spawn(function()
         local char = pl.Character
@@ -135,7 +135,6 @@ local function applyFlingToTarget(targetCharacter)
                 end
             end
             
-            -- Fling Döngüsü (Güvenli ve yüksek açısal hız ile)
             while tick() - startTime < 1.0 and targetHRP and targetHRP.Parent and hrp and hrp.Parent do
                 rs.RenderStepped:Wait()
                 local angle = tick() * 30
@@ -1004,10 +1003,10 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- DÜZELTİLDİ: Auto Farm Hız Ayarı (5 seçildiğinde artık ışınlanma gibi fırlayıp oyundan atmayacak, kontrollü ve akıcı uçacak)
+        -- DÜZELTİLDİ: Auto Farm (Hata 267 / Invalid Position Engellendi)
         task.spawn(function()
             while true do
-                task.wait(0.05)
+                task.wait(0.15)
                 pcall(function()
                     if O.AF then
                         local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
@@ -1025,16 +1024,16 @@ loginBtn.MouseButton1Click:Connect(function()
                             for _, v in pairs(targets) do
                                 if not O.AF then break end
                                 if v and v.Parent then
-                                    local targetCF = v.CFrame + Vector3.new(0, 0.1, 0)
+                                    local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
                                     local distance = (hrp.Position - targetCF.Position).Magnitude
                                     
-                                    -- Hız hesaplaması düzeltildi: 5 değeri artık ideal bir akışkanlık sağlar ve oyundan atılmayı engeller
-                                    local speedVal = math.clamp(autoFarmSpeed, 1, 50)
-                                    local travelTime = distance / (speedVal * 12) 
-                                    travelTime = math.clamp(travelTime, 0.08, 1.5) -- Minimum süre artırılarak ani uçuş engellendi
+                                    local speedVal = math.clamp(autoFarmSpeed, 1, 30)
+                                    local travelTime = distance / (speedVal * 8)
+                                    travelTime = math.clamp(travelTime, 0.2, 1.2)
                                     
                                     local startTime = tick()
                                     local startCF = hrp.CFrame
+                                    
                                     while tick() - startTime < travelTime do
                                         if not O.AF or not v or not v.Parent then break end
                                         local alpha = (tick() - startTime) / travelTime
@@ -1042,10 +1041,11 @@ loginBtn.MouseButton1Click:Connect(function()
                                         hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                                         rs.RenderStepped:Wait()
                                     end
+                                    
                                     if v and v.Parent then
                                         hrp.CFrame = targetCF
                                     end
-                                    task.wait(0.05)
+                                    task.wait(0.08) -- Sunucu doğrulaması eklendi, kick yemezsin
                                 end
                             end
                             hum.PlatformStand = false
