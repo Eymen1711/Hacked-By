@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (VERTICAL LEFT TABS)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (FIXED)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -19,7 +19,7 @@ local rainbowModeActive = true
 -- Global Settings
 local currentWalkSpeed = 16
 local currentJumpPower = 50
-local autoFarmSpeed = 25
+local autoFarmSpeed = 5 -- Başlangıç hızı 5 olarak ayarlandı
 local currentFOV = 70
 
 local CUSTOM_FONT = Enum.Font.FredokaOne
@@ -618,7 +618,7 @@ loginBtn.MouseButton1Click:Connect(function()
         -- Tab 5: Auto Farm & Anti-Autofarm
         Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) O.AF = s end)
         Tog(pageFrames[5], "Anti-Autofarm", false, function(s) O.AntiAF = s end)
-        createStepControl(pageFrames[5], "Autofarm Speed", 25, 5, 50, 5, function(v) autoFarmSpeed = v end)
+        createStepControl(pageFrames[5], "Autofarm Speed", 5, 1, 50, 1, function(v) autoFarmSpeed = v end) -- Varsayılan 5, 1'er artıp azalıyor
 
         -- Background Loops & Core Functionality
         task.spawn(function()
@@ -668,37 +668,20 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- DÜZELTİLDİ: Anti-Autofarm
         task.spawn(function()
             while true do
-                task.wait(0.5)
+                task.wait(0.2)
                 pcall(function()
                     if O.AntiAF then
                         for _, player in pairs(p:GetPlayers()) do
                             if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
                                 local otherHRP = player.Character.HumanoidRootPart
                                 local otherHumanoid = player.Character:FindFirstChildOfClass("Humanoid")
-                                if otherHRP.Position.Y < 300 and otherHumanoid then
-                                    otherHRP.Velocity = Vector3.new(0, 400, 0)
-                                end
-                            end
-                        end
-                    end
-                end)
-            end
-        end)
-
-        task.spawn(function()
-            while true do
-                task.wait(0.5)
-                pcall(function()
-                    if O.FlingSheriff then
-                        for _, player in pairs(p:GetPlayers()) do
-                            if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                                local hasGun = player.Character:FindFirstChild("Gun") or (player.Backpack and player.Backpack:FindFirstChild("Gun"))
-                                if hasGun then
-                                    local otherHRP = player.Character.HumanoidRootPart
-                                    if otherHRP.Position.Y < 300 then
-                                        otherHRP.Velocity = Vector3.new(0, 500, 0)
+                                if otherHRP and otherHumanoid and otherHumanoid.Health > 0 then
+                                    -- Eğer oyuncu normal yürümüyorsa / uçuyorsa (coin toplamak için hareket ediyorsa) müdahale et
+                                    if otherHRP.Position.Y > 5 and math.abs(otherHRP.Velocity.Y) > 50 then
+                                        otherHRP.Velocity = Vector3.new(otherHRP.Velocity.X, -50, otherHRP.Velocity.Z)
                                     end
                                 end
                             end
@@ -708,9 +691,31 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
+        -- DÜZELTİLDİ: Fling Sheriff
         task.spawn(function()
             while true do
-                task.wait(0.5)
+                task.wait(0.2)
+                pcall(function()
+                    if O.FlingSheriff then
+                        for _, player in pairs(p:GetPlayers()) do
+                            if player ~= pl and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                local hasGun = player.Character:FindFirstChild("Gun") or (player.Backpack and player.Backpack:FindFirstChild("Gun")) or player.Character:FindFirstChild("GunServer")
+                                if hasGun then
+                                    local otherHRP = player.Character.HumanoidRootPart
+                                    otherHRP.Velocity = Vector3.new(30000, 30000, 30000)
+                                    otherHRP.RotVelocity = Vector3.new(30000, 30000, 30000)
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+
+        -- DÜZELTİLDİ: Fling Murderer (Rolü Bıçak Olanlar)
+        task.spawn(function()
+            while true do
+                task.wait(0.2)
                 pcall(function()
                     if O.FlingRoleMurderer then
                         for _, player in pairs(p:GetPlayers()) do
@@ -718,9 +723,8 @@ loginBtn.MouseButton1Click:Connect(function()
                                 local hasKnife = player.Character:FindFirstChild("Knife") or (player.Backpack and player.Backpack:FindFirstChild("Knife")) or player.Character:FindFirstChild("KnifeServer")
                                 if hasKnife then
                                     local otherHRP = player.Character.HumanoidRootPart
-                                    if otherHRP.Position.Y < 300 then
-                                        otherHRP.Velocity = Vector3.new(0, 500, 0)
-                                    end
+                                    otherHRP.Velocity = Vector3.new(30000, 30000, 30000)
+                                    otherHRP.RotVelocity = Vector3.new(30000, 30000, 30000)
                                 end
                             end
                         end
@@ -931,7 +935,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                     local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
                                     local distance = (hrp.Position - targetCF.Position).Magnitude
                                     
-                                    local speedVal = math.clamp(autoFarmSpeed, 5, 50)
+                                    local speedVal = math.clamp(autoFarmSpeed, 1, 50)
                                     local travelTime = distance / (speedVal * 10)
                                     travelTime = math.clamp(travelTime, 0.05, 1.5)
                                     
@@ -954,7 +958,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Vertical left tabs applied successfully!", 3)
+        sendNotification("Loaded", "Fixes applied successfully!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
