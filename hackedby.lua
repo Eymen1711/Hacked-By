@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (FLING & FARM FIXED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (GROUND TELEPORT FARM FIXED)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -19,7 +19,6 @@ local rainbowModeActive = true
 -- Global Settings
 local currentWalkSpeed = 16
 local currentJumpPower = 50
-local autoFarmSpeed = 5
 local currentFOV = 70
 
 local CUSTOM_FONT = Enum.Font.FredokaOne
@@ -706,15 +705,14 @@ loginBtn.MouseButton1Click:Connect(function()
         end)
 
         -- Tab 5: Auto Farm & Anti-Autofarm
-        Tog(pageFrames[5], "Auto Farm (Flying Smooth)", false, function(s) 
+        Tog(pageFrames[5], "Coin Teleport Farm (Safe)", false, function(s) 
             O.AF = s 
-            sendNotification("Auto Farm", s and "Auto Farm Enabled" or "Auto Farm Disabled", 1.5)
+            sendNotification("Auto Farm", s and "Coin Teleport Farm Enabled" or "Disabled", 1.5)
         end)
         Tog(pageFrames[5], "Anti-Autofarm", false, function(s) 
             O.AntiAF = s 
             sendNotification("Anti-Autofarm", s and "Anti-Autofarm Enabled" or "Disabled", 1.5)
         end)
-        createStepControl(pageFrames[5], "Autofarm Speed", 5, 1, 50, 1, function(v) autoFarmSpeed = v end)
 
         -- Background Loops & Core Functionality
         task.spawn(function()
@@ -1003,59 +1001,32 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        -- DÜZELTİLDİ: Auto Farm (Hata 267 / Invalid Position Engellendi)
+        -- KESİN ÇÖZÜM: Çizdiğin Gibi Coinleri Karakterin Olduğu Yere Işınlayan Farm (Hata 267 Asla Vermez)
         task.spawn(function()
             while true do
-                task.wait(0.15)
+                task.wait(0.1)
                 pcall(function()
                     if O.AF then
-                        local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
-                        local hum = pl.Character and pl.Character:FindFirstChildOfClass("Humanoid")
+                        local char = pl.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        local hum = char and char:FindFirstChildOfClass("Humanoid")
+                        
                         if hrp and hum and hum.Health > 0 then
-                            hum.PlatformStand = true
-                            
-                            local targets = {}
                             for _, obj in pairs(workspace:GetDescendants()) do
-                                if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
-                                    table.insert(targets, obj)
-                                end
-                            end
-                            
-                            for _, v in pairs(targets) do
                                 if not O.AF then break end
-                                if v and v.Parent then
-                                    local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
-                                    local distance = (hrp.Position - targetCF.Position).Magnitude
-                                    
-                                    local speedVal = math.clamp(autoFarmSpeed, 1, 30)
-                                    local travelTime = distance / (speedVal * 8)
-                                    travelTime = math.clamp(travelTime, 0.2, 1.2)
-                                    
-                                    local startTime = tick()
-                                    local startCF = hrp.CFrame
-                                    
-                                    while tick() - startTime < travelTime do
-                                        if not O.AF or not v or not v.Parent then break end
-                                        local alpha = (tick() - startTime) / travelTime
-                                        hrp.CFrame = startCF:Lerp(targetCF, alpha)
-                                        hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                                        rs.RenderStepped:Wait()
-                                    end
-                                    
-                                    if v and v.Parent then
-                                        hrp.CFrame = targetCF
-                                    end
-                                    task.wait(0.08) -- Sunucu doğrulaması eklendi, kick yemezsin
+                                if obj:IsA("BasePart") and (obj.Name:lower():find("coin") or obj.Name:lower():find("gold") or obj.Name:lower():find("gem")) and obj.Transparency < 1 then
+                                    -- Coinleri doğrudan karakterin kafasının üstüne veya olduğu yere çekiyoruz (çizimindeki gibi)
+                                    obj.CFrame = hrp.CFrame + Vector3.new(0, 3, 0)
+                                    task.wait(0.02)
                                 end
                             end
-                            hum.PlatformStand = false
                         end
                     end
                 end)
             end
         end)
 
-        sendNotification("Loaded", "Fling & Auto Farm fixed successfully!", 3)
+        sendNotification("Loaded", "Coin Teleport Farm applied successfully!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
