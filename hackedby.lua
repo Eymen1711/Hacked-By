@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (TASTE BREAD FONT - FIXED AUTOFARM)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -613,7 +613,7 @@ loginBtn.MouseButton1Click:Connect(function()
         Tog(pageFrames[5], "Anti-Autofarm (Fling Other Farmers)", false, function(s) O.AntiAF = s end)
         Tog(pageFrames[5], "Fling Sheriff", false, function(s) O.FlingSheriff = s end)
         Tog(pageFrames[5], "Fling Murderer", false, function(s) O.FlingRoleMurderer = s end)
-        createStepControl(pageFrames[5], "Autofarm Speed", 25, 10, 100, 5, function(v) autoFarmSpeed = v end)
+        createStepControl(pageFrames[5], "Autofarm Speed", 25, 5, 50, 5, function(v) autoFarmSpeed = v end)
 
         -- Background Loops & Core Functionality
         task.spawn(function()
@@ -911,13 +911,13 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        uis.JumpRequest:Connect(function()
+        uis.JumpRequest:Connect(value => {
             if O.InfJump then
                 pcall(function() pl.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end)
             end
         end)
 
-        -- DÜZELTİLMİŞ UÇARAK ÇALIŞAN AUTO FARM
+        -- DÜZELTİLMİŞ VE HIZI AYARLANABİLİR AUTO FARM
         task.spawn(function()
             while true do
                 task.wait(0.05)
@@ -932,7 +932,11 @@ loginBtn.MouseButton1Click:Connect(function()
                                 if v:IsA("BasePart") and (v.Name:lower():find("coin") or v.Name:lower():find("gold") or v.Name:lower():find("gem")) and v.Transparency < 1 then
                                     local targetCF = v.CFrame + Vector3.new(0, 0.5, 0)
                                     local distance = (hrp.Position - targetCF.Position).Magnitude
-                                    local travelTime = math.clamp(distance / (autoFarmSpeed * 15), 0.01, 0.3)
+                                    
+                                    -- Hız değerine göre süreyi düzgün hesapla (hız düştükçe hareket yavaşlar)
+                                    local speedVal = math.clamp(autoFarmSpeed, 5, 50)
+                                    local travelTime = distance / (speedVal * 10)
+                                    travelTime = math.clamp(travelTime, 0.05, 1.5)
                                     
                                     local startTime = tick()
                                     local startCF = hrp.CFrame
@@ -943,7 +947,7 @@ loginBtn.MouseButton1Click:Connect(function()
                                         rs.RenderStepped:Wait()
                                     end
                                     hrp.CFrame = targetCF
-                                    task.wait(0.02 + math.random(1, 3)/100)
+                                    task.wait(0.05)
                                 end
                             end
                             hum.PlatformStand = false
@@ -953,7 +957,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Taste Bread font applied successfully!", 3)
+        sendNotification("Loaded", "Autofarm speed fix applied successfully!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
