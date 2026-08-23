@@ -1,5 +1,5 @@
 -- ==========================================
--- HACKED BY + ULTIMATE MM2 SCRIPT (LEFT TABS FIXED)
+-- HACKED BY + ULTIMATE MM2 SCRIPT (VERTICAL LEFT TABS)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -22,7 +22,6 @@ local currentJumpPower = 50
 local autoFarmSpeed = 25
 local currentFOV = 70
 
--- Taste Bread Tarzı Tatlı/Oyun Fontu
 local CUSTOM_FONT = Enum.Font.FredokaOne
 
 local function getThemeColor(speed)
@@ -343,7 +342,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end)
         end)
 
-        -- Main Panel Frame (Sol Sekmeli Düzene Uyarlanmıştır)
+        -- Main Panel Frame (Sol Dikey Sekmeli Yapı)
         local f = Instance.new("Frame", mgui)
         f.Size = UDim2.new(0, 620, 0, 450)
         f.Position = UDim2.new(0.5, -310, 0.5, -225)
@@ -368,7 +367,7 @@ loginBtn.MouseButton1Click:Connect(function()
         t.Font = CUSTOM_FONT
         Instance.new("UICorner", t).CornerRadius = UDim.new(0, 12)
 
-        -- Sol Sekme Listesi Alanı
+        -- Sol Dikey Sekme Listesi Alanı
         local catHolder = Instance.new("ScrollingFrame", f)
         catHolder.Size = UDim2.new(0, 150, 1, -55)
         catHolder.Position = UDim2.new(0, 8, 0, 50)
@@ -955,7 +954,7 @@ loginBtn.MouseButton1Click:Connect(function()
             end
         end)
 
-        sendNotification("Loaded", "Left tabs layout applied successfully!", 3)
+        sendNotification("Loaded", "Vertical left tabs applied successfully!", 3)
     else
         textBox.Text = ""
         textBox.PlaceholderText = "WRONG KEY!"
