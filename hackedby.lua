@@ -1,5 +1,5 @@
 -- ==========================================
--- ULTIMATE MM2 FIXED & CLEANED SCRIPT v3.0
+-- ULTIMATE MM2 FIXED & CLEANED SCRIPT v4.1 (Final)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -62,6 +62,32 @@ local function cleanupAll()
         end
     end
     activeConnections = {}
+end
+
+-- Classic custom dragging function for universal executor compatibility
+local function makeDraggable(frame)
+    local dragging, dragInput, dragStart, startPos
+    trackConnection(frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            trackConnection(input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end))
+        end
+    end))
+    trackConnection(frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end))
+    trackConnection(uis.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end))
 end
 
 -- Notification System
@@ -132,7 +158,7 @@ frame.Size = UDim2.new(0, 400, 0, 240)
 frame.Position = UDim2.new(0.5, -200, 0.5, -120)
 frame.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
 frame.Active = true
-Instance.new("UIDragDetector", frame) -- Modern Drag Handling
+makeDraggable(frame)
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
 local stroke = Instance.new("UIStroke", frame)
@@ -238,7 +264,7 @@ trackConnection(loginBtn.MouseButton1Click:Connect(function()
         toggleButton.TextSize = 17
         toggleButton.Font = CUSTOM_FONT
         toggleButton.Active = true
-        Instance.new("UIDragDetector", toggleButton)
+        makeDraggable(toggleButton)
         Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 8)
         local tbStroke = Instance.new("UIStroke", toggleButton)
         trackConnection(rs.RenderStepped:Connect(function() if tbStroke and tbStroke.Parent then tbStroke.Color = getThemeColor(1) end end))
@@ -252,7 +278,7 @@ trackConnection(loginBtn.MouseButton1Click:Connect(function()
         silentAimButton.TextSize = 16
         silentAimButton.Font = CUSTOM_FONT
         silentAimButton.Active = true
-        Instance.new("UIDragDetector", silentAimButton)
+        makeDraggable(silentAimButton)
         Instance.new("UICorner", silentAimButton).CornerRadius = UDim.new(0, 8)
         local sabStroke = Instance.new("UIStroke", silentAimButton)
         trackConnection(rs.RenderStepped:Connect(function() if sabStroke and sabStroke.Parent then sabStroke.Color = getThemeColor(1) end end))
@@ -273,7 +299,7 @@ trackConnection(loginBtn.MouseButton1Click:Connect(function()
         mapButton.TextSize = 17
         mapButton.Font = CUSTOM_FONT
         mapButton.Active = true
-        Instance.new("UIDragDetector", mapButton)
+        makeDraggable(mapButton)
         Instance.new("UICorner", mapButton).CornerRadius = UDim.new(0, 8)
         local mbStroke = Instance.new("UIStroke", mapButton)
         trackConnection(rs.RenderStepped:Connect(function() if mbStroke and mbStroke.Parent then mbStroke.Color = getThemeColor(1) end end))
@@ -303,7 +329,7 @@ trackConnection(loginBtn.MouseButton1Click:Connect(function()
         lobbyButton.TextSize = 17
         lobbyButton.Font = CUSTOM_FONT
         lobbyButton.Active = true
-        Instance.new("UIDragDetector", lobbyButton)
+        makeDraggable(lobbyButton)
         Instance.new("UICorner", lobbyButton).CornerRadius = UDim.new(0, 8)
         local lbStroke = Instance.new("UIStroke", lobbyButton)
         trackConnection(rs.RenderStepped:Connect(function() if lbStroke and lbStroke.Parent then lbStroke.Color = getThemeColor(1) end end))
@@ -324,7 +350,7 @@ trackConnection(loginBtn.MouseButton1Click:Connect(function()
         f.Position = UDim2.new(0.5, -310, 0.5, -225)
         f.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
         f.Active = true
-        Instance.new("UIDragDetector", f)
+        makeDraggable(f)
         f.ClipsDescendants = true
         f.Visible = false
 
