@@ -1,5 +1,5 @@
 -- ==========================================
--- ULTIMATE MM2 FIXED & CLEANED SCRIPT v4.1 (Final)
+-- ULTIMATE MM2 FIXED & CLEANED SCRIPT v4.2 (Final)
 -- ==========================================
 
 local p = game:GetService("Players")
@@ -308,7 +308,7 @@ trackConnection(loginBtn.MouseButton1Click:Connect(function()
             pcall(function()
                 local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                 if hrp then
-                    local map = workspace:FindFirstChild("Map")
+                    local map = workspace:FindFirstChild("Map", true)
                     if map then
                         local primary = map:IsA("Model") and (map.PrimaryPart or map:FindFirstChildWhichIsA("BasePart"))
                         if primary then hrp.CFrame = primary.CFrame + Vector3.new(0, 5, 0) end
@@ -338,7 +338,12 @@ trackConnection(loginBtn.MouseButton1Click:Connect(function()
             pcall(function()
                 local hrp = pl.Character and pl.Character:FindFirstChild("HumanoidRootPart")
                 if hrp then 
-                    hrp.CFrame = CFrame.new(0, 10, 0) 
+                    local spawn = workspace:FindFirstChild("LobbySpawn", true)
+                    if spawn and spawn:IsA("BasePart") then
+                        hrp.CFrame = spawn.CFrame + Vector3.new(0, 3, 0)
+                    else
+                        hrp.CFrame = CFrame.new(0, 10, 0) 
+                    end
                     sendNotification("Teleport", "Returned to Lobby!", 2)
                 end
             end)
